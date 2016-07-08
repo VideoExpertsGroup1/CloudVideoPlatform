@@ -1,0 +1,588 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B10CC06F1D1D0FE7006427D3 /* loader_white_330x28.gif in Resources */ = {isa = PBXBuildFile; fileRef = B10CC06E1D1D0FE7006427D3 /* loader_white_330x28.gif */; };
+		B10CC0721D1D1859006427D3 /* UIImage_Gif.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10CC0711D1D1859006427D3 /* UIImage_Gif.swift */; };
+		B10CC0741D1D30A6006427D3 /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10CC0731D1D30A6006427D3 /* Helpers.swift */; };
+		B1A1395E1D12EF1300D59D71 /* CloudAPIToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1A1395D1D12EF1300D59D71 /* CloudAPIToken.swift */; };
+		B1D5807A1D018F710084A924 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D580791D018F710084A924 /* AppDelegate.swift */; };
+		B1D5807E1D018F710084A924 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D5807D1D018F710084A924 /* LoginViewController.swift */; };
+		B1D580811D018F710084A924 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B1D5807F1D018F710084A924 /* Main.storyboard */; };
+		B1D580831D018F710084A924 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B1D580821D018F710084A924 /* Assets.xcassets */; };
+		B1D580911D018F710084A924 /* clientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D580901D018F710084A924 /* clientTests.swift */; };
+		B1D5809E1D01A4320084A924 /* RegistrationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D5809D1D01A4320084A924 /* RegistrationViewController.swift */; };
+		B1D580A01D01A9F30084A924 /* ClientAPIController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D5809F1D01A9F30084A924 /* ClientAPIController.swift */; };
+		B1D580A21D01AA040084A924 /* CloudAPIController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1D580A11D01AA040084A924 /* CloudAPIController.swift */; };
+		B1F4FBD11D13D122009306E8 /* PlayerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1F4FBCE1D13D122009306E8 /* PlayerWrapper.swift */; };
+		B1F4FBD91D13D1BE009306E8 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B1F4FBD81D13D1BE009306E8 /* libz.tbd */; };
+		B1F4FBDB1D13D1D3009306E8 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B1F4FBDA1D13D1D3009306E8 /* libc++.tbd */; };
+		B1F4FBDD1D13D1E0009306E8 /* libMediaPlayerSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B1F4FBDC1D13D1E0009306E8 /* libMediaPlayerSDK.a */; };
+		B1F4FBDF1D13D1FF009306E8 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1F4FBDE1D13D1FF009306E8 /* QuartzCore.framework */; };
+		B1F4FBE11D13D20E009306E8 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1F4FBE01D13D20E009306E8 /* CoreMedia.framework */; };
+		B1F4FBE31D13D21B009306E8 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1F4FBE21D13D21B009306E8 /* CoreVideo.framework */; };
+		B1F4FBE51D13D226009306E8 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1F4FBE41D13D226009306E8 /* VideoToolbox.framework */; };
+		B1F4FBE71D13D33C009306E8 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1F4FBE61D13D33C009306E8 /* CoreAudio.framework */; };
+		B1F4FBE91D13D346009306E8 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1F4FBE81D13D346009306E8 /* AVFoundation.framework */; };
+		B1F4FBEB1D13D358009306E8 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B1F4FBEA1D13D358009306E8 /* libiconv.tbd */; };
+		B1F4FBED1D13D364009306E8 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1F4FBEC1D13D364009306E8 /* AudioToolbox.framework */; };
+		B1F4FBEF1D13D370009306E8 /* MediaPlayer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1F4FBEE1D13D370009306E8 /* MediaPlayer.framework */; };
+		B1F4FBF11D13D382009306E8 /* iAd.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1F4FBF01D13D382009306E8 /* iAd.framework */; };
+		B1F4FBFA1D13D49E009306E8 /* logo.png in Resources */ = {isa = PBXBuildFile; fileRef = B1F4FBF91D13D49E009306E8 /* logo.png */; };
+		B1F4FC061D13E09F009306E8 /* libbz2.1.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B1F4FC041D13E09F009306E8 /* libbz2.1.0.tbd */; };
+		B1F4FC071D13E09F009306E8 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = B1F4FC051D13E09F009306E8 /* libbz2.tbd */; };
+		B1FE5E9B1D11545E000751AC /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FE5E9A1D11545E000751AC /* UserProfile.swift */; };
+		B1FE5E9E1D118824000751AC /* UserProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FE5E9D1D118824000751AC /* UserProfileController.swift */; };
+		B1FE5EA01D129FFC000751AC /* CloudClientController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1FE5E9F1D129FFC000751AC /* CloudClientController.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		B1D5808D1D018F710084A924 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B1D5806E1D018F710084A924 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B1D580751D018F710084A924;
+			remoteInfo = client;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		B10CC06E1D1D0FE7006427D3 /* loader_white_330x28.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = loader_white_330x28.gif; sourceTree = "<group>"; };
+		B10CC0711D1D1859006427D3 /* UIImage_Gif.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIImage_Gif.swift; path = 3rdparty/UIImage_Gif.swift; sourceTree = "<group>"; };
+		B10CC0731D1D30A6006427D3 /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
+		B1A1395D1D12EF1300D59D71 /* CloudAPIToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudAPIToken.swift; sourceTree = "<group>"; };
+		B1D580761D018F710084A924 /* VXG Cloud Client.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "VXG Cloud Client.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B1D580791D018F710084A924 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		B1D5807D1D018F710084A924 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		B1D580801D018F710084A924 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		B1D580821D018F710084A924 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B1D580871D018F710084A924 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B1D5808C1D018F710084A924 /* VXGCloudClient.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VXGCloudClient.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B1D580901D018F710084A924 /* clientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = clientTests.swift; sourceTree = "<group>"; };
+		B1D580921D018F710084A924 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B1D5809D1D01A4320084A924 /* RegistrationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegistrationViewController.swift; sourceTree = "<group>"; };
+		B1D5809F1D01A9F30084A924 /* ClientAPIController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientAPIController.swift; sourceTree = "<group>"; };
+		B1D580A11D01AA040084A924 /* CloudAPIController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudAPIController.swift; sourceTree = "<group>"; };
+		B1F4FBCE1D13D122009306E8 /* PlayerWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerWrapper.swift; sourceTree = "<group>"; };
+		B1F4FBD81D13D1BE009306E8 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		B1F4FBDA1D13D1D3009306E8 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		B1F4FBDC1D13D1E0009306E8 /* libMediaPlayerSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMediaPlayerSDK.a; path = lib/libMediaPlayerSDK.a; sourceTree = "<group>"; };
+		B1F4FBDE1D13D1FF009306E8 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		B1F4FBE01D13D20E009306E8 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		B1F4FBE21D13D21B009306E8 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
+		B1F4FBE41D13D226009306E8 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
+		B1F4FBE61D13D33C009306E8 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
+		B1F4FBE81D13D346009306E8 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B1F4FBEA1D13D358009306E8 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
+		B1F4FBEC1D13D364009306E8 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		B1F4FBEE1D13D370009306E8 /* MediaPlayer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MediaPlayer.framework; path = System/Library/Frameworks/MediaPlayer.framework; sourceTree = SDKROOT; };
+		B1F4FBF01D13D382009306E8 /* iAd.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = iAd.framework; path = System/Library/Frameworks/iAd.framework; sourceTree = SDKROOT; };
+		B1F4FBF31D13D3D0009306E8 /* M3U8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = M3U8.h; path = include/M3U8.h; sourceTree = "<group>"; };
+		B1F4FBF41D13D3D0009306E8 /* MediaPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MediaPlayer.h; path = include/MediaPlayer.h; sourceTree = "<group>"; };
+		B1F4FBF51D13D3D0009306E8 /* MediaPlayerConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MediaPlayerConfig.h; path = include/MediaPlayerConfig.h; sourceTree = "<group>"; };
+		B1F4FBF61D13D3D0009306E8 /* Thumbnailer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Thumbnailer.h; path = include/Thumbnailer.h; sourceTree = "<group>"; };
+		B1F4FBF71D13D3D0009306E8 /* ThumbnailerConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ThumbnailerConfig.h; path = include/ThumbnailerConfig.h; sourceTree = "<group>"; };
+		B1F4FBF91D13D49E009306E8 /* logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = logo.png; path = ../images/logo.png; sourceTree = "<group>"; };
+		B1F4FBFD1D13DF36009306E8 /* RTSPPlayerBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RTSPPlayerBridge.h; path = include/RTSPPlayerBridge.h; sourceTree = "<group>"; };
+		B1F4FC041D13E09F009306E8 /* libbz2.1.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.1.0.tbd; path = usr/lib/libbz2.1.0.tbd; sourceTree = SDKROOT; };
+		B1F4FC051D13E09F009306E8 /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
+		B1FE5E9A1D11545E000751AC /* UserProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+		B1FE5E9D1D118824000751AC /* UserProfileController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserProfileController.swift; sourceTree = "<group>"; };
+		B1FE5E9F1D129FFC000751AC /* CloudClientController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudClientController.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B1D580731D018F710084A924 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1F4FC061D13E09F009306E8 /* libbz2.1.0.tbd in Frameworks */,
+				B1F4FC071D13E09F009306E8 /* libbz2.tbd in Frameworks */,
+				B1F4FBF11D13D382009306E8 /* iAd.framework in Frameworks */,
+				B1F4FBEF1D13D370009306E8 /* MediaPlayer.framework in Frameworks */,
+				B1F4FBED1D13D364009306E8 /* AudioToolbox.framework in Frameworks */,
+				B1F4FBEB1D13D358009306E8 /* libiconv.tbd in Frameworks */,
+				B1F4FBE91D13D346009306E8 /* AVFoundation.framework in Frameworks */,
+				B1F4FBE71D13D33C009306E8 /* CoreAudio.framework in Frameworks */,
+				B1F4FBE51D13D226009306E8 /* VideoToolbox.framework in Frameworks */,
+				B1F4FBE31D13D21B009306E8 /* CoreVideo.framework in Frameworks */,
+				B1F4FBE11D13D20E009306E8 /* CoreMedia.framework in Frameworks */,
+				B1F4FBDF1D13D1FF009306E8 /* QuartzCore.framework in Frameworks */,
+				B1F4FBDD1D13D1E0009306E8 /* libMediaPlayerSDK.a in Frameworks */,
+				B1F4FBDB1D13D1D3009306E8 /* libc++.tbd in Frameworks */,
+				B1F4FBD91D13D1BE009306E8 /* libz.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1D580891D018F710084A924 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B10CC0701D1D183E006427D3 /* 3rdparty */ = {
+			isa = PBXGroup;
+			children = (
+				B10CC0711D1D1859006427D3 /* UIImage_Gif.swift */,
+			);
+			name = 3rdparty;
+			sourceTree = "<group>";
+		};
+		B1A1395F1D12EF1800D59D71 /* cloudapi */ = {
+			isa = PBXGroup;
+			children = (
+				B1D580A11D01AA040084A924 /* CloudAPIController.swift */,
+				B1A1395D1D12EF1300D59D71 /* CloudAPIToken.swift */,
+			);
+			name = cloudapi;
+			sourceTree = "<group>";
+		};
+		B1D5806D1D018F700084A924 = {
+			isa = PBXGroup;
+			children = (
+				B1D580781D018F710084A924 /* VXGCloudClient */,
+				B1D5808F1D018F710084A924 /* VXGCloudClientTests */,
+				B1D580771D018F710084A924 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B1D580771D018F710084A924 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B1D580761D018F710084A924 /* VXG Cloud Client.app */,
+				B1D5808C1D018F710084A924 /* VXGCloudClient.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B1D580781D018F710084A924 /* VXGCloudClient */ = {
+			isa = PBXGroup;
+			children = (
+				B10CC0701D1D183E006427D3 /* 3rdparty */,
+				B1F4FBF81D13D3EB009306E8 /* images */,
+				B1F4FBF21D13D3B4009306E8 /* include */,
+				B1F4FBD51D13D181009306E8 /* libs */,
+				B1A1395F1D12EF1800D59D71 /* cloudapi */,
+				B1FE5E9C1D11546E000751AC /* clientapi */,
+				B10CC0731D1D30A6006427D3 /* Helpers.swift */,
+				B1D580791D018F710084A924 /* AppDelegate.swift */,
+				B1F4FBCE1D13D122009306E8 /* PlayerWrapper.swift */,
+				B1D5807D1D018F710084A924 /* LoginViewController.swift */,
+				B1FE5E9D1D118824000751AC /* UserProfileController.swift */,
+				B1D5809D1D01A4320084A924 /* RegistrationViewController.swift */,
+				B1FE5E9F1D129FFC000751AC /* CloudClientController.swift */,
+				B1D5807F1D018F710084A924 /* Main.storyboard */,
+				B1D580821D018F710084A924 /* Assets.xcassets */,
+				B1D580871D018F710084A924 /* Info.plist */,
+			);
+			name = VXGCloudClient;
+			path = client;
+			sourceTree = "<group>";
+		};
+		B1D5808F1D018F710084A924 /* VXGCloudClientTests */ = {
+			isa = PBXGroup;
+			children = (
+				B1D580901D018F710084A924 /* clientTests.swift */,
+				B1D580921D018F710084A924 /* Info.plist */,
+			);
+			name = VXGCloudClientTests;
+			path = clientTests;
+			sourceTree = "<group>";
+		};
+		B1F4FBD51D13D181009306E8 /* libs */ = {
+			isa = PBXGroup;
+			children = (
+				B1F4FC041D13E09F009306E8 /* libbz2.1.0.tbd */,
+				B1F4FC051D13E09F009306E8 /* libbz2.tbd */,
+				B1F4FBF01D13D382009306E8 /* iAd.framework */,
+				B1F4FBEE1D13D370009306E8 /* MediaPlayer.framework */,
+				B1F4FBEC1D13D364009306E8 /* AudioToolbox.framework */,
+				B1F4FBEA1D13D358009306E8 /* libiconv.tbd */,
+				B1F4FBE81D13D346009306E8 /* AVFoundation.framework */,
+				B1F4FBE61D13D33C009306E8 /* CoreAudio.framework */,
+				B1F4FBE41D13D226009306E8 /* VideoToolbox.framework */,
+				B1F4FBE21D13D21B009306E8 /* CoreVideo.framework */,
+				B1F4FBE01D13D20E009306E8 /* CoreMedia.framework */,
+				B1F4FBDE1D13D1FF009306E8 /* QuartzCore.framework */,
+				B1F4FBDC1D13D1E0009306E8 /* libMediaPlayerSDK.a */,
+				B1F4FBDA1D13D1D3009306E8 /* libc++.tbd */,
+				B1F4FBD81D13D1BE009306E8 /* libz.tbd */,
+			);
+			name = libs;
+			sourceTree = "<group>";
+		};
+		B1F4FBF21D13D3B4009306E8 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				B1F4FBFD1D13DF36009306E8 /* RTSPPlayerBridge.h */,
+				B1F4FBF31D13D3D0009306E8 /* M3U8.h */,
+				B1F4FBF41D13D3D0009306E8 /* MediaPlayer.h */,
+				B1F4FBF51D13D3D0009306E8 /* MediaPlayerConfig.h */,
+				B1F4FBF61D13D3D0009306E8 /* Thumbnailer.h */,
+				B1F4FBF71D13D3D0009306E8 /* ThumbnailerConfig.h */,
+			);
+			name = include;
+			sourceTree = "<group>";
+		};
+		B1F4FBF81D13D3EB009306E8 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				B10CC06E1D1D0FE7006427D3 /* loader_white_330x28.gif */,
+				B1F4FBF91D13D49E009306E8 /* logo.png */,
+			);
+			name = images;
+			sourceTree = "<group>";
+		};
+		B1FE5E9C1D11546E000751AC /* clientapi */ = {
+			isa = PBXGroup;
+			children = (
+				B1D5809F1D01A9F30084A924 /* ClientAPIController.swift */,
+				B1FE5E9A1D11545E000751AC /* UserProfile.swift */,
+			);
+			name = clientapi;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B1D580751D018F710084A924 /* VXGCloudClient */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B1D580951D018F710084A924 /* Build configuration list for PBXNativeTarget "VXGCloudClient" */;
+			buildPhases = (
+				B1D580721D018F710084A924 /* Sources */,
+				B1D580731D018F710084A924 /* Frameworks */,
+				B1D580741D018F710084A924 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VXGCloudClient;
+			productName = client;
+			productReference = B1D580761D018F710084A924 /* VXG Cloud Client.app */;
+			productType = "com.apple.product-type.application";
+		};
+		B1D5808B1D018F710084A924 /* VXGCloudClientTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B1D580981D018F710084A924 /* Build configuration list for PBXNativeTarget "VXGCloudClientTests" */;
+			buildPhases = (
+				B1D580881D018F710084A924 /* Sources */,
+				B1D580891D018F710084A924 /* Frameworks */,
+				B1D5808A1D018F710084A924 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B1D5808E1D018F710084A924 /* PBXTargetDependency */,
+			);
+			name = VXGCloudClientTests;
+			productName = clientTests;
+			productReference = B1D5808C1D018F710084A924 /* VXGCloudClient.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B1D5806E1D018F710084A924 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0730;
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = "Video Experts Group";
+				TargetAttributes = {
+					B1D580751D018F710084A924 = {
+						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = 5H243ZR48T;
+					};
+					B1D5808B1D018F710084A924 = {
+						CreatedOnToolsVersion = 7.3.1;
+						TestTargetID = B1D580751D018F710084A924;
+					};
+				};
+			};
+			buildConfigurationList = B1D580711D018F710084A924 /* Build configuration list for PBXProject "VXGCloudClient" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = B1D5806D1D018F700084A924;
+			productRefGroup = B1D580771D018F710084A924 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B1D580751D018F710084A924 /* VXGCloudClient */,
+				B1D5808B1D018F710084A924 /* VXGCloudClientTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B1D580741D018F710084A924 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B10CC06F1D1D0FE7006427D3 /* loader_white_330x28.gif in Resources */,
+				B1F4FBFA1D13D49E009306E8 /* logo.png in Resources */,
+				B1D580831D018F710084A924 /* Assets.xcassets in Resources */,
+				B1D580811D018F710084A924 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1D5808A1D018F710084A924 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B1D580721D018F710084A924 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1FE5EA01D129FFC000751AC /* CloudClientController.swift in Sources */,
+				B1D580A21D01AA040084A924 /* CloudAPIController.swift in Sources */,
+				B1A1395E1D12EF1300D59D71 /* CloudAPIToken.swift in Sources */,
+				B10CC0721D1D1859006427D3 /* UIImage_Gif.swift in Sources */,
+				B1D5807E1D018F710084A924 /* LoginViewController.swift in Sources */,
+				B1FE5E9E1D118824000751AC /* UserProfileController.swift in Sources */,
+				B1FE5E9B1D11545E000751AC /* UserProfile.swift in Sources */,
+				B10CC0741D1D30A6006427D3 /* Helpers.swift in Sources */,
+				B1D580A01D01A9F30084A924 /* ClientAPIController.swift in Sources */,
+				B1D5809E1D01A4320084A924 /* RegistrationViewController.swift in Sources */,
+				B1F4FBD11D13D122009306E8 /* PlayerWrapper.swift in Sources */,
+				B1D5807A1D018F710084A924 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1D580881D018F710084A924 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1D580911D018F710084A924 /* clientTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B1D5808E1D018F710084A924 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B1D580751D018F710084A924 /* VXGCloudClient */;
+			targetProxy = B1D5808D1D018F710084A924 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		B1D5807F1D018F710084A924 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B1D580801D018F710084A924 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		B1D580931D018F710084A924 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: EVE GROUP PTE. LTD. (5H243ZR48T)";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE = "";
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B1D580941D018F710084A924 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: EVE GROUP PTE. LTD. (5H243ZR48T)";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PROVISIONING_PROFILE = "";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		B1D580961D018F710084A924 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: EVE GROUP PTE. LTD. (5H243ZR48T)";
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = client/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/client/lib",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.vxg.cnvrclient2;
+				PRODUCT_NAME = "VXG Cloud Client";
+				PROVISIONING_PROFILE = "3476fd72-648b-4a43-bf7e-547a1f8111ad";
+				SWIFT_OBJC_BRIDGING_HEADER = "${SRCROOT}/client/include/RTSPPlayerBridge.h";
+			};
+			name = Debug;
+		};
+		B1D580971D018F710084A924 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: EVE GROUP PTE. LTD. (5H243ZR48T)";
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = client/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/client/lib",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.vxg.cnvrclient2;
+				PRODUCT_NAME = "VXG Cloud Client";
+				PROVISIONING_PROFILE = "3476fd72-648b-4a43-bf7e-547a1f8111ad";
+				SWIFT_OBJC_BRIDGING_HEADER = "${SRCROOT}/client/include/RTSPPlayerBridge.h";
+			};
+			name = Release;
+		};
+		B1D580991D018F710084A924 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = clientTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.vxg.cloud.clientTests;
+				PRODUCT_NAME = VXGCloudClient;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VXGCloudClient.app/VXGCloudClient";
+			};
+			name = Debug;
+		};
+		B1D5809A1D018F710084A924 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				INFOPLIST_FILE = clientTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.vxg.cloud.clientTests;
+				PRODUCT_NAME = VXGCloudClient;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/VXGCloudClient.app/VXGCloudClient";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B1D580711D018F710084A924 /* Build configuration list for PBXProject "VXGCloudClient" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1D580931D018F710084A924 /* Debug */,
+				B1D580941D018F710084A924 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B1D580951D018F710084A924 /* Build configuration list for PBXNativeTarget "VXGCloudClient" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1D580961D018F710084A924 /* Debug */,
+				B1D580971D018F710084A924 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B1D580981D018F710084A924 /* Build configuration list for PBXNativeTarget "VXGCloudClientTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1D580991D018F710084A924 /* Debug */,
+				B1D5809A1D018F710084A924 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = B1D5806E1D018F710084A924 /* Project object */;
+}
