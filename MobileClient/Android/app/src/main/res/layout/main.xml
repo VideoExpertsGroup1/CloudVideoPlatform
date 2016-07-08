@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_view"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+	android:background="@drawable/bg_cnvrclient2">
+
+	<LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+
+        <FrameLayout
+            android:id="@+id/playerView1"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.04" >
+	        <FrameLayout
+    	        android:id="@+id/playerViewLive"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center">
+		    </FrameLayout>
+		    <FrameLayout
+    	        android:id="@+id/playerViewPlayback1"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center">
+		    </FrameLayout>
+		    <FrameLayout
+    	        android:id="@+id/playerViewPlayback2"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="#131313"
+                android:layout_gravity="center">
+		    </FrameLayout>
+	        <WebView
+	                android:id="@+id/webView2"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+	                android:layout_gravity="center"/>
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+	<FrameLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:background="@drawable/bg_cnvrclient2"
+		android:id="@+id/fl_cloudclient_loader"
+		android:visibility="visible">
+
+		<LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+			android:layout_gravity="center">
+
+			<TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Loading..."
+                android:id="@+id/textView4"
+				android:layout_gravity="center_horizontal"
+				android:textColor="#ffffff"
+				android:textSize="36dp"
+				android:textStyle="bold" />
+
+			<pl.droidsonroids.gif.GifImageView
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/imageView"
+				android:src="@drawable/loader_white_330x28"
+				/>
+
+		</LinearLayout>
+
+	</FrameLayout>
+
+</RelativeLayout>
+
+
+

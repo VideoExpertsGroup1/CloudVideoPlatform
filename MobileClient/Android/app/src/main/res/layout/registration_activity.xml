@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.vxg.cnvrclient2.RegistrationActivity"
+    android:background="@drawable/bg_cnvrclient2">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="left|bottom"
+            android:gravity="center|center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Registration"
+                android:id="@+id/textView2"
+                android:layout_gravity="center_horizontal"
+                android:singleLine="true"
+                android:textStyle="bold"
+                android:textSize="25dp"
+                android:layout_marginBottom="10dp" />
+
+            <EditText
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:id="@+id/edt_registration_username"
+                android:layout_gravity="center_horizontal"
+                android:hint="User name"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/edt_cnvrclient2"
+                android:gravity="center|center_horizontal" />
+
+            <EditText
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:id="@+id/edt_registration_email"
+                android:layout_gravity="center_horizontal"
+                android:hint="Email"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/edt_cnvrclient2"
+                android:gravity="center|center_horizontal" />
+
+            <EditText
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:id="@+id/edt_registration_password"
+                android:layout_gravity="center_horizontal"
+                android:hint="Password"
+                android:password="true"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/edt_cnvrclient2"
+                android:textAlignment="center"
+                android:gravity="center|center_horizontal" />
+
+            <Button
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:text="Sign Up"
+                android:id="@+id/btn_registration_signup"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/btn_submit_cnvrclient2"
+                android:layout_marginBottom="10dp"
+                android:textColor="#ffffff"
+                android:textStyle="bold"
+                android:textSize="16dp"
+                android:gravity="center|center_horizontal" />
+
+            <Button
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:text="Sign In"
+                android:id="@+id/btn_registration_signin"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/btn_cnvrclient2"
+                android:textColor="#ffffff"
+                android:textStyle="bold"
+                android:textSize="16dp"
+                android:gravity="center|center_horizontal" />
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="--- Powered by  VXG Cloud Platform ---"
+        android:id="@+id/textView3"
+        android:textColor="#ffffff"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_alignParentTop="false"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true" />
+</RelativeLayout>

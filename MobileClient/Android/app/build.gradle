@@ -1,0 +1,35 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion '22.0.1'
+
+    lintOptions{
+        disable "ResourceType"
+    }
+
+    defaultConfig {
+        applicationId "com.vxg.cnvrclient2"
+        minSdkVersion 19
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.00"
+        // testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        setProperty("archivesBaseName", "VXGCloudClient2-$versionName-vcode$versionCode")
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.google.android.gms:play-services-gcm:9.0.0'
+    compile 'com.android.support:appcompat-v7:22.1.1'
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.+'
+}

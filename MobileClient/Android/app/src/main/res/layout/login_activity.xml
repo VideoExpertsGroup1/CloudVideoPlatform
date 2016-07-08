@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity"
+    android:background="@drawable/bg_cnvrclient2"
+    android:padding="0dp"
+    android:paddingLeft="0dp"
+    android:paddingTop="0dp"
+    android:paddingRight="0dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/frameLayout"
+        android:layout_margin="0dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:weightSum="1"
+            android:gravity="center"
+            android:textAlignment="center">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imgLogo"
+                android:background="@drawable/logo"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="10dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                android:visibility="visible" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Video Experts Group"
+                android:id="@+id/textView"
+                android:textColor="#ffffff"
+                android:singleLine="true"
+                android:textStyle="bold"
+                android:paddingBottom="10dp"
+                android:textSize="25dp" />
+
+            <EditText
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:id="@+id/edt_login_email"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="0dp"
+                android:layout_marginBottom="10dp"
+                android:textSize="16dp"
+                android:background="@drawable/edt_cnvrclient2"
+                android:textAlignment="center"
+                android:paddingRight="0dp"
+                android:paddingTop="0dp"
+                android:paddingLeft="0dp"
+                android:padding="0dp"
+                android:gravity="center|center_horizontal"
+                android:hint="User name"
+                android:text="demo"
+                android:focusable="true"
+                android:singleLine="true"
+                android:enabled="true"
+                android:editable="true" />
+
+            <EditText
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:id="@+id/edt_login_password"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:textSize="16dp"
+                android:background="@drawable/edt_cnvrclient2"
+                android:text="demo"
+                android:editable="true"
+                android:password="true"
+                android:gravity="center|center_horizontal"
+                android:hint="Password"
+                android:enabled="true"
+                android:focusable="true"
+                android:singleLine="true" />
+
+            <Button
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:text="Sign In"
+                android:id="@+id/btn_login_signIn"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="0dp"
+                android:background="@drawable/btn_submit_cnvrclient2"
+                android:textColor="#ffffff"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:singleLine="true"
+                android:typeface="normal"
+                android:layout_marginBottom="10dp"
+                android:gravity="center|center_horizontal"
+                android:padding="0dp"
+                android:paddingLeft="0dp"
+                android:paddingTop="0dp"
+                android:paddingRight="0dp"
+                android:textSize="16dp" />
+
+            <Button
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:text="Sign Up"
+                android:id="@+id/btnSignUp"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="0dp"
+                android:background="@drawable/btn_cnvrclient2"
+                android:textColor="#ffffff"
+                android:gravity="center_vertical|center"
+                android:paddingRight="0dp"
+                android:paddingTop="0dp"
+                android:paddingLeft="0dp"
+                android:padding="0dp"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                android:layout_marginBottom="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Login..."
+                android:id="@+id/login_processing"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#ffffff" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="--- Powered by  VXG Cloud Platform ---"
+        android:id="@+id/poweredBy"
+        android:layout_alignParentTop="false"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentBottom="true"
+        android:textColor="#ffffff"
+        android:layout_margin="0dp"
+        android:layout_marginBottom="5dp" />
+</RelativeLayout>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VXG Cloud Client</string>
+    <string name="app_short_name">VXG Cloud Client</string>
+    <string name="title_activity_player">PlayerActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="gcm_send_message">OK</string>
+    <string name="token_error_message">token error message</string>
+</resources>

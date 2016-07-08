@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.vxg.cnvrclient2.activities.UserProfileActivity"
+    android:background="@drawable/bg_cnvrclient2"
+    android:gravity="center">
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView"
+        android:fillViewport="false"
+        android:layout_alignParentStart="false">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity=""
+            android:baselineAligned="false"
+            android:gravity="center">
+
+            <EditText
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:id="@+id/edt_userprofile_email"
+                android:hint="Email address"
+                android:background="@drawable/edt_cnvrclient2"
+                android:layout_marginBottom="5dp"
+                android:textAlignment="center"
+                android:textSize="16dp"
+                android:gravity="center" />
+
+            <EditText
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:id="@+id/edt_userprofile_firstname"
+                android:background="@drawable/edt_cnvrclient2"
+                android:layout_marginBottom="5dp"
+                android:hint="First Name"
+                android:textAlignment="center"
+                android:textSize="16dp"
+                android:gravity="center" />
+
+            <EditText
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:id="@+id/edt_userprofile_lastname"
+                android:background="@drawable/edt_cnvrclient2"
+                android:layout_marginBottom="5dp"
+                android:hint="Last Name"
+                android:textAlignment="center"
+                android:textSize="16dp"
+                android:gravity="center" />
+
+            <EditText
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:id="@+id/edt_userprofile_country"
+                android:background="@drawable/edt_cnvrclient2"
+                android:layout_marginBottom="5dp"
+                android:hint="Country"
+                android:textAlignment="center"
+                android:textSize="16dp"
+                android:gravity="center" />
+
+            <EditText
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:id="@+id/edt_userprofile_region"
+                android:background="@drawable/edt_cnvrclient2"
+                android:layout_marginBottom="5dp"
+                android:hint="Region"
+                android:textAlignment="center"
+                android:textSize="16dp"
+                android:gravity="center" />
+
+            <EditText
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:id="@+id/edt_userprofile_city"
+                android:background="@drawable/edt_cnvrclient2"
+                android:layout_marginBottom="5dp"
+                android:hint="City"
+                android:textAlignment="center"
+                android:textSize="16dp"
+                android:gravity="center" />
+
+            <EditText
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:id="@+id/edt_userprofile_address"
+                android:background="@drawable/edt_cnvrclient2"
+                android:layout_marginBottom="5dp"
+                android:hint="Address"
+                android:textAlignment="center"
+                android:textSize="16dp"
+                android:gravity="center" />
+
+            <EditText
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:id="@+id/edt_userprofile_postcode"
+                android:background="@drawable/edt_cnvrclient2"
+                android:layout_marginBottom="5dp"
+                android:hint="Postcode"
+                android:textAlignment="center"
+                android:textSize="16dp"
+                android:gravity="center" />
+
+            <EditText
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:id="@+id/edt_userprofile_phone"
+                android:background="@drawable/edt_cnvrclient2"
+                android:layout_marginBottom="5dp"
+                android:hint="Phone"
+                android:textAlignment="center"
+                android:textSize="16dp"
+                android:gravity="center" />
+
+            <EditText
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:id="@+id/edt_userprofile_contactway"
+                android:background="@drawable/edt_cnvrclient2"
+                android:layout_marginBottom="10dp"
+                android:hint="Contact way"
+                android:textAlignment="center"
+                android:textSize="16dp"
+                android:gravity="center" />
+
+            <Button
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:text="Update"
+                android:id="@+id/btn_userprofile_update"
+                android:background="@drawable/btn_submit_cnvrclient2"
+                android:layout_marginBottom="5dp"
+                android:textColor="#ffffff"
+                android:textStyle="bold"
+                android:textSize="16dp"
+                android:gravity="center" />
+
+            <Button
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:text="Cancel"
+                android:id="@+id/btn_userprofile_cancel"
+                android:background="@drawable/btn_cnvrclient2"
+                android:textColor="#ffffff"
+                android:textStyle="bold"
+                android:textSize="16dp"
+                android:gravity="center" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>
