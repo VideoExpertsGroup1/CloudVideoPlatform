@@ -130,7 +130,7 @@ window.AccpClient = new function (){
 		if(!self.isAuthorizePHPPage()){
 			result += "<div class='menu'>";
 			result += "    <div class='logout'>Sign-out</div>";
-			result += "    <div class='profile'>Profile</div>";
+			// result += "    <div class='profile'>Profile</div>";
 			result += "</div>";
 		}
 		
