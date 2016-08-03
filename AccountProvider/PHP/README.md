@@ -24,7 +24,8 @@
 	* jwks = http://your_account_provider_host/openid/jwks.php
 * vendor = YOURCOMPANYNAME (lagest english characters)
 
-This information need for registration AccountProvider in ServiceProvider side.
+*This information need for registration AccountProvider in ServiceProvider side.*
+*In this step please contact with VideoExpertsGroup team.*
 
 ## Installation Database
 
