@@ -143,7 +143,7 @@ public class CloudClientActivity extends Activity
         String expire = VXGCloudPlatform.inst().getCloudApiTokenExpire();
 		String baseuri = VXGCloudPlatform.inst().getBaseURI();
         // TODO add version
-        String uri = baseuri + "/?mobile&login=test#token=" + token + "&expire=" + expire + "&vendor=VXG";
+        String uri = baseuri + "/?mobile=&vendor=VXG#token=" + token + "&expire=" + expire;
 
 		mWebView2.loadUrl(uri);
 		mWebView2.addJavascriptInterface(webPlayerInterface, "AndroidWebPlayerInterface");
