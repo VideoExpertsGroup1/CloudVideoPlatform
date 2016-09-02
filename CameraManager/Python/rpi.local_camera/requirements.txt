@@ -1,0 +1,7 @@
+websocket-client>=0.18.0
+six>=1.9.0
+configobj
+backports.ssl_match_hostname
+tzlocal
+subprocess32
+requests

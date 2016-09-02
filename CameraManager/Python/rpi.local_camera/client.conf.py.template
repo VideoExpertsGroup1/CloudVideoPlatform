@@ -1,0 +1,29 @@
+# Client configuration file
+
+#
+# Server settings
+#
+server_hostname = string(max=128, default='auth2-cm-1778017050.us-east-1.elb.amazonaws.com')
+ws_port = integer(0, 65535, default=8888)
+wss_port = integer(0, 65535, default=8883)
+
+#
+# Camera settings
+#
+# Camera RTSP video feed to use. Mandatory field
+camera_feed = string(max=50, default='rtsp://10.20.16.157/video1')
+# Place registration token here if CM is not registered
+reg_token = string(max=24, default='')
+# Event generation for test purposes. Generate 'sound' events with this interval, seconds. 0 for Off
+dbg_events_interval = integer(0, 3600, default=0)
+
+#
+# Read-only parameters, normally you should not edit them
+#
+# CM connection ID set by server, do not edit it
+connection_id = string(max=50, default='')
+# CM password set by server is stored here, do not edit it
+password = string(max=24, default='')
+# Camera UUID set by server, do not edit it
+camera_uuid = string(max=50, default='')
+
