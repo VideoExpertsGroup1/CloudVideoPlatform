@@ -1,13 +1,13 @@
-Demo VXG cloud Camera Manager (CM)
-v1.0.0
+#Demo VXG cloud Camera Manager (CM)
+##v1.0.0
 
-INSTALLATION
+##INSTALLATION
 This sample is written in Python 2.7+. You need to install it to launch.
 Besides python framework you need to install additional python libraries by command (from admin\root user):
     python -m pip install -r <PATH_TO_CM_DIR>/requirements.txt
 
 
-LAUNCHING
+##LAUNCHING
 1) Follow to cnvrclient2.videoexpertsgroup.com/accounts/login/ and Sign Up, if you already have an account on this site, skip this step;
 2) Open auth2_cm_starter.py and edit 'username' and 'password' variables with your credentials like this:
     username = 'my_acc'
