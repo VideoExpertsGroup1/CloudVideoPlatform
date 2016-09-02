@@ -6,7 +6,7 @@ This sample is written in Python 2.7+. You need to install it to launch.
 
 Besides python framework you need to install additional python libraries by command (from admin\root user):
 
-    `python -m pip install -r <PATH_TO_CM_DIR>/requirements.txt`
+    python -m pip install -r <PATH_TO_CM_DIR>/requirements.txt
 
 
 ## LAUNCHING
