@@ -3,7 +3,7 @@
 #
 # Server settings
 #
-server_hostname = string(max=128, default='auth2-cm-1778017050.us-east-1.elb.amazonaws.com')
+server_hostname = string(max=128, default='cam.skyvr.videoexpertsgroup.com')
 ws_port = integer(0, 65535, default=8888)
 wss_port = integer(0, 65535, default=8883)
 

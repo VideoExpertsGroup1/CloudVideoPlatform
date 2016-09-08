@@ -19,7 +19,7 @@ accp_host = 'http://cnvrclient2.videoexpertsgroup.com'
 username = ''
 password = ''
 # CM server address. Do not edit that if you not sure what does it means.
-cm_host = 'auth2-cm-1778017050.us-east-1.elb.amazonaws.com'
+cm_host = 'cam.skyvr.videoexpertsgroup.com'
 
 globals.init_config()
 
