@@ -15,9 +15,10 @@ class ClientApiController : NSObject {
     var m_sBaseUrl = "http://cnvrclient2.videoexpertsgroup.com";
     var svcp_auth_web_url = "";
     var svcp_auth_app_url = "";
+    var svcp_host = "";
     let session = NSURLSession.sharedSession()
     let jar = NSHTTPCookieStorage.sharedHTTPCookieStorage()
-    
+
     class var sharedInstance:ClientApiController {
         struct Singleton {
             static let instance = ClientApiController()
@@ -90,6 +91,8 @@ class ClientApiController : NSObject {
                 }else{
                     self.svcp_auth_web_url = respJson["svcp_auth_web_url"] as! String;
                     self.svcp_auth_app_url = respJson["svcp_auth_app_url"] as! String;
+                    let url:NSURL = NSURL(string: self.svcp_auth_app_url )!
+                    self.svcp_host = url.host!;
                 }
             } catch _ {
                 self.m_sLastError = (error?.localizedDescription)!;

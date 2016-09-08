@@ -27,7 +27,7 @@ class CloudClientController: UIViewController, UIWebViewDelegate {
     @IBOutlet weak var vwLoader: UIView!
     @IBOutlet weak var imgGifLoader: UIImageView!
 
-    let baseURI = "http://auth2-web-1723830871.us-east-1.elb.amazonaws.com/?mobile&login=test"
+    var baseURI = "http://auth2-web-1723830871.us-east-1.elb.amazonaws.com/"
     var liveContainer : PlayerWrapper! = nil;
     var recordContainer1 : PlayerWrapper! = nil;
     var recordContainer2 : PlayerWrapper! = nil;
@@ -53,9 +53,12 @@ class CloudClientController: UIViewController, UIWebViewDelegate {
         Helpers.applyGradient(self.vwLoader)
         self.imgGifLoader.image = UIImage.gifWithName("loader_white_330x28")
         let apiToken = CloudApiController.sharedInstance.cloudAPIToken;
+        self.baseURI = "http://" + ClientApiController.sharedInstance.svcp_host + "/web/3.02/?mobile&login=test&vendor=VXG";
         print("Token: " + apiToken.token);
+        let urlWithToken = self.baseURI + "#token=" + apiToken.token + "&expire=" + apiToken.expire;
+        print("URL: " + urlWithToken);
         NSOperationQueue.mainQueue().addOperationWithBlock({
-            let url = NSURL(string: self.baseURI + "#token=" + apiToken.token + "&expire=" + apiToken.expire);
+            let url = NSURL(string: urlWithToken);
             let requestObj = NSURLRequest(URL: url!);
             self.wvCloudClient.loadRequest(requestObj);
             print("loadRequest async?")
