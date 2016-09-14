@@ -1,0 +1,5 @@
+AccountProvider filter=lfs diff=lfs merge=lfs -text
+CameraManager filter=lfs diff=lfs merge=lfs -text
+MobileClient filter=lfs diff=lfs merge=lfs -text
+README.md filter=lfs diff=lfs merge=lfs -text
+MobileClient/iOS/client/lib/* filter=lfs diff=lfs merge=lfs -text
