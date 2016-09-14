@@ -19,9 +19,13 @@
 @property (nonatomic) int       connectionBufferingType;    // 0 - first time only, 1 - continues
 @property (nonatomic) int       connectionBufferingTime;    // in milliseconds
 @property (nonatomic) int       connectionBufferingSize;    // in bytes
-
+@property (nonatomic) int       connectionTimeout;          // Intteruprt source if connection is not passed timeout
 @property (nonatomic) int       dataReceiveTimeout;
+
+@property (nonatomic) int       enableInterruptOnClose;		// 1 - inturrupt connection and close, 0 - do not set a interuption close               operation  stream and send TEARDOWN command
+
 @property (nonatomic) int       decodingType;               // 0 - soft, 1 - hardware
+@property (nonatomic) int       decoderLatency;             // This setting is for s/w decoder, 1 - Low latency, frames are not buffered on decoder , 0 - frames are buffered in video decoder  by default
 @property (nonatomic) int       rendererType;               // 0 - egl,  1 - by hardware decoder
 @property (nonatomic) int       synchroEnable;              // enable audio video synchro
 @property (nonatomic) int       synchroNeedDropVideoFrames; // drop video frames if it late

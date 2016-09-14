@@ -86,17 +86,39 @@ class PlayerWrapper : NSObject, MediaPlayerCallback
                 }
                 config.startPreroll = 1;
                 // config.
+                // force for preview
+                config.aspectRatioMode = 1; // Int32(Settings.sharedInstance.rendererAspectRatioMode)
+                config.enableAudio = 1; // 0 - disable, 1 - enable
+
                 
             }else{
-                config.connectionBufferingTime = 300 // in milliseconds
+                // live
+                // config.connectionBufferingTime = 300 // in milliseconds
+                /*
+                 conf.setDecodingType(0);
+                 conf.setConnectionTimeout(60000);
+                 conf.setDecoderLatency(0);
+                 conf.setConnectionBufferingTime(0);
+                 conf.setConnectionDetectionTime(400);
+                 conf.setSynchroEnable(0);
+                 conf.setSynchroNeedDropVideoFrames(0);
+                 conf.setDataReceiveTimeout(60*1000);
+                 conf.setNumberOfCPUCores(1);
+                 conf.setAspectRatioMode(0);
+                 */
+                config.decodingType = 0;
+                config.connectionTimeout = 60000;
+                config.decoderLatency = 0;
+                config.connectionBufferingTime = 0;
+                config.connectionDetectionTime = 400;
+                config.synchroEnable = 0;
+                config.synchroNeedDropVideoFrames = 0;
+                config.dataReceiveTimeout = 60*1000;
+                config.numberOfCPUCores = 1;
+                config.aspectRatioMode = 0;
             }
             
             // config.connectionBufferingTime = 300 // in milliseconds
-            
-            // force for preview
-            config.aspectRatioMode = 1; // Int32(Settings.sharedInstance.rendererAspectRatioMode)
-            config.enableAudio = 1; // 0 - disable, 1 - enable
-            
             if(self.player.getState() != MediaPlayerClosed){
                 self.player!.Close();
             }

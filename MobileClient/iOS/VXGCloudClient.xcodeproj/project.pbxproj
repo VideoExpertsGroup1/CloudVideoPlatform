@@ -491,7 +491,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: EVE GROUP PTE. LTD. (5H243ZR48T)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = client/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
@@ -502,7 +503,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.vxg.cnvrclient2;
 				PRODUCT_NAME = "VXG Cloud Client";
-				PROVISIONING_PROFILE = "3476fd72-648b-4a43-bf7e-547a1f8111ad";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "${SRCROOT}/client/include/RTSPPlayerBridge.h";
 			};
 			name = Debug;
@@ -512,7 +513,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: EVE GROUP PTE. LTD. (5H243ZR48T)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = client/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
@@ -523,7 +525,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.vxg.cnvrclient2;
 				PRODUCT_NAME = "VXG Cloud Client";
-				PROVISIONING_PROFILE = "3476fd72-648b-4a43-bf7e-547a1f8111ad";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "${SRCROOT}/client/include/RTSPPlayerBridge.h";
 			};
 			name = Release;
