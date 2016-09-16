@@ -1930,6 +1930,16 @@ class Camera:
             subprocess.check_call(args)
         except:
             logger.error('Failed to initialize camera: could not set I-Frame interval')
+        try:
+            args = ['v4l2-ctl', '--set-ctrl', 'video_bitrate=500000']
+            subprocess.check_call(args)
+        except:
+            logger.error('Failed to initialize camera: could not set video bitrate')
+        try:
+            args = ['v4l2-ctl', '--set-ctrl', 'repeat_sequence_header=1']
+            subprocess.check_call(args)
+        except:
+            logger.error('Failed to initialize camera: could not set repeat sequence header')
 
     def _disconnect_stream(self, stream_id):
         """
