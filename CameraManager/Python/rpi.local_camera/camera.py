@@ -1916,10 +1916,20 @@ class Camera:
         if self.streamers.get(stream_id, None) is not None:
             raise ValueError('Already started')
 
+        if camera_url.startswith('/dev/'):
+            self._initialize_camera()
         args = [FFMPEG, '-f', 'v4l2', '-video_size', 'vga', '-framerate', '25', '-input_format', 'h264', '-i',
                 camera_url, '-vcodec', 'copy', '-an', '-f', 'flv', publish_url]
         self.streamers[stream_id] = subprocess.Popen(args)
         return True
+
+    @staticmethod
+    def _initialize_camera():
+        try:
+            args = ['v4l2-ctl', '--set-ctrl', 'h264_i_frame_period=10']
+            subprocess.check_call(args)
+        except:
+            logger.error('Failed to initialize camera: could not set I-Frame interval')
 
     def _disconnect_stream(self, stream_id):
         """
