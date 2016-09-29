@@ -100,7 +100,7 @@ define('application',['config','jquery','backbone','underscore','polyglot','mari
 	application.polyglot = new pg({ phrases: {} });
 
 	polyglot_data = $.ajax({
-		url: './vendor/VXG_DEV/lang/en.json',
+		url: './vendor/' + SkyVR.config.vendor + '/lang/' + SkyVR.lang() + '.json',
 		dataType: 'json',
 		async: false,
 		success: function(data) {
