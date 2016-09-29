@@ -1,0 +1,107 @@
+
+.skyvr-cell-content.top-panel{
+	display: none;
+}
+
+.sidebar{
+	width: 100% !important;
+}
+
+.slider_wrapper{
+	width: 100% !important;
+}
+
+.slides{
+	width: 100% !important;
+}
+
+.slide-wrapper{
+	width: 100% !important;
+}
+
+.empty-cameras{
+	width: 100% !important;
+	border: unset !important;
+}
+
+.slide{
+	display: inline-block !important;
+}
+
+@media screen and (max-width: 852px){
+	.adjacent-controls.left {
+		display: block;
+		width: 0px !important;
+		min-width: 0px !important;
+	}
+
+	.adjacent-controls.left .datepicker-container {
+		display: block;
+		position: fixed;
+		left: 0px;
+		top: initial;
+		bottom: 65px;
+	}
+	
+	.player-button.goto-live{
+		position: fixed;
+		left: 140px;
+		top: initial;
+		bottom: 62px;
+	}
+	
+	.adjacent-controls.left2{
+		display: block;
+		width: 0px !important;
+		min-width: 0px !important;
+	}
+
+	.adjacent-controls.right{
+		display: block;
+		width: 0px !important;
+		min-width: 0px !important;
+	}
+
+	.clip-menu-container{
+		display: block;
+		position: fixed;
+		right: 75px  !important;
+		bottom: 68px  !important;
+	}
+	
+	.zone-menu-container{
+		display: block;
+		position: fixed;
+		right: 25px  !important;
+		bottom: 65px  !important;
+	}
+	
+	.zoom-levels{
+		position: fixed;
+		right: 100px;
+		width: 150px !important;
+		height: 36px;
+		bottom: 62px !important;
+		top: initial !important;
+		left: initial !important;
+	}
+
+	.zoom-levels span{
+		display: inline-block;
+		width: 36px;
+		height: 36px;
+		background-image: url(../images/zoom_inactive_36x36.svg);
+		background-position: center center;
+		color: white;
+		line-height: 36px;
+		background-color: transparent;
+	}
+
+	.zoom-levels span.active{
+		background-image: url(../images/zoom_active_36x36.svg);
+		background-color: inherit;
+		color: white;
+		line-height: 36px;
+		background-color: transparent;
+	}
+}
