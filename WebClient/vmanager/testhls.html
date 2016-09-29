@@ -1,0 +1,100 @@
+<html>
+	<head>
+		<script>
+			var cookie = "";
+			var url_fullpath = "";
+			function loadFile(url){
+				var utl = url;
+				var ellog = document.getElementById('log');
+				var xmlhttp = new XMLHttpRequest();
+
+				xmlhttp.onreadystatechange = function() {
+					if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+						if(xmlhttp.status == 200){
+							// console.log(utl);
+							ellog.innerHTML += "\n\nURL: " + utl + "\n DONE!\n";
+						}else if(xmlhttp.status == 404){
+							ellog.innerHTML += "\n\nURL: " + url + "\nNOT FOUND\n\n";
+						}else if(xmlhttp.status == 403){
+							ellog.innerHTML += "\n\nURL: " + url + "\nFORBIDDEN\n\n";
+						}else{
+							ellog.innerHTML += "\n\nURL: " + url + "\nFORBIDDEN 3\n\n";
+						}
+					} else {
+						// ellog.innerHTML += "\n\nURL: " + url + "\nFORBIDDEN 2\n\n";
+					}
+				}
+				xmlhttp.open("GET", utl, true);
+				xmlhttp.withCredentials = true;
+				// xmlhttp.setRequestHeader("Content-Type", 'text/plain');
+				xmlhttp.send();
+			}
+			
+			function processResponse(responseText){
+				var ellog = document.getElementById('log');
+				var resp = responseText.split('\n');
+				var files = [];
+				for(var i = 0; i < resp.length; i++){
+					if(resp[i].startsWith('u')){
+						files.push(url_fullpath + resp[i]);
+					}
+				}
+				ellog.innerHTML += "\n\nFILES FOR LOAD: \n" + files.join('\n');
+				for(var i = 0; i < files.length; i++){
+					loadFile(files[i]);
+				}
+			}
+
+			function start(){
+				var url = document.getElementById('hls-url').value;
+				console.log(url)
+				url_fullpath = url.split('/').slice(0,-1).join('/') + '/';
+				console.log("Split: ", url_fullpath);
+				
+				var ellog = document.getElementById('log');
+				ellog.innerHTML = "";
+				var token = url.split('?')[1];
+
+				ellog.innerHTML += "LINK: " + url;
+
+				// ellog.innerHTML += "\nCOOKIE: \n" + document.cookie + "\n";
+				// var myDate = new Date();
+				// myDate.setMonth(myDate.getMonth() + 12);
+				// document.cookie = 'media-tikect=' + url.split('?')[1] + ";expires=" + myDate + ";domain=.54.152.15.63;path=/" //
+                // ellog.innerHTML += "\nCOOKIE: \n" + document.cookie + "\n";
+                  
+				// media-ticket=media.eyJuIjoidTY2bTEwNzNjMTA0Ml9wcmltYXJ5In0.1457082133.LcxRLerwUnEpGKKtVTMbHJUdy7A; expires=Fri, 04-Mar-16 09:02:13 GMT
+				var xmlhttp = new XMLHttpRequest();
+				// xmlhttp.setRequestHeader("Cache-Control", "no-cache");
+				xmlhttp.onreadystatechange = function() {
+					if (xmlhttp.readyState == XMLHttpRequest.DONE ) {
+						if(xmlhttp.status == 200){
+							ellog.innerHTML += "\n\nHEADERS: \n" + xmlhttp.getAllResponseHeaders();
+							ellog.innerHTML += "\n\nRESPONSE: \n" + xmlhttp.responseText;
+							processResponse(xmlhttp.responseText);
+						}else if(xmlhttp.status == 404){
+							ellog.innerHTML += "\n\nNOT FOUND " + xmlhttp.status + "\n\n";
+						}else if(xmlhttp.status == 403){
+							ellog.innerHTML += "\n\nFORBIDDEN " + xmlhttp.status + "\n\n";
+						}else{
+							ellog.innerHTML += "\n\nFORBIDDEN 3 " + xmlhttp.status + " \n\n";
+						}
+					} else {
+						console.log('camera by xmlhttp.readyState == ' + xmlhttp.readyState);
+					}
+				}
+
+				xmlhttp.open("GET", url, true);
+				xmlhttp.withCredentials = true;
+				xmlhttp.send();
+			}
+		</script>
+	</head>
+	<body>
+		<input type="text" size="50" value="" id="hls-url"/>
+		<button onclick="start();">Load</button>
+		<pre id="log"></pre>
+	</body>
+</html>
+
+

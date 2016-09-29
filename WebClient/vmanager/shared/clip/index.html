@@ -1,0 +1,96 @@
+<html>
+<head>
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+	<meta charset="utf-8">
+	<script type="text/javascript">
+		cc = {};
+		cc.title = "Title";
+		cc.subtitle = "Description Of Service";
+		cc.clips = false;
+	</script>
+	<script type="text/javascript" src="../../cc.js"></script>
+	<script type="text/javascript" src="../../files/js/lib/jquery.js"></script>
+	<script type="text/javascript" src="../../js/skyvr.js"></script>
+	<script type="text/javascript" src="../../js/skyui.js"></script>
+	<script type="text/javascript" src="../../js/video-502-min.js"></script>
+	<script type="text/javascript" src="../../js/videojs.thumbnails.js"></script>
+	<script type="text/javascript">
+		SkyVR.setURL('http://' + window.location.host.toString() + '/');
+		SkyUI.loadLang('../../');
+	</script>
+
+	<meta content="" name="description">
+
+	<!--[if lte IE 9]>
+	<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+	<![endif]-->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, minimal-ui" name="viewport">
+
+	<link href="../../files/app.css" rel="stylesheet"/>
+	<link href="../../css/skyvr.css" rel="stylesheet"/>
+	<link href="../../files/video-js502.min.css" rel="stylesheet"/>
+	<link href="../../css/videojs.thumbnails.css" rel="stylesheet"/>
+	<link href="../../files/player.css" rel="stylesheet"/>
+	<script type="text/javascript">
+		function onload(){
+			var clipid = undefined;
+			var token = undefined;
+			if(SkyVR.containsPageParam('clipid'))
+				clipid = parseInt(SkyVR.pageParams['clipid'],10);
+			if(SkyVR.containsPageParam('token'))
+				token = SkyVR.pageParams['token'];
+
+			if(!token && !clipid){
+				var text = "Not found clip";
+				$('.clip-container').html('<div class="skyvr-loading-content">' + text + '</div>');
+				SkyUI.nextContainer();	
+				return;
+			}
+			
+			SkyVR.storageClipAnon(clipid, token).fail(function(){
+				var text = "Not found clip";
+				$('.clip-container').html('<div class="skyvr-loading-content">' + text + '</div>');
+				SkyUI.nextContainer();
+			}).done(function(clip){
+				var elemId = 'videojs-clipshow';
+				// $('.clip-container').html('<div class="skyvr-loading-content">Found</div>');
+				videojs.options.flash.swf = '../../swf/video-js-custom-SkyVR.swf';
+				var title = '';
+				if(cc.clips_tags){
+					title += clip.group.trim() + ' / ';
+				}
+				title += clip.title.trim();
+				$('.container-title').text(title);
+				$('#skyvr-dialog-clipshow-content').html(
+					'<video class="video-js vjs-default-skin" controls="true" autoplay="true" preload="auto" controls="true" id="' + elemId + '">'
+					+ '<source src="' + clip.url + '" type="video/mp4" />'
+					+ '</video>'
+				);
+				mPlayer = videojs(elemId);
+				SkyUI.nextContainer();
+			});
+		}
+	</script>
+</head>
+<body class="custom-scroll spec-background" onload="onload();">
+	<div class="content">
+		<div class="loading-container animate-container">
+			<div class="skyvr-loading-content">Loading...<br><img src="../../images/loader_white_330x28.gif"/></div>
+		</div>
+		<div class="clip-container animate-container incoming-container">
+			<div class="container-header">
+				<div class="container-title">Test</div>
+			</div>
+			<center>
+				<div class="skyvr-clipshow-window" style="margin-top: 30px;">
+					<div class="vjs-has-started skyvr-clipviewer-vjsplayer" style="margin: 10px">
+						<div class="player-container skyvr-clipshow-content vjs-default-skin" id="skyvr-dialog-clipshow-content">
+						</div>
+					</div>
+				</div>
+			</center>
+		</div>
+	</div>
+</body>
+</html>
