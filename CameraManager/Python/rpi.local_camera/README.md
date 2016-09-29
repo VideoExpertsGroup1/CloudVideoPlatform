@@ -18,9 +18,9 @@
 
     sudo su -c 'echo 'bcm2835_v4l2' >> /etc/modules'
     
-    sudo reboot;
+    sudo echo gpu_mem=128 >> /boot/config.txt
     
-     
+    sudo reboot;
     
 
 ## LAUNCH
