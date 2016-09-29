@@ -7,14 +7,19 @@
 * Besides python framework you'll need to install additional python libraries using this command (as admin\root user):
 
     sudo apt-get install --fix-missing python-pip libpython-dev libxslt1-dev libyaml-dev
-    python -m pip install -r <PATH_TO_CM_DIR>/requirements.txt
+    
+    sudo python -m pip install -r <PATH_TO_CM_DIR>/requirements.txt
 
 * Copy all files to a local folder on rPI and set the files execute permission.
   
-    chmod -R 777 
+    sudo chmod -R 777 *
     
 *   Add video driver loading on device start . Please note that reboot is required after following command:
+
     sudo su -c 'echo 'bcm2835_v4l2' >> /etc/modules'
+    
+    sudo reboot;
+    
      
     
 
