@@ -55,5 +55,7 @@
 # Enable audio (loads snd_bcm2835)
 dtparam=audio=on
 
+start_x=1
+
 # set GPU size
 gpu_mem=128
