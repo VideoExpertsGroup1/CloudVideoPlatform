@@ -79,7 +79,12 @@ define('application',['config','jquery','backbone','underscore','polyglot','mari
         deckRegion: "#deck"
     });
     bb.history.start({pushState: true});
-	conf.base_api_url = "http://" + window.location.host.toString() + "/";
+    
+	if(!localStorage.getItem("svcp_host")){
+		conf.base_api_url = window.location.protocol + "//" + window.location.host.toString() + "/";
+	} else {
+		conf.base_api_url = localStorage.getItem("svcp_host");
+	}
 	console.log("URL: " + conf.base_api_url);
 	SkyVR.setURL(conf.base_api_url);
 
@@ -180,12 +185,8 @@ define('application',['config','jquery','backbone','underscore','polyglot','mari
 		});
 
 		var md_zones = {motion_detection: []};
-        var parts=localStorage.getItem("svURL").split("/");
-		            var protocol=parts[0];
-		            var host=parts[2];
-		            var urlNew=protocol+"//"+host+"/";
 		$.ajax({
-				url : urlNew + "api/v2/cameras/" + SkyVR.cameraID() + "/motion_detection/regions/",
+				url : conf.base_api_url + "api/v2/cameras/" + SkyVR.cameraID() + "/motion_detection/regions/",
 				type : "get",
 				async: false,
 				success : function(data){
@@ -422,7 +423,7 @@ define('application',['config','jquery','backbone','underscore','polyglot','mari
 			localStorage.removeItem('SkyVR_anonToken');
 			localStorage.removeItem('apiToken');
 			localStorage.removeItem('SkyVR_apiToken');
-            
+
 			window.location.replace(window.location.protocol+"//"+window.location.host+"/");
 		}else{
 			// TODO: page not found
@@ -799,7 +800,27 @@ define('app',['config','backbone','underscore','application','marionette','event
 		}
 		
 		if(cc.goto_first_camera == true){
-			$('.cards .type-camera.card .card-header .close-card-button').hide();
+			if(localStorage.getItem("profile_url") == null){
+				$('.cards .type-camera.card .card-header .close-card-button').hide();
+			}else{
+				if(isFramed){
+					console.log("Opened in frame");
+					$('.cards .type-camera.card .card-header .close-card-button').hide();
+				}else{
+					$('.cards .type-camera.card .card-header .close-card-button').unbind('click').bind('click', function(e){
+						// call demo_logout if demo mode
+						if(localStorage.getItem("is_opened_like_demo") == "true"){
+							window.location = localStorage.getItem("profile_url") + "?demo_logout";
+						}else{
+							window.location = localStorage.getItem("profile_url");
+						}
+					});
+				}
+			}
+		}else{
+			$('.cards .type-camera.card .card-header .close-card-button').unbind('click').bind('click', function(e){
+				application.trigger('closedeck');
+			});
 		}
 
 		// TODO redesign on SkyVR.cameraMotionDetection()
@@ -807,13 +828,8 @@ define('app',['config','backbone','underscore','application','marionette','event
 		if(!SkyVR.cache.cameraInfo().url && SkyVR.hasAccessMotionDetection(SkyVR.cameraID())){
 			console.log("APP: load motion_detection");
 			regions = true;
-             var parts=localStorage.getItem("svURL").split("/");
-		            var protocol=parts[0];
-		            var host=parts[2];
-		            var urlNew=protocol+"//"+host+"/";
-		
 			$.ajax({
-				url : urlNew + "api/v2/cameras/" + SkyVR.cameraID() + "/motion_detection/",
+				url : conf.base_api_url + "api/v2/cameras/" + SkyVR.cameraID() + "/motion_detection/",
 				type : "get",
 				async: false,
 				success : function(data){
@@ -1394,9 +1410,21 @@ define('app',['config','backbone','underscore','application','marionette','event
 			ApplicationMobileInterface.setBackCallback('handlerBackButton');
 		}
 	}
-
-	if(SkyVR.containsPageParam("login") || SkyVR.isOAuth2Host()){
-		// console.log("Login OAuth: ", SkyVR.config.apiToken);
+	
+	var path = window.location.pathname;
+	if(path[path.length-1] == '/'){
+		path += 'index.html';
+	}
+	var arr = path.split('/').filter(function(val){ return val != ""; });
+	last_page = arr[arr.length - 1];
+	if(last_page == 'shared_clips'){
+		console.log("Show page clips");
+		setTimeout(function(){
+			$('.content').html('<div class="cards"><div class="clip-container"></div></div>');
+			event.trigger(event.SHOW_PAGE_CLIPS, {onlyclips: true});
+		},5000);
+	}else{
+		console.log("Try open main page");
 		if(SkyVR.config.apiToken.token){
 			if(application.apiToken){
 				application.apiToken.destroy();
@@ -1413,37 +1441,9 @@ define('app',['config','backbone','underscore','application','marionette','event
 					SkyUI.trigger('showfirstcameraplayer', app, event);
 				else
 					application.trigger('ShowMainPage');
-			},2000);
+			},3000);
 		}else{
 			event.trigger(event.UNAUTHORIZED_REQUEST);
-		}
-	}else if(SkyVR.containsPageParam("p")){
-		var p = SkyVR.pageParams['p'];
-		if(p == "camlist" && loadTokenFromStorage() == true){
-			if(cc.goto_first_camera)
-				SkyUI.trigger('showfirstcameraplayer', app, event);
-			else
-				application.trigger('ShowMainPage');
-		}else{
-			// TODO: page not found
-			application.trigger('pageNotFound');
-		}
-	}else{
-		var path = window.location.pathname;
-		if(path[path.length-1] == '/'){
-			path += 'index.html';
-		}
-		var arr = path.split('/').filter(function(val){ return val != ""; });
-		last_page = arr[arr.length - 1];
-		if(last_page == 'shared_clips'){
-			console.log("Show page clips");
-			setTimeout(function(){
-				$('.content').html('<div class="cards"><div class="clip-container"></div></div>');
-				event.trigger(event.SHOW_PAGE_CLIPS, {onlyclips: true});
-			},5000);
-		}else{
-			// TODO: page not found
-			application.trigger('pageNotFound');
 		}
 	}
 	return application;

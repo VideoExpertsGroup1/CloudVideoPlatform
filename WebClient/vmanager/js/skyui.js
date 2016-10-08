@@ -140,13 +140,30 @@ SkyUI.on('showfirstcameraplayer', function(app, event){
 		}else{
 			if(data.objects.length > 1)
 				console.warn('[SKYUI] Cameras more than one please check cc.goto_first_camera');
-			
 			var main_content_template = _.template($('#templates #main-content').html());
 			var cnt = $(main_content_template({app: app}));
 			$('.content').html(cnt);
-			SkyVR.setCameraID(cam.id);
+			var openCam = null;
+			var openCamId = 0;
+			if(localStorage.getItem('selectedCam') != null){
+				var choosenCam=JSON.parse(localStorage.getItem('selectedCam'));
+				console.log("ID "+choosenCam.svcp_id);
+				for(var i = 0; i < data.objects.length; i++){
+					if(choosenCam.svcp_id == data.objects[i].id) {
+						console.log("ID"+i+":"+data.objects[i].id);
+						openCam = data.objects[i];
+						openCamId=data.objects[i].id;
+						break;
+					}
+				}
+			}else{
+				openCam = data.objects[0];
+				openCamId = data.objects[0].id;
+			}
+
+			SkyVR.setCameraID(openCamId);
 			console.log('selection camera', SkyVR.cache.cameraInfo());
-			event.trigger(event.CAMERA_SELECTED, [SkyVR.cache.cameraInfo() || cam]);
+			event.trigger(event.CAMERA_SELECTED, [openCam]);
 		}
 	});
 	// event.trigger(event.CAMERA_SELECTED, [SkyVR.cache.cameraInfo() || cam]);
@@ -1056,3 +1073,58 @@ SkyUI.showPageClips = function(app){
 
 // for feature
 window.CloudUI = window.SkyUI;
+
+window.CloudUI.getRealVideoSize = function (){
+	var size = {}
+	size.height = 0;
+	size.width = 0;
+	try{
+		if(videojs('live-container').videoHeight() != 0){
+			size.height = videojs('live-container').videoHeight();
+			size.width = videojs('live-container').videoWidth();
+			return size;
+		}
+	}catch(e){
+		
+	}
+	try{
+		if(videojs('record-container1').videoHeight() != 0){
+			size.height = videojs('record-container1').videoHeight();
+			size.width = videojs('record-container1').videoWidth();
+			return size;
+		}
+	}catch(e){
+		
+	}
+	
+	try{
+		if(videojs('record-container2').videoHeight() != 0){
+			size.height = videojs('record-container2').videoHeight();
+			size.width = videojs('record-container2').videoWidth();
+			return size;
+		}
+	}catch(e){
+		
+	}
+	return size;
+}
+
+window.CloudUI.calculateMotionZoneSize = function(){
+	var size = {};
+	size.height = 0;
+	size.width = 0;
+	size.left = 0;
+	
+	var flash_size = {};
+	flash_size.height = $('.flash-player-container')[0].clientHeight;
+	flash_size.width = $('.flash-player-container')[0].clientWidth;
+	
+	var video_size = CloudUI.getRealVideoSize();
+	
+	if(video_size.height == 0){
+		size.height = flash_size.height;
+		size.width = flash_size.width;
+		return size;
+	}
+	return video_size;
+}

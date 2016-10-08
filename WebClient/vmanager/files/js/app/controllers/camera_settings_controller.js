@@ -75,12 +75,7 @@ define(['config', 'backbone','underscore', 'application', '../views/camera_setti
 						context.fillRect(10,10,context.canvas.width - 20,context.canvas.height - 20);*/
 					}
 					Scheduler24.show('camera-settings-scheduler-editor-canvas');
-					var parts=localStorage.getItem("svURL").split("/");
-		            var protocol=parts[0];
-		            var host=parts[2];
-		            var urlNew=protocol+"//"+host+"/";
-		           
-					Scheduler24.config.base_api_url = urlNew;
+					Scheduler24.config.base_api_url = conf.base_api_url;
 					Scheduler24.config.cameraId = self.camera['id'];
 					Scheduler24.config.replaceByEventToOn = !SkyVR.isP2PStreaming();
 					Scheduler24.selectLegend('_');
@@ -96,12 +91,8 @@ define(['config', 'backbone','underscore', 'application', '../views/camera_setti
 					obj.name = form_data['camera_name'];
 					self.camera.name = obj.name;
 					var el = $(this);
-					var parts=localStorage.getItem("svURL").split("/");
-		            var protocol=parts[0];
-		            var host=parts[2];
-		            var urlNew=protocol+"//"+host+"/";
 					return $.ajax({
-						url: urlNew + "api/v2/cameras/"+ self.camera['id'] + "/",
+						url: conf.base_api_url + "api/v2/cameras/"+ self.camera['id'] + "/",
 						type: 'PUT',
 						success: function(data){
 							el.parent().parent().find(".current-value").text(obj.name);

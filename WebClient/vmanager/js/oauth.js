@@ -3,17 +3,17 @@ SkyVR.oauth = function(){
 		SkyVR.accountInfo().done(function(info){
 			console.log('oauth authorization! info', info);
 			if(!SkyVR.containsPageParam("vendor")){
-				SkyVR.config.vendor = "VXG_DEV"; // info.vendor;
-				SkyVR.loadVendorScripts(SkyVR.config.vendor);
-				// SkyVR.loadVendorTranslates(SkyVR.config.vendor, '../../');
+				SkyVR.config.vendor = info.vendor;
+				SkyVR.loadVendorScripts(info.vendor);
+				// SkyVR.loadVendorTranslates(SkyVR.pageParams['vendor'], '../../');
 			}
 		});
 	}
 
 	if(window.location.pathname == '/share/clips/index.html' || window.location.pathname == '/share/clips/'){
 		if(SkyVR.containsPageParam("vendor")){
-			SkyVR.config.vendor = "VXG_DEV"; // SkyVR.pageParams['vendor'];
-			SkyVR.loadVendorScripts(SkyVR.config.vendor, '../../');
+			SkyVR.config.vendor = SkyVR.pageParams['vendor'];
+			SkyVR.loadVendorScripts(SkyVR.pageParams['vendor'], '../../');
 		}
 		if(SkyVR.containsPageParam("token")){
 			SkyVR.config.shareToken.token = SkyVR.pageParams['token'];
@@ -24,8 +24,8 @@ SkyVR.oauth = function(){
 		SkyVR.loadApiTokenFromHref();
 		SkyVR.applyApiToken();
 		if(SkyVR.containsPageParam("vendor")){
-			SkyVR.config.vendor = "VXG_DEV"; // SkyVR.pageParams['vendor'];
-			SkyVR.loadVendorScripts(SkyVR.config.vendor, './');
+			SkyVR.config.vendor = SkyVR.pageParams['vendor'];
+			SkyVR.loadVendorScripts(SkyVR.pageParams['vendor'], './');
 		}
 		SkyVR.updateApiToken().done(function(new_token){
 			SkyVR.applyApiToken();
@@ -50,12 +50,17 @@ SkyVR.oauth = function(){
 		console.log('oauth authorization! old token is not expered');
 		SkyVR.applyApiToken();
 		if(SkyVR.containsPageParam("vendor")){
-			SkyVR.config.vendor = "VXG_DEV"; // SkyVR.pageParams['vendor'];
-			SkyVR.loadVendorScripts(SkyVR.config.vendor, './');
+			SkyVR.config.vendor = SkyVR.pageParams['vendor'];
+			SkyVR.loadVendorScripts(SkyVR.pageParams['vendor'], './');
 		}
 		loadAccountInfo_();
 	}
 }
+
+if(localStorage.getItem("svcp_host")){
+	SkyVR.setURL(localStorage.getItem("svcp_host"));
+}
+
 SkyVR.oauth();
 
 

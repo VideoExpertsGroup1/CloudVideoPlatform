@@ -185,24 +185,8 @@ window.SkyVR = new function (){
 		};
 		SkyVR.cache.cameras[cameraID]['event_processing']['events']['sound'] = struct;
 	};
-	
-	this.isOAuth2Host = function(){
-		return (
-			SkyVR.config.url == "http://54.173.34.172:7999/"
-			|| SkyVR.config.url == "http://auth2-web-1723830871.us-east-1.elb.amazonaws.com/"
-			|| SkyVR.config.url == "http://ec2-52-90-91-194.compute-1.amazonaws.com:8000/"
-			|| SkyVR.config.url == "http://54.173.34.172:12008/"
-			|| SkyVR.config.url == "http://54.173.34.172/"
-		);	 
-	};
 
 	this.setURL = function(url){
-		 
-		var parts=localStorage.getItem("svURL").split("/");
-		var protocol=parts[0];
-		var host=parts[2];
-		var urlNew=protocol+"//"+host+"/";
-		url=urlNew;
 		if(this.config.url != url){
 			this.config.url = url;
 			console.log("Set URL: " + this.config.url);
@@ -335,8 +319,6 @@ window.SkyVR = new function (){
 	
 	this.updateApiToken = function(){
 		var d = $.Deferred();
-		this.config.url_account="http://54.173.34.172/api/v2/account/";
-
 		$.ajax({
 			url: this.config.url_account + "token/api/",
 			type: 'GET',
@@ -882,10 +864,8 @@ window.SkyVR = new function (){
 	this.getAccount = function(cb_success, cb_error){
 		cb_success = (cb_success == undefined) ? SkyVR.handleNothing : cb_success;
 		cb_error = (cb_error == undefined) ? SkyVR.handleError : cb_error;
-		var parts=this.config.url_account.split('/');
-		var newUrl=parts[0]+"//54.173.34.172/"+parts[3]+"/"+parts[4]+"/"+parts[5]+"/";
 		return $.ajax({
-			url: newUrl,
+			url: SkyVR.config.url_account,
 			type: 'GET',
 			success: cb_success,
 			error: cb_error
@@ -977,8 +957,6 @@ window.SkyVR = new function (){
 	this.cameraInfo = function(id){
 		var d = $.Deferred();
 		var camid = id != undefined ? id : SkyVR.cameraID();
-		
-		this.config.url_cameras="http://54.173.34.172/api/v2/cameras/";
 		if(camid == undefined) return;
 		return $.ajax({
 			url: this.config.url_cameras + camid + "/",
@@ -1164,8 +1142,7 @@ window.SkyVR = new function (){
 	this.cameraPreview = function(cameraID, cb_success, cb_error){
 		cb_success = (cb_success == undefined) ? SkyVR.handleNothing : cb_success;
 		cb_error = (cb_error == undefined) ? SkyVR.handleError : cb_error;
-		return $.ajax
-		({
+		return $.ajax({
 			url: this.config.url_cameras + cameraID + "/preview/",
 			type: 'GET',
 			success: cb_success,
@@ -1619,7 +1596,7 @@ window.SkyVR = new function (){
 		function getData(req_data){
 			var req_d = $.Deferred();
 			$.ajax({
-				url: "http://54.173.34.172/api/v2/cameras/",
+				url: SkyVR.config.url_cameras,
 				data: req_data,
 				cache : false,
 				type: 'GET'
@@ -1923,17 +1900,12 @@ window.SkyVR = new function (){
 		});
 	};
 	this.storageActivity = function(){
-		var parts=localStorage.getItem("svURL").split("/");
-		var protocol=parts[0];
-		var host=parts[2];
-		var url_storage=protocol+"//"+host+"/";
-		
 		var params = {
 			camid: SkyVR.cameraID(),
 			daysincamtz: ''
 		};
 		return $.ajax({
-			url: url_storage + "api/v2/storage/activity/",
+			url: SkyVR.config.url_storage + "activity/",
 			type: 'GET',
 			data: params,
 			cache : false
@@ -2010,11 +1982,3 @@ window.SkyVR = new function (){
 		return d;
 	}
 }();
-
-//(function(){
-// 
-//        var parts=localStorage.getItem("svURL").split("/");
-//		var protocol=parts[0];
-//		var host=parts[2];
-//		var url_storage=protocol+"//"+host+"/";
-//		SkyVR.config.url_storage=url_storage+"api/v2/storage/";})()

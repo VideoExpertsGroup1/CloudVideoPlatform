@@ -2,7 +2,6 @@
  * Created by Exception on 10.08.2015.
  */
 define('config',['underscore'],function(_){
-    
     return _.extend({},{
 		cookie_url: "54.173.34.172",
 		base_api_url: "http://54.173.34.172:8000/",

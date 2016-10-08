@@ -77,7 +77,34 @@ input[type="text"], input[type="password"]{
 	border: 5px;
 	border-radius: 5px;
 }
-
+#new-camera-timezone{
+	width:330px;
+	height: 35px;
+	border-width: 1px;
+    border-color:#12658D;
+	border-radius: 5px
+	
+}
+#see-demo {
+    margin-top: 35px;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    color: #ffffff;
+    display: block;
+    width: 330px;
+    text-align: left;
+    background: url(./../vmanager/files/images/left_arrow.svg) no-repeat;
+    background-position: left;
+    padding-left: 15px;
+    cursor: pointer;
+}
+#actionBar{
+background-color: #12658D	;
+}
+a {
+    text-decoration: none;
+}
 input[type="submit"]{
 	font-family: "Open Sans",sans-serif;
 	height: 60px;
@@ -133,15 +160,16 @@ form{
 
 #forgot-password {
     margin-top: 35px;
-    font-family: "Open Sans",sans-serif;
+    font-family: 'Open Sans', sans-serif;
     font-weight: 400;
     font-size: 16px;
-    color: #FFF;
+    color: #ffffff;
     display: block;
     width: 330px;
     text-align: right;
-    padding-right: 23px;
-    text-decoration: none;
+    background: url(./../vmanager/files/images/right_arrow.svg) no-repeat;
+    background-position: right;
+    padding-right: 15px;
 }
 
 .form-wrapper{
@@ -233,7 +261,7 @@ form{
 	border-color: #0000ff;
 	margin-left: 30px;
 	margin-bottom:5px;
-	 
+	width:500px; 
 	height:30px
 }
 .dialog_closing_cross{

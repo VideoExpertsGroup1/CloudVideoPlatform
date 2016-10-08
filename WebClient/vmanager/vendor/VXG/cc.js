@@ -12,7 +12,7 @@ window.cc = {
 	timeline_recordsHeight: 5,
 	timeline_recordsY: 10,
 	vendor: 'VXG',
-	goto_first_camera: false,
+	goto_first_camera: true,
 	clip_creation_delete_after: null, // in sec
 	clip_min_length: 5, // in sec
 	clip_max_length: null // in sec

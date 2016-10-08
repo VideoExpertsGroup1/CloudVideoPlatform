@@ -5,3 +5,13 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+
+WebClient/vmanager/service
+WebClient/vmanager/vendor/*
+!WebClient/vmanager/vendor/VXG*
+!WebClient/vmanager/vendor/SAMPLE_*
+
+*.orig
+
+WebClient/vmanager/clip_*

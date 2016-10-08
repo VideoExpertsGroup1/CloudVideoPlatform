@@ -11,8 +11,8 @@ window.cc = {
 	timeline_menu_condition_of_cache: false,
 	timeline_recordsHeight: 5,
 	timeline_recordsY: 10,
-	vendor: 'VXG',
-	goto_first_camera: false,
+	vendor: 'VXG_DEV',
+	goto_first_camera: true,
 	clip_creation_delete_after: null, // in sec
 	// clip_creation_delete_after: 120, // in sec
 	clip_min_length: 15, // in sec

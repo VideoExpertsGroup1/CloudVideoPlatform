@@ -15,7 +15,10 @@ define(['config', 'backbone','underscore', 'raphael'], function(conf,bb,_,Raphae
 	};
 	application.showAddZone = function(){
 		application.show();
-		var paper = Raphael($('.player-control-container')[0], $('.flash-player-container')[0].clientWidth, $('.flash-player-container')[0].clientHeight);
+		
+		var size = CloudUI.calculateMotionZoneSize();
+		
+		var paper = Raphael($('.player-control-container')[0], size.width, size.height);
 		$('.player-control-container svg').css('position','absolute');
 		$(".player-control-container svg").css("z-index", 10);
 		
@@ -308,8 +311,6 @@ define(['config', 'backbone','underscore', 'raphael'], function(conf,bb,_,Raphae
 		paper.paperGridSupport = paperGridSupport;
 		_.extend(paper,{drawRectZone: application.drawRectZone})
 		//paper = application.drawRectZone(paper, rectXMD, rectYMD, rectWidthMD,rectHeightMD, paperGridSupport);
-		
-		
 		return paper;
 	};
 	application.centringLayoutButtons = function(){

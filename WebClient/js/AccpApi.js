@@ -1,13 +1,82 @@
 window.AccpApi = new function (){
 	var self = this;
-	
-	
+
 	var debugServer="http://10.20.16.28/accp_frontend/";
 	self.base_url =(window.location.host!=="10.20.16.28")?window.location.protocol+"//"+window.location.host+"/":debugServer;
 	this.getBaseUrl=function(){return self.base_url;};
 	this.isDebuggable=function(){return debug;};
 	this.getDebugServer=function(){return debugServer;};
+	
+	this.getCurrentUrl = function(){
+		var current_url = window.location.pathname.split("/");
+		current_url.pop();
+		return window.location.protocol + "//" + window.location.host + current_url.join("/") + "/";
+	}
+	
+	this.getSvcpAuthWebUrl_WithRedirect = function(){
+		var vmanager_path = window.location.pathname.split("/");
+		vmanager_path.pop();
+		vmanager_path.push("vmanager");
+		var redirect_url = window.location.protocol + "//" + window.location.host + vmanager_path.join("/") + "/";
+		return localStorage.getItem("svcp_auth_web_url") + "&redirect=" + redirect_url;
+	}
+	
+	this.getSvcpHost = function(){
+		return localStorage.setItem("svcp_host");
+	}
+	
+	this.getSvcpAuthWebUrl = function(){
+		return localStorage.setItem("svcp_host");
+	}
+	
+	this.setSvcpAuthWebUrl = function(svcpAuthWebUrl){
+		var parts = svcpAuthWebUrl.split('/');
+		// change protocol
+		parts[0] = window.location.protocol;
+		svcpAuthWebUrl = parts.join('/');
+		var svcphost = window.location.protocol+"//"+parts[2]+"/";
+		localStorage.setItem("svcp_auth_web_url",svcpAuthWebUrl);
+		localStorage.setItem("svcp_host",svcphost);
+		console.log("svcphost: " + svcphost);
+		var profile_path = window.location.pathname.split("/");
+		profile_path.pop();
+		var profile_url = window.location.protocol + "//" + window.location.host + profile_path.join("/") + "/"
+		localStorage.setItem("profile_url",profile_url);
+	}
+		
+	$.ajaxSetup({
+		crossDomain: true,
+		cache: false,
+	});
+	
+	this.isDemo = function(){
+		return localStorage["is_opened_like_demo"] == "true";
+	}
+	
+	this.demo_login = function(){
+		localStorage.setItem("is_opened_like_demo", false);
+		localStorage.removeItem('selectedCam');
+		var d = $.Deferred();
+		$.ajax({
+			url: self.base_url + "api/v1/account/demo_login/",
+			type: 'POST',
+            xhrFields: {
+			  withCredentials: true
+		   }
+		}).done(function(response){
+			self.setSvcpAuthWebUrl(response.svcp_auth_web_url);
+			// self.svcp_auth_app_url = response.svcp_auth_app_url;
+			localStorage.setItem("is_opened_like_demo", true);
+			d.resolve(response);
+		}).fail(function(){
+			d.reject();
+		});
+		return d;
+	};
+	
 	this.login = function(username,password){
+		localStorage.setItem("is_opened_like_demo", false);
+		localStorage.removeItem('selectedCam');
 		var d = $.Deferred();
 		$.ajaxSetup({
 			crossDomain: true,
@@ -28,6 +97,9 @@ window.AccpApi = new function (){
 			  withCredentials: true
 		   }
 		}).done(function(response){
+			self.setSvcpAuthWebUrl(response.svcp_auth_web_url);
+			self.svcp_auth_app_url = response.svcp_auth_app_url;
+			localStorage.setItem("is_opened_like_demo", false);
 			d.resolve(response);
 		}).fail(function(){
 			d.reject();
@@ -80,7 +152,7 @@ window.AccpApi = new function (){
 	};
 	
 	this.logout = function(data){
-		
+		localStorage.setItem("is_opened_like_demo", false);
 		var d = $.Deferred();
 		$.ajaxSetup({
 			crossDomain: true,
@@ -95,7 +167,7 @@ window.AccpApi = new function (){
 		   }
 		}).done(function(response){
 			d.resolve(response);
-			document.getElementById('username').style.color='#046B90';
+			
 		}).fail(function(){
 			d.reject();
 		});
