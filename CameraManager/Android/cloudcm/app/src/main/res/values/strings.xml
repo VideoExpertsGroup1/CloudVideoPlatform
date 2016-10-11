@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">VXG Cloud Camera</string>
+    <string name="prompt_login">Username</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="error_invalid_email">Email address is invalid</string>
+    <string name="error_invalid_password">Password is too short</string>
+    <string name="error_incorrect_password">Password or login are incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="progress_desc">Signing in…</string>
+
+    <string name="exit_dialog_title">Stop broadcast?</string>
+    <string name="exit_dialog_positive">OK</string>
+    <string name="exit_dialog_negative">Cancel</string>
+
+
+    <string name="error_dialog_title_conn_error">Connection error</string>
+    <string name="error_dialog_title_app_issue">Application issue</string>
+
+    <string name="error_dialog_ws_port_blocked">Can not connect to port 8888. Check firewall setting.</string>
+    <string name="error_dialog_lost_server_connection">Lost server connection</string>
+    <string name="error_dialog_AUTH_FAILURE">Authentication failure.</string>
+    <string name="error_dialog_activity_on_stop">Placing the application to background.</string>
+    <string name="error_dialog_CONN_CONFLICT">There is another alive connection from the CM.</string>
+    <string name="error_dialog_SYSTEM_ERROR">System failure on peer.</string>
+    <string name="error_dialog_DELETED">CM has been deleted from account it belonged to.</string>
+    <string name="error_dialog_ERROR">General application error.</string>
+    <string name="error_dialog_timer">Reconnect in %1$d</string>
+    <string name="error_dialog_timer_null">Reconnect in</string>
+
+    <string name="error_dialog_positive">Try sign in again</string>
+
+
+    <string name="toast_on_successful_login">Authentication successful</string>
+    <string name="toast_on_http_error">Connection error with server</string>
+
+    <string name="stream_status_online">( OnLine )</string>
+    <string name="stream_status_fail">( Can not register CM )</string>
+    <string name="stream_status_stopped_by_user">( Stopped by user )</string>
+    <string name="stream_status_demo_limitation">( Streaming stopped. DEMO VERSION limitation )</string>
+    <string name="stream_status_server_not_connected">( Server not connected )</string>
+    <string name="stream_status_out_of_memory">( Out of memory )</string>
+    <string name="stream_status_connecting">( Connecting… )</string>
+</resources>
