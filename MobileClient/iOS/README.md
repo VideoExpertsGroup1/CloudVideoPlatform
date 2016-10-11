@@ -14,7 +14,7 @@ THIS CLIENT WORKS ONLY WITH VXG CLOUD VIDEO PLATFORM
 ------------------------------------------------------------------------------------------------------
 
 How to Use it:
-* Sign Up or Sign In
+* Sign Up or Sign In (Please contact us at info@videoexpertsgroup.com if you don't have an account)
 * Watch your streams, record them, make short clips and share them
 
 Features of VXG Cloud Client:
