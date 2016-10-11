@@ -8,6 +8,7 @@ https://play.google.com/store/apps/details?id=com.vxg.cloud.cm
 1. set paths to Android SDK/NDK in local.properties file
 
 2. launch gradle build
+
 (Linux)
   ./gradlew assembleDebug
 
