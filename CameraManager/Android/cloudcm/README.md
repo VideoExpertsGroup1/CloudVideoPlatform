@@ -8,10 +8,10 @@ https://play.google.com/store/apps/details?id=com.vxg.cloud.cm
 1. set paths to Android SDK/NDK in local.properties file
 
 2. launch gradle build
-* Linux
+(Linux)
   ./gradlew assembleDebug
 
-* Windows
+(Windows)
   gradlew.bat assembleDebug
 
 3. final apk will be located at
