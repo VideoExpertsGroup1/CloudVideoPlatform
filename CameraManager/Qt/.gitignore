@@ -1,0 +1,9 @@
+Makefile
+*.o
+bin
+tmp
+
+*.~lock*
+*.~*
+vxgcloudcamera.session.ini
+preview.jpg
