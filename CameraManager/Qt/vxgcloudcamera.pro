@@ -44,7 +44,6 @@ SOURCES += \
 	src/cmd_handlers/cmd_backward_start_handler.cpp \
 
 
-
 HEADERS += \
 	src/accpclient/accpclient.h \
     src/websocketclient.h \
