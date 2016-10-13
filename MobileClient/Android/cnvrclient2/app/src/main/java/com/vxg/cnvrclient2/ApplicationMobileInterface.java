@@ -181,7 +181,7 @@ public class ApplicationMobileInterface {
             public void run() {
                 try {
                     Log.i(TAG, "webAppStarted!");
-                    ((FrameLayout) ((CloudClientActivity)mp).findViewById(R.id.fl_cloudclient_loader)).setVisibility(View.GONE);
+                    // ((FrameLayout) ((CloudClientActivity)mp).findViewById(R.id.fl_cloudclient_loader)).setVisibility(View.GONE);
                 } catch (Exception e) {
                     Log.e("Test", "Error on webAppStarted: " + e.getMessage());
                 }

@@ -6,17 +6,15 @@
 package com.vxg.cnvrclient2.activities;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vxg.cnvrclient2.R;
-import com.vxg.cnvrclient2.api.CnvrClient2;
+import com.vxg.AccoutProvider.AccountProviderAPI;
 import com.vxg.cnvrclient2.controllers.RegistrationController;
 
 public class RegistrationActivity extends Activity {
@@ -72,7 +70,7 @@ public class RegistrationActivity extends Activity {
             Toast.makeText(this, "Registration successfull", Toast.LENGTH_SHORT).show();
         }else if(s == RegistrationController.REGISTRATION_FAIL){
             Log.i(TAG, "REGISTRATION_FAIL");
-            String errorDetail = CnvrClient2.getInstance().getLastError();
+            String errorDetail = AccountProviderAPI.getInstance().getLastError();
             Toast.makeText(this, "Registration failed\n" + errorDetail, Toast.LENGTH_SHORT).show();
         }
     }

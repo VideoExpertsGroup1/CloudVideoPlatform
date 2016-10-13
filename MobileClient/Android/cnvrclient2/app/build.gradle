@@ -13,10 +13,20 @@ android {
         applicationId "com.vxg.cnvrclient2"
         minSdkVersion 19
         targetSdkVersion 22
-        versionCode 2
-        versionName "1.01"
+        versionCode 4
+        versionName "3.02"
         // testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         setProperty("archivesBaseName", "VXGCloudClient2-$versionName-vcode$versionCode")
+    }
+
+    productFlavors {
+        armv7_armeabi_x86 {
+            ndk {
+                abiFilter "armeabi-v7a"
+                abiFilter "armeabi"
+                abiFilter "x86"
+            }
+        }
     }
 
     buildTypes {
@@ -25,7 +35,20 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+
+    sourceSets {
+        main {
+            jni{
+                srcDirs = [] // This prevents the auto generation of Android.mk
+            }
+            jniLibs{
+                srcDir 'src/main/jniLibs' // This is not necessary unless you have precompiled libraries in your project.
+            }
+        }
+    }
 }
+
+
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')

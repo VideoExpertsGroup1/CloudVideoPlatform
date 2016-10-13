@@ -6,11 +6,10 @@
 
 package com.vxg.cnvrclient2.controllers;
 
+import com.vxg.AccoutProvider.AccountProviderAPI;
 import com.vxg.cnvrclient2.activities.UserProfileActivity;
-import com.vxg.cnvrclient2.api.CnvrClient2;
-import com.vxg.cnvrclient2.api.objects.UserProfile;
+import com.vxg.AccoutProvider.AccountProviderUserProfile;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class UserProfileController {
@@ -23,11 +22,11 @@ public class UserProfileController {
     private UserProfileActivity m_Activity = null;
     private int m_State = UserProfileController.USERPROFILE_NODATA;
     private String m_Error = "";
-    private CnvrClient2 api = CnvrClient2.getInstance();
+    private AccountProviderAPI api = AccountProviderAPI.getInstance();
 
-    private UserProfile m_userProfile = null;
+    private AccountProviderUserProfile m_userProfile = null;
 
-    public UserProfile getUserProfile() { return m_userProfile; }
+    public AccountProviderUserProfile getUserProfile() { return m_userProfile; }
 
     public static UserProfileController inst(){
         if (null == self){
@@ -68,15 +67,15 @@ public class UserProfileController {
             @Override
             public void run() {
                 JSONObject obj = api.userProfile();
-                m_userProfile = new UserProfile(obj);
+                m_userProfile = new AccountProviderUserProfile(obj);
                 updateActivityState(UserProfileController.USERPROFILE_DONE);
             }
         });
         t.start();
     }
 
-    public void tryUpdateUserProfileData(UserProfile up){
-        final UserProfile localup = up;
+    public void tryUpdateUserProfileData(AccountProviderUserProfile up){
+        final AccountProviderUserProfile localup = up;
         updateActivityState(UserProfileController.USERPROFILE_PROCESSING);
         Thread t = new Thread(new Runnable() {
             @Override

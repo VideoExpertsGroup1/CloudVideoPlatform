@@ -7,7 +7,7 @@
 package com.vxg.cnvrclient2.controllers;
 
 import com.vxg.cnvrclient2.activities.RegistrationActivity;
-import com.vxg.cnvrclient2.api.CnvrClient2;
+import com.vxg.AccoutProvider.AccountProviderAPI;
 
 public class RegistrationController {
     public static int REGISTRATION_START = 0;
@@ -19,7 +19,7 @@ public class RegistrationController {
     private RegistrationActivity m_RegistrationActivity = null;
     private int m_State = RegistrationController.REGISTRATION_START;
     private String m_Error = "";
-    private CnvrClient2 api = CnvrClient2.getInstance();
+    private AccountProviderAPI api = AccountProviderAPI.getInstance();
     public static RegistrationController inst(){
         if (null == self){
             self = new RegistrationController();

@@ -6,16 +6,13 @@
 
 package com.vxg.cnvrclient2.activities;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.vxg.cloud.platfrom.client.api.VXGCloudPlatform;
+import com.vxg.ServiceProvider.ServiceProviderToken;
+import com.vxg.ServiceProvider.ServiceProviderAPI;
 import com.vxg.cnvrclient2.ApplicationController;
 import com.vxg.cnvrclient2.ApplicationMobileInterface;
 import com.vxg.cnvrclient2.PlayerWrapper;
 import com.vxg.cnvrclient2.R;
 import com.vxg.cnvrclient2.WebPlayerInterface;
-import com.vxg.cnvrclient2.controllers.UserProfileController;
-import com.vxg.cnvrclient2.gcm.VXGCCQuickstartPreferences;
 
 import android.app.Activity;
 import android.content.Context;
@@ -25,7 +22,6 @@ import android.graphics.Color;
 import android.graphics.Movie;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -67,7 +63,7 @@ public class CloudClientActivity extends Activity
 		}
 	}
 
-    private Movie mMovie;
+    // private Movie mMovie;
 
     @Override
     public void onCreate(Bundle savedInstanceState) 
@@ -82,10 +78,9 @@ public class CloudClientActivity extends Activity
 
 		setContentView(R.layout.main);
 
-        ((FrameLayout) findViewById(R.id.fl_cloudclient_loader)).setVisibility(View.VISIBLE);
-
-        InputStream is = this.getResources().openRawResource(R.drawable.loader_white_330x28);
-        mMovie = Movie.decodeStream(is);
+        ((FrameLayout) findViewById(R.id.fl_cloudclient_loader)).setVisibility(View.GONE);
+        // InputStream is = this.getResources().openRawResource(R.drawable.loader_white_330x28);
+        // mMovie = Movie.decodeStream(is);
 
 		appMobileInterface = new ApplicationMobileInterface(this);
 		webPlayerInterface = new WebPlayerInterface(this);
@@ -139,10 +134,10 @@ public class CloudClientActivity extends Activity
 			e.printStackTrace();
 		}
 
-        String token = VXGCloudPlatform.inst().getCloudApiTokenID();
-        String expire = VXGCloudPlatform.inst().getCloudApiTokenExpire();
-		String baseuri = VXGCloudPlatform.inst().getBaseURI();
-        // TODO add version
+		ServiceProviderToken serviceProviderToken = ServiceProviderAPI.inst().getServiceProviderToken();
+        String token = serviceProviderToken.getToken();
+        String expire = serviceProviderToken.getExpire();
+		String baseuri = ServiceProviderAPI.inst().getBaseURI();
         String uri = baseuri + "/web/3.02/?mobile&vendor=VXG&login=test#token=" + token + "&expire=" + expire;
 
 		mWebView2.loadUrl(uri);

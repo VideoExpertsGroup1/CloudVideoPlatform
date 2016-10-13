@@ -1,10 +1,10 @@
-package com.vxg.cnvrclient2.api.objects;
+package com.vxg.AccoutProvider;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class UserProfile {
+public class AccountProviderUserProfile {
     private String m_sEmail = "";
     private String m_sFirstName = "";
     private String m_sLastName = "";
@@ -16,11 +16,11 @@ public class UserProfile {
     private String m_sPhone = "";
     private String m_sContactWay = "";
 
-    public UserProfile(){
+    public AccountProviderUserProfile(){
 
     }
 
-    public UserProfile(JSONObject obj){
+    public AccountProviderUserProfile(JSONObject obj){
         m_sEmail = getValue(obj, "email");
         m_sFirstName = getValue(obj, "first_name");
         m_sLastName = getValue(obj, "last_name");

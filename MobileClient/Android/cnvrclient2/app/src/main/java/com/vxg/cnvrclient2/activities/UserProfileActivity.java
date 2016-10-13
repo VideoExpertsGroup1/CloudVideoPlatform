@@ -7,7 +7,6 @@
 package com.vxg.cnvrclient2.activities;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,7 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vxg.cnvrclient2.R;
-import com.vxg.cnvrclient2.api.objects.UserProfile;
+import com.vxg.AccoutProvider.AccountProviderUserProfile;
 import com.vxg.cnvrclient2.controllers.UserProfileController;
 
 public class UserProfileActivity extends Activity {
@@ -32,7 +31,7 @@ public class UserProfileActivity extends Activity {
         btn_userprofile_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UserProfile up = new UserProfile();
+                AccountProviderUserProfile up = new AccountProviderUserProfile();
                 up.setEmail(((TextView) findViewById(R.id.edt_userprofile_email)).getText().toString());
                 up.setFirstName(((TextView) findViewById(R.id.edt_userprofile_firstname)).getText().toString());
                 up.setLastName(((TextView) findViewById(R.id.edt_userprofile_lastname)).getText().toString());
@@ -83,7 +82,7 @@ public class UserProfileActivity extends Activity {
             Toast.makeText(this, "Updated profile", Toast.LENGTH_SHORT).show();
         }else if(s == UserProfileController.USERPROFILE_DONE){
             Log.i(TAG, "USERPROFILE_DONE");
-            UserProfile up = controller.getUserProfile();
+            AccountProviderUserProfile up = controller.getUserProfile();
             ((TextView) findViewById(R.id.edt_userprofile_email)).setText(up.getEmail());
             ((TextView) findViewById(R.id.edt_userprofile_firstname)).setText(up.getFirstName());
             ((TextView) findViewById(R.id.edt_userprofile_lastname)).setText(up.getLastName());

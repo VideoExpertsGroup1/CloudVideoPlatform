@@ -1,8 +1,8 @@
 package com.vxg.cnvrclient2.controllers;
 
-import android.os.StrictMode;
-
-import com.vxg.cnvrclient2.api.CnvrClient2;
+import com.vxg.AccoutProvider.AccountProviderAPI;
+import com.vxg.ServiceProvider.ServiceProviderToken;
+import com.vxg.ServiceProvider.ServiceProviderAPI;
 import com.vxg.cnvrclient2.activities.LoginActivity;
 
 public class LoginController {
@@ -15,7 +15,7 @@ public class LoginController {
     private LoginActivity m_LoginActivity = null;
     private int m_State = LoginController.LOGIN_START;
     private String m_Error = "";
-    private CnvrClient2 api = CnvrClient2.getInstance();
+    private AccountProviderAPI api = AccountProviderAPI.getInstance();
 
     public static LoginController inst(){
         if (null == self){
@@ -60,6 +60,8 @@ public class LoginController {
             @Override
             public void run() {
                 if(api.login(sLogin,sPassword) == true){
+                    ServiceProviderToken token = api.getServiceProviderToken();
+                    ServiceProviderAPI.inst().setServiceProviderToken(token);
                     updateActivityState(LoginController.LOGIN_OK);
                 }else{
                     m_Error = api.getLastError();
