@@ -1,8 +1,4 @@
 //
-//  CloudAPIToken.swift
-//  VXG Cloud Client
-//  Created by sea-kg on 16.06.16.
-//
 //  Copyright © 2016 EVE Group Pte. Ltd. All rights reserved.
 //  Contact: https://www.videoexpertsgroup.com/contact-vxg/
 //  This file is part of the demonstration of the VXG Cloud Platform.
