@@ -14,11 +14,12 @@ WebSocketClient::WebSocketClient(CloudStreamerSettings *pSettings, QObject *pare
 	m_pSettings = pSettings;
 	create_cmd_handlers(m_mapCmdHandlers);
 	m_pProcess = new Process();
-	
+
 	m_sProtocol = "ws";
 	m_sHost = m_pSettings->servercm_host();
 	m_nPort = m_pSettings->servercm_ws_port();
 	m_pSettings->servercm_needreconnect(false);
+	
 	QUrl url = makeURL();
 	
 	m_nMessageID = 0;
@@ -55,10 +56,19 @@ WebSocketClient::WebSocketClient(CloudStreamerSettings *pSettings, QObject *pare
 // ---------------------------------------------------------------------
 
 QUrl WebSocketClient::makeURL(){
-	if(m_pSettings->servercm_needreconnect()){
-		return QUrl(m_sProtocol + "://" + m_pSettings->servercm_reconnection_host() + ":" + QString::number(m_nPort) + "/ctl/NEW/" + m_pSettings->accp_reg_token() + "/");
+	
+	QString suffix = "";
+	if(m_pSettings->cm_isRegistered()){
+		suffix  = "/ctl/" + m_pSettings->cm_connid() + "/";
+	}else{
+		suffix  = "/ctl/NEW/" + m_pSettings->accp_reg_token() + "/";
 	}
-	return QUrl(m_sProtocol + "://" + m_sHost + ":" + QString::number(m_nPort) + "/ctl/NEW/" + m_pSettings->accp_reg_token() + "/");
+
+	QUrl url;
+	if(m_pSettings->servercm_needreconnect()){
+		url = QUrl(m_sProtocol + "://" + m_pSettings->servercm_reconnection_host() + ":" + QString::number(m_nPort) + suffix);
+	}
+	return QUrl(m_sProtocol + "://" + m_sHost + ":" + QString::number(m_nPort) + suffix);
 }
 
 // ---------------------------------------------------------------------
@@ -114,11 +124,15 @@ CloudStreamerSettings *WebSocketClient::settings(){
 
 void WebSocketClient::onWebSocketConnected()
 {
-	std::cout << "123";
     qDebug() << "WebSocket connected";
     QJsonObject jsonData = makeCommand("register");
 	jsonData["pwd"] = "";
-	jsonData["reg_token"] = m_pSettings->accp_reg_token();
+	if(m_pSettings->cm_isRegistered()){
+		jsonData["prev_sid"] = m_pSettings->servercm_sid();
+		jsonData["pwd"] = m_pSettings->cm_pwd();
+	}else{
+		jsonData["reg_token"] = m_pSettings->accp_reg_token();
+	}
 	jsonData["ver"] = m_pSettings->cm_version();
 	jsonData["tz"] = m_pSettings->cm_timezone();
 	jsonData["vendor"] = m_pSettings->cm_vendor();

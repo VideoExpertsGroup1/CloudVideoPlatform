@@ -15,25 +15,27 @@ OBJECTS_DIR = tmp/
 MOC_DIR = tmp/
 
 SOURCES += \
-    src/main.cpp \
-    src/accpclient/accpclient.cpp \
-    src/websocketclient.cpp \
-    src/cloudstreamersettings.cpp \
-    src/process.cpp \
-    src/mediaserverinfo.cpp \
-    src/memorycardstatus.cpp \
-    src/cmd_handlers/create_cmd_handlers.cpp \
-    src/cmd_handlers/cmd_configure_handler.cpp \
-    src/cmd_handlers/cmd_bye_handler.cpp \
-    src/cmd_handlers/cmd_get_cam_status_handler.cpp \
-    src/cmd_handlers/cmd_get_supported_streams_handler.cpp \
-    src/cmd_handlers/cmd_get_cam_video_conf_handler.cpp \
-    src/cmd_handlers/cmd_get_cam_audio_conf_handler.cpp \
+	src/main.cpp \
+	src/accpclient/accpclient.cpp \
+	src/websocketclient.cpp \
+	src/cloudstreamersettings.cpp \
+	src/process.cpp \
+	src/mediaserverinfo.cpp \
+	src/memorycardstatus.cpp \
+	src/cmd_handlers/create_cmd_handlers.cpp \
+	src/cmd_handlers/cmd_configure_handler.cpp \
+	src/cmd_handlers/cmd_bye_handler.cpp \
+	src/cmd_handlers/cmd_get_cam_status_handler.cpp \
+	src/cmd_handlers/cmd_get_supported_streams_handler.cpp \
+	src/cmd_handlers/cmd_get_cam_video_conf_handler.cpp \
+	src/cmd_handlers/cmd_get_cam_audio_conf_handler.cpp \
+	src/cmd_handlers/cmd_set_cam_audio_conf_handler.cpp \
 	src/cmd_handlers/cmd_get_stream_by_event_handler.cpp \
 	src/cmd_handlers/cmd_get_motion_detection_handler.cpp \
 	src/cmd_handlers/cmd_set_motion_detection_handler.cpp \
 	src/cmd_handlers/cmd_get_audio_detection_handler.cpp \
 	src/cmd_handlers/cmd_get_cam_events_handler.cpp \
+	src/cmd_handlers/cmd_set_cam_events_handler.cpp \
 	src/cmd_handlers/cmd_cam_update_preview_handler.cpp \
 	src/cmd_handlers/cmd_hello_handler.cpp \
 	src/cmd_handlers/cmd_cam_hello_handler.cpp \
@@ -46,26 +48,28 @@ SOURCES += \
 
 HEADERS += \
 	src/accpclient/accpclient.h \
-    src/websocketclient.h \
-    src/cloudstreamersettings.h \
-    src/process.h \
-    src/mediaserverinfo.h \
-    src/memorycardstatus.h \
-    src/interfaces/iprocess.h \
-    src/interfaces/icmdhandler.h \
-    src/interfaces/iwebsocketclient.h \
-    src/cmd_handlers/create_cmd_handlers.h \
-    src/cmd_handlers/cmd_configure_handler.h \
-    src/cmd_handlers/cmd_bye_handler.h \
-    src/cmd_handlers/cmd_get_cam_status_handler.h \
-    src/cmd_handlers/cmd_get_supported_streams_handler.h \
-    src/cmd_handlers/cmd_get_cam_video_conf_handler.h \
-    src/cmd_handlers/cmd_get_cam_audio_conf_handler.h \
+	src/websocketclient.h \
+	src/cloudstreamersettings.h \
+	src/process.h \
+	src/mediaserverinfo.h \
+	src/memorycardstatus.h \
+	src/interfaces/iprocess.h \
+	src/interfaces/icmdhandler.h \
+	src/interfaces/iwebsocketclient.h \
+	src/cmd_handlers/create_cmd_handlers.h \
+	src/cmd_handlers/cmd_configure_handler.h \
+	src/cmd_handlers/cmd_bye_handler.h \
+	src/cmd_handlers/cmd_get_cam_status_handler.h \
+	src/cmd_handlers/cmd_get_supported_streams_handler.h \
+	src/cmd_handlers/cmd_get_cam_video_conf_handler.h \
+	src/cmd_handlers/cmd_get_cam_audio_conf_handler.h \
+	src/cmd_handlers/cmd_set_cam_audio_conf_handler.h \
 	src/cmd_handlers/cmd_get_stream_by_event_handler.h \
 	src/cmd_handlers/cmd_get_motion_detection_handler.h \
 	src/cmd_handlers/cmd_set_motion_detection_handler.h \
 	src/cmd_handlers/cmd_get_audio_detection_handler.h \
 	src/cmd_handlers/cmd_get_cam_events_handler.h \
+	src/cmd_handlers/cmd_set_cam_events_handler.h \
 	src/cmd_handlers/cmd_cam_update_preview_handler.h \
 	src/cmd_handlers/cmd_hello_handler.h \
 	src/cmd_handlers/cmd_cam_hello_handler.h \

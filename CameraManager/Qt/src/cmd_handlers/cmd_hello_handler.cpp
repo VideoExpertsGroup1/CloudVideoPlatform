@@ -26,7 +26,6 @@ void CmdHelloHandler::handle(QJsonObject obj, IWebSocketClient *wsc){
 	data["initial_mode"] = wsc->settings()->camera_initial_mode();
 	
 	if(wsc->settings()->camera_initial_mode() == "p2p"){
-		
 		QJsonObject p2p;
 		QJsonObject local;
 		local["main_port"] = 80;

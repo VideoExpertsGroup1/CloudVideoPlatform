@@ -14,8 +14,15 @@ QString CmdStreamStopHandler::cmd(){
 }
 
 void CmdStreamStopHandler::handle(QJsonObject obj, IWebSocketClient *wsc){
-	if(wsc->process()->isStarted()){
-		wsc->process()->stop();
+	
+	int counter = wsc->settings()->stream_counter();
+	if(counter <= 0){
+		wsc->settings()->stream_counter(0);
+		if(wsc->process()->isStarted()){
+			wsc->process()->stop();
+		}
+	}else{
+		wsc->settings()->stream_counter(counter-1);
 	}
 	wsc->sendMessage(wsc->makeCommandDone(cmd(), obj["msgid"].toInt(), "OK"));
 }

@@ -10,14 +10,14 @@ void CmdGetCamEventsHandler::handle(QJsonObject obj, IWebSocketClient *wsc){
 	QJsonObject cam_events_conf = wsc->makeCommand("cam_events_conf");
 	cam_events_conf["refid"] = obj["msgid"].toInt();
 	cam_events_conf["cam_id"] = wsc->settings()->camera_id();
-	cam_events_conf["enabled"] = true;
+	cam_events_conf["enabled"] = wsc->settings()->camevents_enabled();
 	
 	// events
 	QJsonArray events;
-	if(wsc->settings()->eventsconf_memorycard_isenabled()){
+	if(wsc->settings()->camevents_enabled() && wsc->settings()->camevents_memorycard_active()){
 		QJsonObject events_memorycard;
 		events_memorycard["event"] = "memorycard";
-		events_memorycard["active"] = true;
+		events_memorycard["active"] = wsc->settings()->camevents_memorycard_active();
 		events_memorycard["stream"] = false;
 		events_memorycard["snapshot"] = false;
 		QJsonObject caps;
@@ -29,8 +29,8 @@ void CmdGetCamEventsHandler::handle(QJsonObject obj, IWebSocketClient *wsc){
 	cam_events_conf["events"] = events;
 	wsc->sendMessage(cam_events_conf);
 
-	if(wsc->settings()->eventsconf_memorycard_isenabled()){
-		// init memory card
+	if(wsc->settings()->camevents_enabled() && wsc->settings()->camevents_memorycard_active()){
+		// init memory card example
 		QJsonObject cam_event = wsc->makeCommand("cam_event");
 		cam_event["cam_id"] = wsc->settings()->camera_id();
 		cam_event["event"] = "memorycard";

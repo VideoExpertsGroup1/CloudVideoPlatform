@@ -21,12 +21,14 @@ void CmdStreamStartHandler::handle(QJsonObject obj, IWebSocketClient *wsc){
 	
 	QString video_stream_command = wsc->settings()->streams_video_stream_command();
 	video_stream_command.replace(QString("%RTMPURL%"), stream_url);
-	qDebug() << "[WS] video_stream_command: " << video_stream_command;
-	
-	if(wsc->process()->isStarted()){
-		wsc->process()->stop();
+	if(!wsc->process()->isStarted()){
+		wsc->settings()->stream_counter(1); // set count
+		qDebug() << "[WS] video_stream_command: " << video_stream_command;
+		wsc->process()->start(video_stream_command);
+	}else{
+		int counter = wsc->settings()->stream_counter();
+		qDebug() << "[WS] video_stream_command (already started): " << video_stream_command;
+		wsc->settings()->stream_counter(counter + 1);
 	}
-	wsc->process()->start(video_stream_command);
-
 	wsc->sendMessage(wsc->makeCommandDone(cmd(), obj["msgid"].toInt(), "OK"));
 }
