@@ -1,13 +1,20 @@
-/*
- *
- * Copyright (c) 2016 VIDEO EXPERTS GROUP
- *
- */
+//
+//  Copyright © 2016 VXG Inc. All rights reserved.
+//  Contact: https://www.videoexpertsgroup.com/contact-vxg/
+//  This file is part of the demonstration of the VXG Cloud Platform.
+//
+//  Commercial License Usage
+//  Licensees holding valid commercial VXG licenses may use this file in
+//  accordance with the commercial license agreement provided with the
+//  Software or, alternatively, in accordance with the terms contained in
+//  a written agreement between you and VXG Inc. For further information
+//  use the contact form at https://www.videoexpertsgroup.com/contact-vxg/
+//
 
 package com.vxg.cnvrclient2.activities;
 
-import com.vxg.ServiceProvider.ServiceProviderToken;
-import com.vxg.ServiceProvider.ServiceProviderAPI;
+import com.vxg.cloud.ServiceProvider.ServiceProviderToken;
+import com.vxg.cloud.ServiceProvider.ServiceProviderAPI;
 import com.vxg.cnvrclient2.ApplicationController;
 import com.vxg.cnvrclient2.ApplicationMobileInterface;
 import com.vxg.cnvrclient2.PlayerWrapper;
@@ -19,7 +26,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
-import android.graphics.Movie;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -32,8 +38,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
-
-import java.io.InputStream;
 
 public class CloudClientActivity extends Activity
 {
