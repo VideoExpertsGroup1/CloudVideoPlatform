@@ -151,8 +151,8 @@ class NVRClient:
         :raise RuntimeError: when config is invalid
         """
         camera_feed = self.config.get('camera_feed', None)
-        if not camera_feed or not camera_feed.startswith('rtsp://'):
-            raise RuntimeError('Please provide correct RTSP video source URL in client.conf.py in param "camera_feed"')
+        if not camera_feed:
+            raise RuntimeError('Please provide correct video source URL in client.conf.py in param "camera_feed"')
         reg_token = self.config.get('reg_token', None)
         connection_id = self.config.get('connection_id', None)
         if not reg_token and not connection_id:

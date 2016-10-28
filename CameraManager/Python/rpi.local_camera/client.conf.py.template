@@ -10,8 +10,8 @@ wss_port = integer(0, 65535, default=8883)
 #
 # Camera settings
 #
-# Camera RTSP video feed to use. Mandatory field
-camera_feed = string(max=50, default='rtsp://10.20.16.157/video1')
+# Camera video feed to use. Mandatory field
+camera_feed = string(max=50, default='dev:///dev/video0')
 # Place registration token here if CM is not registered
 reg_token = string(max=24, default='')
 # Event generation for test purposes. Generate 'sound' events with this interval, seconds. 0 for Off

@@ -1126,6 +1126,11 @@ class Camera:
         self.username = 'user'  # Credentials to access video/audio feed
         self.password = 'password'  # Credentials to access video/audio feed
         self.device_type = None  # Camera type: bullet, media server etc, could be empty
+        parse_res = urlparse(globals.config['camera_feed'])
+        self.video_source_type = parse_res.scheme
+        if self.video_source_type not in ['rtsp', 'dev']:
+            raise RuntimeError('Unknown video source type %s' % self.video_source_type)
+        self.ip = parse_res.hostname
 
         """
         Capabilities determined by camera hardware and could not be changed dynamically
@@ -1139,16 +1144,29 @@ class Camera:
         # Video streams caps, dictionary: {'video_stream_name': [VideoInfoCapabilities]...}
         # In this sample set's assume that camera have only one elementary video stream: 'video1'.
         # Since default VideoInfoCapabilities config is not usable, let's fill it somehow
-        self.video_stream_caps = {'video1': [VideoInfoCapabilities(formats=[VideoEncodingFormat.H264],  # only H.264
-                                                                   resolutions=[[640, 480]],  # only 1920x1080
-                                                                   fps=[25],  # only 30 fps
-                                                                   gop=[30, 30, 1],  # only 30 frames
-                                                                   bitrate=[500, 500, 1],  # only 500kbps
-                                                                   vbr=False)]}  # does not support VBR
+        if self.video_source_type == 'dev':
+            self.video_stream_caps = {'video1': [VideoInfoCapabilities(formats=[VideoEncodingFormat.H264],  # only H.264
+                                                                       resolutions=[[640, 480]],  # only 640x480
+                                                                       fps=[25],  # only 25 fps
+                                                                       gop=[30, 30, 1],  # only 30 frames
+                                                                       bitrate=[500, 500, 1],  # only 500kbps
+                                                                       vbr=False)]}  # does not support VBR
+        else:
+            self.video_stream_caps = {'video1': [VideoInfoCapabilities(formats=[VideoEncodingFormat.H264],  # only H.264
+                                                                       resolutions=[[1920, 1080]],  # only 1920x1080
+                                                                       fps=[30],  # only 30 fps
+                                                                       gop=[30, 30, 1],  # only 30 frames
+                                                                       bitrate=[500, 500, 1],  # only 500kbps
+                                                                       vbr=False)]}  # does not support VBR
         # Audio streams caps, dictionary: {'audio_stream_name': [AudioInfoCapabilities]...}
         # In this sample set's assume that camera have only one elementary audio stream: 'audio1'.
         # Since default AudioInfoCapabilities config is not usable, let's fill it somehow
-        self.audio_stream_caps = {}
+        if self.video_source_type == 'dev':
+            self.audio_stream_caps = {}
+        else:
+            self.audio_stream_caps = {'audio1': [AudioInfoCapabilities(formats=[AudioEncodingFormat.AAC],  # only AAC
+                                                                       bitrate=[64, 64, 1],  # only 64kbps
+                                                                       samplerates=[44.1])]}  # only 44.1kHz
         # List of available media streams: [MediaStreamInfo]
         # First media stream in this list will be chosen as default for live and record on server,
         # if user wasn't selected another ones.
@@ -1160,9 +1178,15 @@ class Camera:
         # so you should extend MediaStreamInfo and fill it properly.
         # Just for example our media stream URL will be taken from config, but in general it could be composed
         # by some rule from url, username, password, etc.
-        self.media_streams = [MediaStreamInfo(stream_id='primary',
-                                              video_stream_id='video1',
-                                              media_url='/dev/video0')]
+        if self.video_source_type == 'dev':
+            self.media_streams = [MediaStreamInfo(stream_id='primary',
+                                                  video_stream_id='video1',
+                                                  media_url=parse_res.path)]
+        else:
+            self.media_streams = [MediaStreamInfo(stream_id='primary',
+                                                  video_stream_id='video1',
+                                                  audio_stream_id='audio1',
+                                                  media_url=globals.config['camera_feed'])]
         # Event-driven streaming parameters caps, use default 'empty' caps for this sample
         self.stream_by_event_caps = StreamByEventCapabilities()
         # Motion detection parameters caps, use default 'empty' caps for this sample
@@ -1189,14 +1213,24 @@ class Camera:
         self.status_led = None
         # dict of video ES current settings, 'video_stream_name': VideoInfo.
         # Let's describe stream defined earlier in video_streams_caps according to this caps.
-        self.video_streams = {'video1': VideoInfo(fmt=VideoEncodingFormat.H264,
-                                                  width=640, height=480,
-                                                  fps=25,
-                                                  gop=30,
-                                                  bitrate=500)}
+        if self.video_source_type == 'dev':
+            self.video_streams = {'video1': VideoInfo(fmt=VideoEncodingFormat.H264,
+                                                      width=640, height=480,
+                                                      fps=25,
+                                                      gop=30,
+                                                      bitrate=500)}
+        else:
+            self.video_streams = {'video1': VideoInfo(fmt=VideoEncodingFormat.H264,
+                                                      width=1920, height=1080,
+                                                      fps=30,
+                                                      gop=30,
+                                                      bitrate=500)}
         # dict of audio ES current settings, 'audio_stream_name': AudioInfo.
         # Let's describe stream defined earlier in audio_stream_caps according to this caps
-        self.audio_streams = {}
+        if self.video_source_type == 'dev':
+            self.audio_streams = {}
+        else:
+            self.audio_streams = {'audio1': AudioInfo(fmt=AudioEncodingFormat.AAC, bitrate=64, samplerate=44.1)}
         # Event-driven streaming settings.
         # Let's use media stream 'primary' we defined before as stream to record in event-driven recording case
         self.stream_by_event_params = StreamByEventParams(stream_id='primary')
@@ -1260,7 +1294,7 @@ class Camera:
         Get camera's IP
         :return: string with camera's IP
         """
-        return urlparse(globals.config['camera_feed']).hostname
+        return self.ip
 
     def __cmp__(self, ip):
         return ip != self.get_ip()
@@ -1916,10 +1950,14 @@ class Camera:
         if self.streamers.get(stream_id, None) is not None:
             raise ValueError('Already started')
 
-        if camera_url.startswith('/dev/'):
+        if self.video_source_type == 'dev':
             self._initialize_camera()
-        args = [FFMPEG, '-f', 'v4l2', '-video_size', 'vga', '-framerate', '25', '-input_format', 'h264', '-i',
-                camera_url, '-vcodec', 'copy', '-an', '-f', 'flv', publish_url]
+            args = [FFMPEG, '-f', 'v4l2', '-video_size', 'vga', '-framerate', '25', '-input_format', 'h264', '-i',
+                    camera_url, '-vcodec', 'copy', '-an', '-f', 'flv', publish_url]
+        else:
+            args = [FFMPEG, '-rtsp_transport', 'tcp', '-v', 'quiet', '-i', camera_url,
+                    '-c', 'copy', '-an', '-f', 'flv', '-map', '0', '-bsf:v', 'dump_extra',
+                    '-analyzeduration', '1500000', '-flags', 'global_header', publish_url]
         self.streamers[stream_id] = subprocess.Popen(args)
         return True
 
@@ -1959,7 +1997,23 @@ class Camera:
         :param stream_id: string, media stream to get snapshot from
         :return: string path to JPEG file or None in case of error
         """
-        raise NotImplementedError
+        if self.video_source_type == 'dev':
+            raise NotImplementedError
+
+        filename = 'snap_%s.jpg' % get_iso_8601_time_str(time())
+        output = os.path.join(globals.WORK_DIR, filename)
+        try:
+            media_stream = self._find_media_stream_by_id(stream_id)
+            if media_stream is None:
+                raise ValueError('Unknown media stream ID')
+            camera_url = media_stream.url
+            args = [FFMPEG, '-v', 'error', '-y', '-rtsp_transport', 'tcp', '-i', camera_url,
+                    '-f', 'image2', '-vframes', '1', '-s', '160x120', output]
+            subprocess.call(args)
+        except:
+            logger.error('Failed to make snapshot for cam(%s): %s', self.camera_id, error_str())
+
+        return output
 
     def _make_preevent_record(self):
         """
