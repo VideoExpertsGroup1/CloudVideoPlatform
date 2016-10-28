@@ -11,12 +11,13 @@
 //  use the contact form at https://www.videoexpertsgroup.com/contact-vxg/
 //
 
-#include "cmd_get_audio_detection_handler.h"
+#include "cmd_set_cam_audio_conf_handler.h"
 
-QString CmdGetAudioDetectionHandler::cmd(){
-	return "get_audio_detection";
+QString CmdSetCamAudioConfHandler::cmd(){
+	return "set_motion_detection";
 }
 
-void CmdGetAudioDetectionHandler::handle(QJsonObject obj, IWebSocketClient *wsc){
+void CmdSetCamAudioConfHandler::handle(QJsonObject obj, IWebSocketClient *wsc){
 	// TODO
+	wsc->sendMessage(wsc->makeCommandDone(cmd(), obj["msgid"].toInt(), "OK"));	
 }

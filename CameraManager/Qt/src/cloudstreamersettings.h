@@ -1,3 +1,16 @@
+//
+//  Copyright © 2016 VXG Inc. All rights reserved.
+//  Contact: https://www.videoexpertsgroup.com/contact-vxg/
+//  This file is part of the demonstration of the VXG Cloud Platform.
+//
+//  Commercial License Usage
+//  Licensees holding valid commercial VXG licenses may use this file in
+//  accordance with the commercial license agreement provided with the
+//  Software or, alternatively, in accordance with the terms contained in
+//  a written agreement between you and VXG Inc. For further information
+//  use the contact form at https://www.videoexpertsgroup.com/contact-vxg/
+//
+
 #ifndef CLOUDSTREAMER_H
 #define CLOUDSTREAMER_H
 
@@ -45,6 +58,7 @@ class CloudStreamerSettings {
 		void cm_pwd(QString);
 		QString cm_connid();
 		void cm_connid(QString);
+		bool cm_isRegistered();
 		
 		QString camera_brand();
 		QString camera_ip();
@@ -59,12 +73,19 @@ class CloudStreamerSettings {
 		QString camera_mode();
 		void camera_mode(QString);
 
-		bool eventsconf_memorycard_isenabled();
+		bool camevents_memorycard_active();
+		void camevents_memorycard_active(bool val);
+		bool camevents_enabled();
+		void camevents_enabled(bool val);
 
 		QString streams_video_stream_command();
 		QString streams_preview_command();
 		
+		int stream_counter();
+		void stream_counter(int val);
+		
 	private:
+		void loadSessionIni();
 		void saveSessionIni();
 		int readIntFromSettings(QSettings &sett, QString settName, int defaultValue);
 		QString readStringFromSettings(QSettings &sett, QString settName, QString defaultValue);
@@ -105,10 +126,13 @@ class CloudStreamerSettings {
 		int m_nCamera_id;
 		QString m_sCamera_mode;
 		
-		bool m_bEventsConf_memorycard_isenabled;
+		bool m_bCamEvents_enabled;
+		bool m_bCamEvents_memorycard_active;
 		
 		QString m_sStreams_video_stream_command;
 		QString m_sStreams_preview_command;
+		
+		int m_nStream_counter;
 };
 
 #endif // CLOUDSTREAMER_H
