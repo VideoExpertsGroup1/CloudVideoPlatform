@@ -19,6 +19,7 @@
 #include "cmd_get_cam_status_handler.h"
 #include "cmd_get_supported_streams_handler.h"
 #include "cmd_get_cam_video_conf_handler.h"
+#include "cmd_get_stream_config_handler.h"
 #include "cmd_get_cam_audio_conf_handler.h"
 #include "cmd_set_cam_audio_conf_handler.h"
 #include "cmd_get_stream_by_event_handler.h"
@@ -33,6 +34,8 @@
 #include "cmd_stream_stop_handler.h"
 #include "cmd_backward_start_handler.h"
 #include "cmd_backward_stop_handler.h"
+#include "cmd_set_cam_parameter_handler.h"
+#include "cmd_cam_get_log_handler.h"
 
 void create_cmd_handlers(QMap<QString, ICmdHandler *> &pHandlers){
 	QVector<ICmdHandler *> v;
@@ -45,6 +48,7 @@ void create_cmd_handlers(QMap<QString, ICmdHandler *> &pHandlers){
 	v.push_back(new CmdGetCamAudioConfHandler());
 	v.push_back(new CmdSetCamAudioConfHandler());
 	v.push_back(new CmdGetStreamByEventHandler());
+	v.push_back(new CmdGetStreamConfigHandler());
 	v.push_back(new CmdGetMotionDetectionHandler());
 	v.push_back(new CmdSetMotionDetectionHandler());
 	v.push_back(new CmdGetAudioDetectionHandler());
@@ -57,6 +61,8 @@ void create_cmd_handlers(QMap<QString, ICmdHandler *> &pHandlers){
 	v.push_back(new CmdStreamStopHandler());
 	v.push_back(new CmdBackwardStartHandler());
 	v.push_back(new CmdBackwardStopHandler());
+	v.push_back(new CmdSetCamParameterHandler());
+	v.push_back(new CmdCamGetLogHandler());
 
 	for(int i = 0; i < v.size(); i++){
 		QString cmd = v[i]->cmd();

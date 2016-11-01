@@ -18,5 +18,64 @@ QString CmdGetCamVideoConfHandler::cmd(){
 }
 
 void CmdGetCamVideoConfHandler::handle(QJsonObject obj, IWebSocketClient *wsc){
-	// TODO
+	QJsonObject cam_video_conf = wsc->makeCommand("cam_video_conf");
+	cam_video_conf["refid"] = obj["msgid"].toInt();
+	cam_video_conf["cam_id"] = wsc->settings()->camera_id();
+	cam_video_conf["vert_flip"] = wsc->settings()->videoconf_vert_flip();
+	cam_video_conf["horz_flip"] = wsc->settings()->videoconf_horz_flip();
+	cam_video_conf["tdn"] = wsc->settings()->videoconf_tdn();
+	cam_video_conf["ir_light"] = wsc->settings()->videoconf_ir_light();
+
+	QJsonObject caps;
+
+	{
+		QJsonArray vert_flip;
+		QStringList caps_vert_flip = wsc->settings()->videoconf_caps_vert_flip();
+		for(int i = 0; i < caps_vert_flip.size(); i++){
+			QString s = caps_vert_flip.at(i).trimmed();
+			if(s != ""){
+				vert_flip.append(s);
+			}
+		}
+		caps["vert_flip"] = vert_flip;
+	}
+
+	{
+		QJsonArray horz_flip;
+		QStringList caps_horz_flip = wsc->settings()->videoconf_caps_horz_flip();
+		for(int i = 0; i < caps_horz_flip.size(); i++){
+			QString s = caps_horz_flip.at(i).trimmed();
+			if(s != ""){
+				horz_flip.append(s);
+			}
+		}
+		caps["horz_flip"] = horz_flip;
+	}
+	
+	{
+		QJsonArray tdn;
+		QStringList caps_tdn = wsc->settings()->videoconf_caps_tdn();
+		for(int i = 0; i < caps_tdn.size(); i++){
+			QString s = caps_tdn.at(i).trimmed();
+			if(s != ""){
+				tdn.append(s);
+			}
+		}
+		caps["tdn"] = tdn;
+	}
+
+	{
+		QJsonArray ir_light;
+		QStringList caps_ir_light = wsc->settings()->videoconf_caps_ir_light();
+		for(int i = 0; i < caps_ir_light.size(); i++){
+			QString s = caps_ir_light.at(i).trimmed();
+			if(s != ""){
+				ir_light.append(s);
+			}
+		}
+		caps["ir_light"] = ir_light;
+	}
+	
+	cam_video_conf["caps"] = caps;
+	wsc->sendMessage(cam_video_conf);
 }

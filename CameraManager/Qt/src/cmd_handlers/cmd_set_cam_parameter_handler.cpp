@@ -11,19 +11,28 @@
 //  use the contact form at https://www.videoexpertsgroup.com/contact-vxg/
 //
 
-#ifndef VXGCLOUDCAMERA_CMD_GET_CAM_AUDIO_CONF_HANDLER_H
-#define VXGCLOUDCAMERA_CMD_GET_CAM_AUDIO_CONF_HANDLER_H
+#include "cmd_set_cam_parameter_handler.h"
 
-#include "../interfaces/icmdhandler.h"
-#include "../interfaces/iwebsocketclient.h"
+QString CmdSetCamParameterHandler::cmd(){
+	return "set_cam_parameter";
+}
 
-#include <QString>
-#include <QVariant>
+void CmdSetCamParameterHandler::handle(QJsonObject obj, IWebSocketClient *wsc){
 
-class CmdGetCamAudioConfHandler : public ICmdHandler {
-	public:
-		virtual QString cmd();
-		virtual void handle(QJsonObject obj, IWebSocketClient *wsc);
-};
+	int nCamid = 0;
+	if(obj.contains("cam_id")){
+		nCamid = obj["cam_id"].toInt();
+	}
 
-#endif // VXGCLOUDCAMERA_CMD_GET_CAM_AUDIO_CONF_HANDLER_H
+	if(obj.contains("status_led")){
+		// wsc->settings()->audioconf_spkr_mute(obj["status_led"].toBool());
+	}
+	
+	if(obj.contains("activity")){
+		// wsc->settings()->audioconf_spkr_mute(obj["status_led"].toBool());
+	}
+	
+	
+
+	wsc->sendMessage(wsc->makeCommandDone(cmd(), obj["msgid"].toInt(), "OK"));	
+}

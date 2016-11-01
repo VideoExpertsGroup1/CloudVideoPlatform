@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 {
 	QCoreApplication a(argc, argv);
 	CloudStreamerSettings *pSettings = new CloudStreamerSettings("vxgcloudcamera.ini", "vxgcloudcamera.session.ini");
-	
+
 	if(!pSettings->cm_isRegistered()){
 		// NEW CAMERA MANAGER
 		AccpClient accp(pSettings);

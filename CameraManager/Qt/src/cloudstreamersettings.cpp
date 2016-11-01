@@ -55,6 +55,10 @@ CloudStreamerSettings::CloudStreamerSettings(QString sFilename, QString sFilenam
 		
 		m_bCamEvents_enabled = readBooleanFromSettings(sett, "CAMEVENTS/enabled", false);
 		m_bCamEvents_memorycard_active = readBooleanFromSettings(sett, "CAMEVENTS/memorycard_active", false);
+		
+		loadAudioConf(sett);
+		loadVideoConf(sett);
+
 		m_sStreams_video_stream_command = readStringFromSettings(sett, "STREAMS/video_stream_command", "");
 		m_sStreams_preview_command = readStringFromSettings(sett, "STREAMS/preview_command", "");
 	}else{
@@ -83,6 +87,18 @@ QString CloudStreamerSettings::readStringFromSettings(QSettings &sett, QString s
 	QString sResult = defaultValue;
 	if(sett.contains(settName)){
 		sResult = sett.value(settName, sResult).toString();
+	}else{
+		qDebug() << "[WARNING] " << settName << " - not found in " << m_sFilename << "\n\t Will be used default value: " << defaultValue;
+	}
+	return sResult;
+}
+
+// ---------------------------------------------------------------------
+
+QStringList CloudStreamerSettings::readStringListFromSettings(QSettings &sett, QString settName, QStringList defaultValue){
+	QStringList sResult = defaultValue;
+	if(sett.contains(settName)){
+		sResult = sett.value(settName, sResult).toStringList();
 	}else{
 		qDebug() << "[WARNING] " << settName << " - not found in " << m_sFilename << "\n\t Will be used default value: " << defaultValue;
 	}
@@ -135,9 +151,46 @@ void CloudStreamerSettings::loadSessionIni(){
 		m_sStreams_video_stream_command = readStringFromSettings(sett_session, "STREAMS/video_stream_command", "");
 		m_sStreams_preview_command = readStringFromSettings(sett_session, "STREAMS/preview_command", "");
 		
+		loadAudioConf(sett_session);
+		loadVideoConf(sett_session);
+	
 		m_bCamEvents_memorycard_active = readBooleanFromSettings(sett_session, "CAMEVENTS/memorycard_active", false);
 	}
 }
+
+// ---------------------------------------------------------------------
+
+void CloudStreamerSettings::loadAudioConf(QSettings &sett){
+	
+	// caps
+	m_bAudioConf_caps_mic = readBooleanFromSettings(sett, "AUDIOCONF/caps_mic", false);
+	m_bAudioConf_caps_spkr = readBooleanFromSettings(sett, "AUDIOCONF/caps_spkr", false);
+	m_bAudioConf_caps_backward = readBooleanFromSettings(sett, "AUDIOCONF/caps_backward", false);
+	m_slistAudioConf_caps_echo_cancel = readStringListFromSettings(sett, "AUDIOCONF/caps_echo_cancel", QStringList());
+	
+	// values
+	m_bAudioConf_spkr_mute = readBooleanFromSettings(sett, "AUDIOCONF/spkr_mute", false);
+	m_nAudioConf_spkr_vol = readIntFromSettings(sett, "AUDIOCONF/spkr_vol", 100);
+	m_bAudioConf_mic_mute = readBooleanFromSettings(sett, "AUDIOCONF/mic_mute", false);
+	m_nAudioConf_mic_gain = readIntFromSettings(sett, "AUDIOCONF/mic_gain", 100);
+	m_sAudioConf_echo_cancel = readStringFromSettings(sett, "AUDIOCONF/echo_cancel", "");
+}
+
+// ---------------------------------------------------------------------
+
+void CloudStreamerSettings::loadVideoConf(QSettings &sett){
+	// caps
+	m_slistVideoConf_caps_vert_flip = readStringListFromSettings(sett, "VIDEOCONF/caps_vert_flip", QStringList());
+	m_slistVideoConf_caps_horz_flip = readStringListFromSettings(sett, "VIDEOCONF/caps_horz_flip", QStringList());
+	m_slistVideoConf_caps_tdn = readStringListFromSettings(sett, "VIDEOCONF/caps_tdn", QStringList());
+	m_slistVideoConf_caps_ir_light = readStringListFromSettings(sett, "VIDEOCONF/caps_ir_light", QStringList());
+	
+	// values
+	m_sVideoConf_vert_flip = readStringFromSettings(sett, "VIDEOCONF/vert_flip", "auto");
+	m_sVideoConf_horz_flip = readStringFromSettings(sett, "VIDEOCONF/horz_flip", "auto");
+	m_sVideoConf_tdn = readStringFromSettings(sett, "VIDEOCONF/tdn", "auto");
+	m_sVideoConf_ir_light = readStringFromSettings(sett, "VIDEOCONF/ir_light", "auto");
+};
 
 // ---------------------------------------------------------------------
 
@@ -179,6 +232,26 @@ void CloudStreamerSettings::saveSessionIni(){
 
 	sett.setValue("CAMEVENTS/enabled", m_bCamEvents_enabled);
 	sett.setValue("CAMEVENTS/memorycard_active", m_bCamEvents_memorycard_active);
+
+	sett.setValue("AUDIOCONF/caps_mic", m_bAudioConf_caps_mic);
+	sett.setValue("AUDIOCONF/caps_spkr", m_bAudioConf_caps_spkr);
+	sett.setValue("AUDIOCONF/caps_backward", m_bAudioConf_caps_backward);
+	sett.setValue("AUDIOCONF/caps_echo_cancel", m_slistAudioConf_caps_echo_cancel);
+	sett.setValue("AUDIOCONF/spkr_mute", m_bAudioConf_spkr_mute);
+	sett.setValue("AUDIOCONF/spkr_vol", m_nAudioConf_spkr_vol);
+	sett.setValue("AUDIOCONF/mic_mute", m_bAudioConf_mic_mute);
+	sett.setValue("AUDIOCONF/mic_gain", m_nAudioConf_mic_gain);
+	sett.setValue("AUDIOCONF/echo_cancel", m_sAudioConf_echo_cancel);
+	
+	
+	sett.setValue("VIDEOCONF/caps_vert_flip", m_slistVideoConf_caps_vert_flip);
+	sett.setValue("VIDEOCONF/caps_horz_flip", m_slistVideoConf_caps_horz_flip);
+	sett.setValue("VIDEOCONF/caps_tdn", m_slistVideoConf_caps_tdn);
+	sett.setValue("VIDEOCONF/caps_ir_light", m_slistVideoConf_caps_ir_light);
+	sett.setValue("VIDEOCONF/vert_flip", m_sVideoConf_vert_flip);
+	sett.setValue("VIDEOCONF/horz_flip", m_sVideoConf_horz_flip);
+	sett.setValue("VIDEOCONF/tdn", m_sVideoConf_tdn);
+	sett.setValue("VIDEOCONF/ir_light", m_sVideoConf_ir_light);
 
 	sett.setValue("STREAMS/video_stream_command", m_sStreams_video_stream_command);
 	sett.setValue("STREAMS/preview_command", m_sStreams_preview_command);
@@ -445,6 +518,228 @@ bool CloudStreamerSettings::camevents_enabled(){
 
 void CloudStreamerSettings::camevents_enabled(bool val){
 	m_bCamEvents_enabled = val;
+	saveSessionIni();
+};
+
+// ---------------------------------------------------------------------
+
+bool CloudStreamerSettings::audioconf_caps_mic(){
+	return m_bAudioConf_caps_mic;
+};
+
+// ---------------------------------------------------------------------
+
+void CloudStreamerSettings::audioconf_caps_mic(bool val){
+	m_bAudioConf_caps_mic = val;
+	saveSessionIni();
+};
+
+// ---------------------------------------------------------------------
+
+bool CloudStreamerSettings::audioconf_caps_spkr(){
+	return m_bAudioConf_caps_spkr;
+};
+
+// ---------------------------------------------------------------------
+
+void CloudStreamerSettings::audioconf_caps_spkr(bool val){
+	m_bAudioConf_caps_spkr = val;
+	saveSessionIni();
+};
+
+// ---------------------------------------------------------------------
+
+bool CloudStreamerSettings::audioconf_caps_backward(){
+	return m_bAudioConf_caps_backward;
+};
+
+// ---------------------------------------------------------------------
+
+void CloudStreamerSettings::audioconf_caps_backward(bool val){
+	m_bAudioConf_caps_backward = val;
+	saveSessionIni();
+};
+
+// ---------------------------------------------------------------------
+
+QStringList CloudStreamerSettings::audioconf_caps_echo_cancel(){
+	return m_slistAudioConf_caps_echo_cancel;
+};
+
+// ---------------------------------------------------------------------
+
+void CloudStreamerSettings::audioconf_caps_echo_cancel(QStringList val){
+	m_slistAudioConf_caps_echo_cancel = val;
+	saveSessionIni();
+}
+
+// ---------------------------------------------------------------------
+
+bool CloudStreamerSettings::audioconf_spkr_mute(){
+	return m_bAudioConf_spkr_mute;
+};
+
+// ---------------------------------------------------------------------
+
+void CloudStreamerSettings::audioconf_spkr_mute(bool val){
+	m_bAudioConf_spkr_mute = val;
+	saveSessionIni();
+};
+
+// ---------------------------------------------------------------------
+
+int CloudStreamerSettings::audioconf_spkr_vol(){
+	return m_nAudioConf_spkr_vol;
+};
+
+// ---------------------------------------------------------------------
+
+void CloudStreamerSettings::audioconf_spkr_vol(int val){
+	m_nAudioConf_spkr_vol = val;
+	saveSessionIni();
+};
+
+// ---------------------------------------------------------------------
+
+int CloudStreamerSettings::audioconf_mic_gain(){
+	return m_nAudioConf_mic_gain;
+};
+
+// ---------------------------------------------------------------------
+
+void CloudStreamerSettings::audioconf_mic_gain(int val){
+	m_nAudioConf_mic_gain = val;
+	saveSessionIni();
+};
+
+// ---------------------------------------------------------------------
+
+bool CloudStreamerSettings::audioconf_mic_mute(){
+	return m_bAudioConf_mic_mute;
+};
+
+// ---------------------------------------------------------------------
+
+void CloudStreamerSettings::audioconf_mic_mute(bool val){
+	m_bAudioConf_mic_mute = val;
+	saveSessionIni();
+};
+
+// ---------------------------------------------------------------------
+
+
+QString CloudStreamerSettings::audioconf_echo_cancel(){
+	return m_sAudioConf_echo_cancel;
+};
+
+// ---------------------------------------------------------------------
+
+void CloudStreamerSettings::audioconf_echo_cancel(QString val){
+	m_sAudioConf_echo_cancel = val;
+	saveSessionIni();
+}
+
+// ---------------------------------------------------------------------
+
+QStringList CloudStreamerSettings::videoconf_caps_vert_flip(){
+	return m_slistVideoConf_caps_vert_flip;
+};
+
+// ---------------------------------------------------------------------
+
+void CloudStreamerSettings::videoconf_caps_vert_flip(QStringList val){
+	m_slistVideoConf_caps_vert_flip = val;
+	saveSessionIni();
+};
+
+// ---------------------------------------------------------------------
+
+QStringList CloudStreamerSettings::videoconf_caps_horz_flip(){
+	return m_slistVideoConf_caps_horz_flip;
+};
+
+// ---------------------------------------------------------------------
+
+void CloudStreamerSettings::videoconf_caps_horz_flip(QStringList val){
+	m_slistVideoConf_caps_horz_flip = val;
+	saveSessionIni();
+};
+
+// ---------------------------------------------------------------------
+
+QStringList CloudStreamerSettings::videoconf_caps_tdn(){
+	return m_slistVideoConf_caps_tdn;
+};
+
+// ---------------------------------------------------------------------
+
+void CloudStreamerSettings::videoconf_caps_tdn(QStringList val){
+	m_slistVideoConf_caps_tdn = val;
+	saveSessionIni();
+};
+
+// ---------------------------------------------------------------------
+
+QStringList CloudStreamerSettings::videoconf_caps_ir_light(){
+	return m_slistVideoConf_caps_ir_light;
+};
+
+// ---------------------------------------------------------------------
+
+void CloudStreamerSettings::videoconf_caps_ir_light(QStringList val){
+	m_slistVideoConf_caps_ir_light = val;
+	saveSessionIni();
+};
+
+// ---------------------------------------------------------------------
+
+QString CloudStreamerSettings::videoconf_vert_flip(){
+	return m_sVideoConf_vert_flip;
+};
+
+// ---------------------------------------------------------------------
+
+void CloudStreamerSettings::videoconf_vert_flip(QString val){
+	m_sVideoConf_vert_flip = val;
+	saveSessionIni();
+};
+
+// ---------------------------------------------------------------------
+
+QString CloudStreamerSettings::videoconf_horz_flip(){
+	return m_sVideoConf_horz_flip;
+};
+
+// ---------------------------------------------------------------------
+
+void CloudStreamerSettings::videoconf_horz_flip(QString val){
+	m_sVideoConf_horz_flip = val;
+	saveSessionIni();
+};
+
+// ---------------------------------------------------------------------
+
+QString CloudStreamerSettings::videoconf_tdn(){
+	return m_sVideoConf_tdn;
+};
+
+// ---------------------------------------------------------------------
+
+void CloudStreamerSettings::videoconf_tdn(QString val){
+	m_sVideoConf_tdn = val;
+	saveSessionIni();
+};
+
+// ---------------------------------------------------------------------
+
+QString CloudStreamerSettings::videoconf_ir_light(){
+	return m_sVideoConf_ir_light;
+};
+
+// ---------------------------------------------------------------------
+
+void CloudStreamerSettings::videoconf_ir_light(QString val){
+	m_sVideoConf_ir_light = val;
 	saveSessionIni();
 };
 
