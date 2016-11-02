@@ -157,7 +157,7 @@ Previously you need ganerate private and public keys (for linux):
 	
 Insert to oauth_clients
 
-	INSERT INTO oauth_clients(client_id, client_secret, redirect_uri) VALUES('your_client_id', 'your_client_secret', 'http://auth2-web-1723830871.us-east-1.elb.amazonaws.com/svcauth/bycode');
+	INSERT INTO oauth_clients(client_id, client_secret, redirect_uri) VALUES('your_client_id', 'your_client_secret', 'http://web.skyvr.videoexpertsgroup.com/svcauth/bycode');
 
 Insert to oauth_public_keys (Configure public/private keys)
 

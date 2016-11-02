@@ -1,6 +1,6 @@
 window.CloudApi = new function (){
 	var self = this;
-	self.base_url = 'http://auth2-web-1723830871.us-east-1.elb.amazonaws.com/';
+	self.base_url = 'http://web.skyvr.videoexpertsgroup.com/';
 	this.setApiToken = function(token){
 		self.token = token;
 	}
