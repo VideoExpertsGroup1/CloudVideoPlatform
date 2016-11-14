@@ -249,20 +249,8 @@ define(['config', 'backbone','underscore', 'application', 'raphael', 'is', '../v
 		};
 		$(window).resize(resizeWindow);
 		$('.DM-panel-rect #cancel-md').unbind().on('click', function(){
-			if(zone.edited){
-				if (confirm(app.polyglot.t('Some changes are lost, Exit?'))){
-					$(".player-control-container svg").unbind();
-					$('.DM-panel-rect #cancel-md').unbind();
-					$('.DM-panel-rect #save-md').unbind();
-					$('.DM-panel-rect #add-md').unbind();
-					$('.DM-panel-rect #remove-md').unbind();
-					$(window).unbind();
-					mdzv.hideMDPanelSquare();
-					//mdzv.hideGrid();
-					mdzv.deletePaper();
-					mdzv.hide();
-				}
-			}else{
+			
+			function disposeMdViewer(){
 				$(".player-control-container svg").unbind();
 				$('.DM-panel-rect #cancel-md').unbind();
 				$('.DM-panel-rect #save-md').unbind();
@@ -273,6 +261,29 @@ define(['config', 'backbone','underscore', 'application', 'raphael', 'is', '../v
 				//mdzv.hideGrid();
 				mdzv.deletePaper();
 				mdzv.hide();
+				event.stopListening(event, event.MDZONES_CHECK_VIDEOSIZE);
+			}
+			
+			if(zone.edited){
+				
+				app.createDialogModal({
+					'title' : app.polyglot.t('dialog_title_md_zones'),
+					'content' : app.polyglot.t('dialog_content_md_zones_changed_confirm_exit'),
+					'buttons' : [
+						{text: app.polyglot.t('dialog_md_zones_changed_exit_yes'), id: 'md_zones_changed_exit', close: false},
+						{text: app.polyglot.t('dialog_md_zones_changed_exit_no'), close: true}
+					],
+					'beforeClose' : function() {
+					}
+				});
+				app.showDialogModal();
+				
+				$('#md_zones_changed_exit').unbind().bind('click', function(){
+					disposeMdViewer();
+					app.destroyDialogModal();
+				});
+			}else{
+				disposeMdViewer();
 			}
 			
 		});
@@ -328,6 +339,7 @@ define(['config', 'backbone','underscore', 'application', 'raphael', 'is', '../v
 		});*/
 		this.matrix = matrix; 
 		$('.DM-panel-rect #save-md').unbind().click(function(){
+			if(SkyUI.isDemo()){SkyUI.showDialogDemo();return;}
 			//paper.rectsGroups
 			//for(var i=0; i< matrix.length;i++){
 			for(var i=0; i< paper.rectsGroups.length;i++){
@@ -1052,6 +1064,23 @@ define(['config', 'backbone','underscore', 'application', 'raphael', 'is', '../v
 		/*$.get( conf.base_api_url + "api/v2/cameras/" + self.camera['id'] + "/motion_detection", function(data){
 			console.log(data);
 		});*/
+		
+		event.listenTo(event, event.MDZONES_CHECK_VIDEOSIZE, function (size_player) {
+			try{
+				if($(".player-control-container svg").length > 0){
+					var size = CloudUI.calculateMotionZoneSize(size_player);
+					
+					var width = $(".player-control-container svg").width();
+					var height = $(".player-control-container svg").height();
+					if(width != size.width || height != size.height){
+						console.log("[MD_ZONES] MDZONES_CHECK_VIDEOSIZE");
+						zone.redrawRect(size_player);
+					}
+				}
+			}catch(e){
+				console.error("[MD_ZONES] Error on MDZONES_CHECK_VIDEOSIZE ", e);
+			}
+		});
 		
 		
 		// TODO sync to async

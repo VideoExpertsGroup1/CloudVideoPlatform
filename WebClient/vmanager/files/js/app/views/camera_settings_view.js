@@ -41,8 +41,8 @@ define(['application', 'config', 'backbone','underscore','event', 'moment-timezo
 
 			// memory card
 			var self = this;
-			SkyVR.cameraInfo().done(function(camera){
-				if(camera && camera.memory_card){
+			SkyVR.cameraMemoryCard().done(function(memory_card){
+				if(memory_card){
 					var memory_card_status = {
 						"none" : app.polyglot.t("memory_card_none"),
 						"normal" : app.polyglot.t("memory_card_normal"),
@@ -52,33 +52,33 @@ define(['application', 'config', 'backbone','underscore','event', 'moment-timezo
 					};
 					if(other){
 						if(other.status)
-							camera.memory_card.status = other.status;
+							memory_card.status = other.status;
 						if(other.size)
-							camera.memory_card.size = other.size;
+							memory_card.size = other.size;
 						if(other.free)
-							camera.memory_card.free = other.free;
+							memory_card.free = other.free;
 					}
 
 					var freePercent = 0;
 					var size = '-';
 					var free = '-';
-					if(camera.memory_card.size)
-						size = camera.memory_card.size + ' MB';
+					if(memory_card.size)
+						size = memory_card.size + ' MB';
 
-					if(camera.memory_card.free){
-						free = camera.memory_card.free + ' MB';
-						if(camera.memory_card.size && camera.memory_card.size != 0)
-							free += ' (' + Math.floor(100*camera.memory_card.free/camera.memory_card.size) + '%)';
+					if(memory_card.free){
+						free = memory_card.free + ' MB';
+						if(memory_card.size && memory_card.size != 0)
+							free += ' (' + Math.floor(100*memory_card.free/memory_card.size) + '%)';
 					}				
 
 					$('#memory_card_text').html(
 						application.buildParamList([
-							{'name' : app.polyglot.t('memory_card_status'), 'value': memory_card_status[camera.memory_card.status] },
+							{'name' : app.polyglot.t('memory_card_status'), 'value': memory_card_status[memory_card.status] },
 							{'name' : app.polyglot.t('memory_card_size'), 'value': size},
 							{'name' : app.polyglot.t('memory_card_available'), 'value':  free}
 						])
 					);
-					if(camera.memory_card.status == "none"){
+					if(memory_card.status == "none"){
 						$('#memory_card_format').hide();
 					}else{
 						$('#memory_card_format').show();
@@ -114,12 +114,6 @@ define(['application', 'config', 'backbone','underscore','event', 'moment-timezo
 			
 			if(tmpcam['p2p'] && tmpcam['p2p']['public']){
 				lp_tmp.push({'name' : app.polyglot.t('IP address: '), 'value':  tmpcam['p2p']['public']['external_ip'] });
-			}
-			
-			if(tmpcam['p2p_settings'] != undefined){
-				var p2p_streaming = tmpcam['p2p_settings']['p2p_streaming'];
-				var p2p_streaming_value = p2p_streaming == true ? app.polyglot.t('menu_p2p_mode') : app.polyglot.t('menu_cloud_mode');
-				lp_tmp.push({'name' : app.polyglot.t('menu_p2p_streaming'), 'value':  p2p_streaming_value });
 			}
 
 			var lp = [];
@@ -556,26 +550,6 @@ define(['application', 'config', 'backbone','underscore','event', 'moment-timezo
 						'current': { 'name': self.camera['url'], 'value': self.camera['url']}
 					});
 				}
-				
-				// P2P Streaming
-				/*if(cam_settings.p2p && conf.debug == true){
-					general_options.push({
-						'setting_name': app.polyglot.t('menu_p2p_streaming'), 
-						'desc': app.polyglot.t('menu_p2p_streaming_description'),
-						'type': 'dropdown', 
-						'input': true,
-						'input_name': 'p2p_streaming', 
-						'input_type': 'radio', 
-						'inputs': [
-							{'value': 'true', 'name': app.polyglot.t('menu_p2p_mode')}, 
-							{'value': 'false', 'name': app.polyglot.t('menu_cloud_mode')}
-						],
-						'current': {
-							'name': cam_settings.p2p.p2p_streaming == true ? app.polyglot.t('menu_p2p_mode') : app.polyglot.t('menu_cloud_mode'),
-							'value': '' + cam_settings.p2p.p2p_streaming
-						}
-					});
-				}*/
 
 				if(cam_settings["led"] != undefined){
 					general_options.push({

@@ -20,6 +20,7 @@ define(['config', 'backbone','underscore', 'raphael'], function(conf,bb,_,Raphae
 		
 		var paper = Raphael($('.player-control-container')[0], size.width, size.height);
 		$('.player-control-container svg').css('position','absolute');
+		$(".player-control-container svg").css("left", size.left + "px");
 		$(".player-control-container svg").css("z-index", 10);
 		
 		//$('.player-control-container svg').attr("width","100%");
@@ -257,10 +258,12 @@ define(['config', 'backbone','underscore', 'raphael'], function(conf,bb,_,Raphae
 		paper.rectsGroups[layersCount].push(circles[1]);
 		paper.rectsGroups[layersCount].push(circles[2]);
 		paper.rectsGroups[layersCount].push(circles[3]);
-		paper.redrawRect = function(){
-			this.setSize($('.flash-player-container')[0].clientWidth, $('.flash-player-container')[0].clientHeight);
-			this.paperWidth = $('.flash-player-container')[0].clientWidth;
-			this.paperHeight = $('.flash-player-container')[0].clientHeight;
+		paper.redrawRect = function(size_player){
+			var size = CloudUI.calculateMotionZoneSize(size_player);
+			$(".player-control-container svg").css("left", size.left + "px");
+			this.setSize(size.width, size.height);
+			this.paperWidth = size.width;
+			this.paperHeight = size.height;
 			xStep = this.width/this.columns;
 			yStep = this.height/this.rows;
 			
@@ -276,6 +279,7 @@ define(['config', 'backbone','underscore', 'raphael'], function(conf,bb,_,Raphae
 					this.rectsGroups[j][i].paperHeight = this.height;
 				}
 			}
+			application.centringLayoutButtons();
 		};
 		//return paper;
 	};
@@ -314,9 +318,11 @@ define(['config', 'backbone','underscore', 'raphael'], function(conf,bb,_,Raphae
 		return paper;
 	};
 	application.centringLayoutButtons = function(){
-		panelWidth = $('.layers').width();
-		documentWidth = $(window).width();
-		$('.layers').css('left', documentWidth/2 - panelWidth/2);
+		setTimeout(function(){
+			var panelWidth = $('.layers').width();
+			var documentWidth = $(window).width();
+			$('.layers').css('left', $(window).width()/2 - $('.layers').width()/2);
+		}, 200);
 	};
 	application.addZone = function(columns, rows,layersCount){
 		application.showMDPanelGrid();

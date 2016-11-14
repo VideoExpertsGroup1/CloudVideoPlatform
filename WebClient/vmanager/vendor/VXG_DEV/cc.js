@@ -4,7 +4,7 @@ window.cc = {
 	secure_password: true,
 	clips: true,
 	clips_tags: false,
-	shared_clips: false,
+	shared_clips: true,
 	account_sharing_clips: false, // deprecated
 	extend_account_settings: function(app, settings_template){
 	},

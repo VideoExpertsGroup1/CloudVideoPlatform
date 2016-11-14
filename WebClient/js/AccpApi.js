@@ -50,7 +50,7 @@ window.AccpApi = new function (){
 	});
 	
 	this.isDemo = function(){
-		return localStorage["is_opened_like_demo"] == "true";
+		return localStorage["is_opened_like_demo"] ==="true";
 	}
 	
 	this.demo_login = function(){
@@ -152,7 +152,7 @@ window.AccpApi = new function (){
 	};
 	
 	this.logout = function(data){
-		localStorage.setItem("is_opened_like_demo", false);
+		localStorage.removeItem("is_opened_like_demo");
 		var d = $.Deferred();
 		$.ajaxSetup({
 			crossDomain: true,

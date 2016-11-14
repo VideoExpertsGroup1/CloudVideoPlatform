@@ -30,6 +30,7 @@
         // Regexes and supporting functions are cached through closure
         return function (date, mask, utc) {
             var dF = dateFormat;
+			var prev_date = date;
 
             // You can't provide utc if you skip other args (use the "UTC:" mask prefix)
             if (arguments.length == 1 && Object.prototype.toString.call(date) == "[object String]" && !/\d/.test(date)) {
@@ -41,7 +42,7 @@
 			date = date ? new Date(date) : Date.now();
             if (isNaN(date)) {
 				SkyVR.printStack();
-				throw SyntaxError("invalid date: [" + date + "]");
+				throw SyntaxError("invalid date: [" + date + "] [" + prev_date + "]");
 			}
 
             mask = String(dF.masks[mask] || mask || dF.masks["default"]);
@@ -181,16 +182,6 @@ define("views/home/view", ["underscore", "marionette"], function (e, t) {
         }
     })
 });
-define("tmpl/main/timeline", ["lodash"], function (_) {
-    return function (obj) {
-        {
-            var __p = "";
-            Array.prototype.join
-        }
-        with (obj || {}) __p += "<span class='wwn-client-upgrade-loading'>\n  <span class='spinner gray'></span>\n</span>\n";
-        return __p
-    }
-});
 
 define('transport', ['underscore'], function (underscore) {
     return underscore.extend({}, {
@@ -243,265 +234,7 @@ define('timeline-model', ['backbone', 'transport'], function (backbone, t) {
     return m;
 });
 
-define('calendar', ['backbone', 'config', 'underscore', 'event'], function (Backbone, config, _, event) {
-    return _.extend({}, {
-        activeDate: null,
-        activeMonthDate: { month: 1, date: 1},
-        curActiveDays: {},
-        cDate: null,
-        data: {},
-        initialize: function (selector, camera_id, aDate) {
-            this.data = [];
-            this.init = true;
-            this.timeouts = [];
-            this.curActiveDays = {};
-            this.hashTable = [];
-            var dt = new Date(aDate) || new Date(SkyVR.getCurrentTimeUTC());
-            this.selector = selector || new Error('Selector must be specified');
-            this.camid = camera_id;
-            this.cDate = this.activeDate = dt;
-            var self = this;
-            self._prepareData([]);
-            self.buildCalendar();
-        },
-        renderCalendar: function () {
-            console.log("[CALENDAR] Render called");
-            var self = this;
-            if(self.init == undefined){
-				console.log("[CALENDAR] Render ended. activeSession is undefined");
-				return;
-			}
-            var callback =  function (err, reslt) {
-				if(self.init == undefined){
-					console.log("[CALENDAR] Render ended. activeSession is undefined");
-					return;
-				}
-                self.data = reslt.objects;
-                self._prepareData(self.data);
-                self.buildCalendar();
-                self.bindEvents();
-                console.log("[CALENDAR] Render ended");
-            }
-            // set empty data
-            self._prepareData([]);
-            self.buildCalendar();
-            var cam = SkyVR.cache.cameraInfo();
-            console.log("[CALENDAR] Camera cache ", cam);
-            console.log("[CALENDAR] Camera cameraID ", SkyVR.config.cameraID);
-            
-            console.log("[CALENDAR] is p2p_streaming: ", SkyVR.isP2PStreaming());
-            if (SkyVR.isP2PStreaming()){
-				console.log("[CALENDAR] Camera is P2P");
-				if (!cam){
-					console.log("[CALENDAR] Camera did not found");
-					return;
-				}else if (cam && cam.status != "active"){
-					console.log("[CALENDAR] Camera is not active");
-					return;
-				}
-
-                var defer = $.Deferred();
-                defer.done(function (data) {
-                    console.log("[CALENDAR] Data recived start render");
-                    callback(false,data);
-                }).fail(function () {
-                    console.log("[CALENDAR] Data NOT recived start render & try get data after 10 sec ");
-                });
-                self.buildCalendar();
-				P2PProvider.getActivity(defer);
-			} else {
-				console.log("[CALENDAR] Camera is Cloud mode");
-                SkyVR.storageActivity().done(function(data){
-					callback(false,data);
-				});
-            }
-        },
-        fixView: function () {
-            var self = this;
-            var prev = new Date(this.cDate);
-            prev.setDate(1);
-            prev.setMonth(prev.getMonth() - 1);
-            prev = this.activeMonth(prev.getFullYear(), self.getMonthNum(prev));
-            var next = new Date(this.cDate);
-            next.setDate(1);
-            var year = next.getFullYear();
-            next.setMonth(next.getMonth()+1);
-            next = this.activeMonth(next.getFullYear(), self.getMonthNum(next));
-            var month = new Date(this.cDate).format('mmmm');
-            $('.calendar .current-month').text(app.polyglot.t(month) + " " + year);
-            $('.calendar .month').removeClass('next prev');
-            if(next){
-                $('.calendar .month').addClass('next');
-            }
-            if(prev){
-                $('.calendar .month').addClass('prev');
-            }
-            var calendar_days = '<span>' + app.polyglot.t('calendar_sunday_short') + '</span>'
-				+ '<span>' + app.polyglot.t('calendar_monday_short') + '</span>'
-				+ '<span>' + app.polyglot.t('calendar_tuesday_short') + '</span>'
-				+ '<span>' + app.polyglot.t('calendar_wednesday_short') + '</span>'
-				+ '<span>' + app.polyglot.t('calendar_thursday_short') + '</span>'
-				+ '<span>' + app.polyglot.t('calendar_friday_short') + '</span>'
-				+ '<span>' + app.polyglot.t('calendar_saturday_short') + '</span>';
-            $('.calendar .header').html(calendar_days);
-        },
-
-        _prepareData: function (dat) {
-            var list = Object.create({});
-            var self = this;
-            this.maxDate = null;
-            _.each(dat, function (el) {
-                var calendarDate = new Date(el);
-				self.maxDate = self.maxDate && self.maxDate > calendarDate ?  self.maxDate : calendarDate;
-				var year = calendarDate.getUTCFullYear();
-				var month = calendarDate.getUTCMonth() + 1;
-				var date = calendarDate.getUTCDate();
-				list[year] = list[year] || {};
-				list[year][month] = list[year][month] || {};
-				list[year][month][date] = list[year][month][date] = true;
-            });
-            this.hashTable = list;
-            console.log(list);
-        },
-        getMonthNum: function (dt) {
-            return dt.getUTCMonth() + 1;
-        },
-        nextMonth: function () {
-            var tmp = new Date(this.cDate);
-            tmp.setDate(1);
-            tmp.setMonth(tmp.getMonth() + 1);
-            return tmp;
-        },
-        prevMonth: function () {
-            var tmp = new Date(this.cDate);
-            tmp.setDate(1);
-            tmp.setMonth(tmp.getMonth() - 1);
-            return tmp;
-        },
-        getDaysInMonths: function (dt) {
-            var tmp = new Date(this.cDate);
-            var monNum = tmp.getMonth();
-            var max_day = 28
-            tmp.setDate(max_day);
-            while(monNum == tmp.getMonth()){
-                max_day++;
-                tmp.setDate(max_day);
-            }
-            max_day--;
-            return max_day;
-        },
-        drawActivityDate: function(month, date){
-			if(this.activeMonthDate.month != month || this.activeMonthDate.date != date){
-				this.activeMonthDate.month = month;
-				this.activeMonthDate.date = date;
-				// $('.calendar .days strong').removeClass('active');	
-				// console.log("drawActivityDate. month: " + month + ", date: " + date);
-				var els = $('.calendar .days strong');
-				for(var i = 0; i < els.length; i++){
-					// console.log(els[i]);
-				}
-			}
-		},
-		setDate: function (dt) {
-            this.activeDate = _.isObject(dt) ? dt : new Date(dt);
-            this._setDaysWithActivity(dt);
-        },
-        _setDaysWithActivity: function (dt) {
-            var self = this;
-            var d = _.isObject(dt) ? dt : new Date(dt);
-            if (!this.activeMonth(d.getFullYear(), self.getMonthNum(d))) {
-                return [];
-            }
-			var year = d.getFullYear();
-			var month = self.getMonthNum(d);
-			var tmp = this.hashTable[year][month];
-			this.curActiveDays = _.isObject(tmp) ? tmp : [];
-        },
-        activeMonth: function (year, month) {
-			return _.isObject(this.hashTable[year]) && _.isObject(this.hashTable[year][month]);
-        },
-        buildCalendar: function () {
-            var self = this;
-            var tmp = new Date(this.cDate);
-            tmp.setDate(1);
-            var cDays = this.getDaysInMonths(this.cDate);
-
-            this._setDaysWithActivity(this.cDate);
-
-            var c = function (el) {
-                $('.calendar .days strong').removeClass('active');
-                $(this).addClass('active');
-                event.trigger(event.CALENDAR_DATE_CHANGED, $(this).data());
-            }
-
-            self.outer = $('.calendar .days');
-            self.outer.html('');
-            var ctr = 0;
-            var getPrevDays = function (day) {
-                var tmp1 = new Date(day);
-                tmp1.setDate(0);
-                var pevMonthLastDay = tmp1.getDate();
-                var ret = [];
-                while (pevMonthLastDay){
-                    ret.push(pevMonthLastDay);
-                    pevMonthLastDay -=1;
-                }
-                return ret;
-            }
-            var prevMonthDays = getPrevDays(tmp);
-            var td = tmp.getDay();
-            for (var i = td-1; i >=0; i--) {
-                this.outer.append($("<span style='color: #969696;'>"+prevMonthDays[i]+"</span>"));
-            }
-            prevMonthDays.reverse();
-            for (var i = 0; i < cDays; i++) {
-                var d = i + 1;
-                if (self.curActiveDays[d]) {
-                    this.outer.append($("<strong>" + (d) + "</strong>").data('day', d).data('month', tmp.getMonth()).data('year', tmp.getFullYear()).click(c));
-                } else {
-                    this.outer.append($("<span>" + (d) + "</span>"));
-                }
-            }
-            tmp.setDate(cDays);
-            var counter = 0;
-            for (var i = tmp.getDay(); i < 6; i++) {
-                this.outer.append($("<span style='color: #969696;'>"+prevMonthDays[counter]+"</span>"));
-                counter++;
-            }
-            var len = $('.days').children().length;
-            if(len < 42){
-                while($('.days').children().length != 42){
-                    this.outer.append($("<span style='color: #969696;'>"+prevMonthDays[counter]+"</span>"));
-                    counter++;
-                }
-            }
-            this.curActiveDays = [];
-            //this.selector.find('.days').html('').append(this.outer);
-            this.fixView();
-        },
-        bindEvents: function () {
-            var self = this;
-            $('.calendar .month .next').unbind().click(function () {
-                self.cDate = self.nextMonth();
-                self.buildCalendar();
-            });
-            $('.calendar .month .prev').unbind().click(function () {
-                self.cDate = self.prevMonth();
-                self.buildCalendar();
-            });
-        },
-		dispose:function(){
-			console.log("[CALENDAR] dispose");
-			$('.calendar .days').html('');
-			$('.calendar .current-month').text("");
-			$('.calendar .month').removeClass('next prev');
-			$('.calendar .header').html('');
-			self.init = undefined;
-			
-		}
-    })
-});
-define('timeline', ['backbone', 'config', 'transport', 'underscore', 'views/home/view', "tmpl/main/timeline", 'd3', 'timeline-model', 'calendar', 'event', 'timezonejs'], function (backbone, config, transport, underscore, view, timeleineTpl, d3, m, calendar, event, timezoneJS) {
+define('timeline', ['backbone', 'config', 'transport', 'underscore', 'views/home/view', 'd3', 'timeline-model', 'event', 'timezonejs'], function (backbone, config, transport, underscore, view, d3, m, event, timezoneJS) {
     function roundToSeconds(time) {
         return time / 1e3
     }
@@ -513,7 +246,6 @@ define('timeline', ['backbone', 'config', 'transport', 'underscore', 'views/home
     var obj = underscore.extend({}, backbone.Events);
     underscore.extend(obj, {
         className: 'timeline',
-        template: timeleineTpl,
         templateViewName: "TimelineView",
         events: {},
         videos: [
@@ -525,7 +257,6 @@ define('timeline', ['backbone', 'config', 'transport', 'underscore', 'views/home
         initialize: function (param) {
 			console.log("[TIMELINE] initialize")
             this.model = m;
-            this.calendar = calendar;
             this.lockStatus = false;
             this.activeSession = undefined;
             this.timelineLoader = new TimelineLoader(event);
@@ -587,8 +318,8 @@ define('timeline', ['backbone', 'config', 'transport', 'underscore', 'views/home
                     promise.resolve();
                 }
             });
-            this.calendar.initialize($('.calendar'), this.cam.id, SkyVR.getCurrentTimeUTC());
-            this.calendar.renderCalendar();
+            Calendar.initialize(event);
+            Calendar.renderCalendar();
             this.Record = function (obj, time) {
 				if(obj){
 					if (underscore.isObject(time)) {
@@ -950,7 +681,7 @@ define('timeline', ['backbone', 'config', 'transport', 'underscore', 'views/home
 						if(!self.timelineLoader.isLoad(start, end)){
 							$('.timeline-container').addClass("loading");
 						}
-						console.log("CALENDAR_DATE_CHANGED " + start + "" + end)
+						console.log("CALENDAR_DATE_CHANGED " + start + ":" + end)
 						self.timelineLoader.load(start, end).done(function(){
 							var el = self.timelineLoader.recordList.recordDuringOrAfter(t);
 							if(el && el.startTime >= start && el.startTime < end){
@@ -968,7 +699,7 @@ define('timeline', ['backbone', 'config', 'transport', 'underscore', 'views/home
 			this.stopUpdateCalendar = function(){
 				clearInterval(this.calendarObserver);
 			}
-			
+
 			this.startUpdateCalendar = function(){
 				this.stopUpdateCalendar();
 				this.calendarObserver = setInterval(function () {
@@ -980,9 +711,9 @@ define('timeline', ['backbone', 'config', 'transport', 'underscore', 'views/home
 			event.unbind(event.CALENDAR_UPDATE);
 			event.on(event.CALENDAR_UPDATE, function(){
 				console.log("[CALENDAR] Update...");
-				self.calendar.dispose();
-                self.calendar.initialize($('.calendar'), self.cam.id, SkyVR.getCurrentTimeUTC());
-                self.calendar.renderCalendar();
+				Calendar.dispose();
+				Calendar.initialize(event);
+				Calendar.renderCalendar();
                 self.stopUpdateCalendar();
                 self.startUpdateCalendar();
 			});
@@ -990,9 +721,9 @@ define('timeline', ['backbone', 'config', 'transport', 'underscore', 'views/home
 			event.unbind(event.CALENDAR_CLEANUP);
 			event.on(event.CALENDAR_CLEANUP, function(){
 				console.log("[CALENDAR] cleanup...");
-				self.calendar.dispose();
-                self.calendar.initialize($('.calendar'), self.cam.id, SkyVR.getCurrentTimeUTC());
-                // self.calendar.renderCalendar();
+				Calendar.dispose();
+                Calendar.initialize(event);
+                // Calendar.renderCalendar();
 				self.stopUpdateCalendar();
 			});
 
@@ -1077,7 +808,7 @@ define('timeline', ['backbone', 'config', 'transport', 'underscore', 'views/home
             this.sessionWatchdog().removeListner();
             this.svg.remove();
             // this.removeListner();
-            this.calendar.dispose();
+            Calendar.dispose();
             this.dismissThumbnail();
 
             $('.skyvr-timeline-thumbnail').css({
@@ -1452,7 +1183,7 @@ define('timeline', ['backbone', 'config', 'transport', 'underscore', 'views/home
         }, 50),
         getCvrEnd: function () {
 			var endTime = this.timelineLoader.recordList.lastEndTime();
-			var calendarMaxTime = this.calendar.maxDate ? this.calendar.maxDate.getTime() : undefined;
+			var calendarMaxTime = Calendar.maxDate ? Calendar.maxDate.getTime() : undefined;
 			return endTime || calendarMaxTime || SkyVR.getCurrentTimeUTC();
         },
         isOutOfBoundsLeft: function () {
@@ -1562,11 +1293,11 @@ define('timeline', ['backbone', 'config', 'transport', 'underscore', 'views/home
 				this.playheadPosition = t;
 				this.playhead.attr("transform", this._cssTranslate(t - config.timeline.hoverWidth / 2, 0));
 				// TODO sea-kg
-				if(this.calendar){
+				if(Calendar.init){
 					var d = this.correctTime2(e);
 					var month = d.getUTCMonth();
 					var date = d.getUTCDate();
-					this.calendar.drawActivityDate(month, date);
+					Calendar.drawActivityDate(month, date);
 				}
 			}
             return 0;

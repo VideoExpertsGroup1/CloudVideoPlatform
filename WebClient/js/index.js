@@ -41,9 +41,8 @@ window.AccpClient = new function (){
 	this.svcpLink='';
 	this.plusPress=false;
 	this.camerasInfo=null;
-	var updateCamerasInterval=10000;
+	this.polingCamerasListInterval = 30000;
 	this.DelIndex="";
-	this.getCamerasInterval=function(){return updateCamerasInterval;};
 	this.parsePageParams = function() {
 		var loc = window.location.search.slice(1);
 		var arr = loc.split("&");
@@ -211,7 +210,7 @@ window.AccpClient = new function (){
 			 camera="<div  style='float:left;width:300px;height:270px;background:#3788b1;margin-left:20px;"+
 			 "margin-top:20px;background-color:#3788b1'>"+
 			 //(cameras.objects[i].status=="not_started"&&cameras.objects[i].preview!==undefined?"<div style='width:300px;height:270px;background:black;opacity:0.1'></div>":"")+
-			 "<img src=\""+preview+"\" onerror='this.src=\"./images/camimg_default.png\";' onclick='goToVideo(this,"+index+")' width='294px' height='210px' style='margin-top:3px;cursor:pointer'></img>"+
+			 "<img src=\"./vmanager/images/transparent_2x2.png\" onload='this.src=\""+preview+"\";this.onload=\"\" ' onerror='this.src=\"./images/camimg_default.png\";' onclick='goToVideo(this,"+index+")' width='294px' height='210px' style='margin-top:3px;cursor:pointer'></img>"+
 			 "<div  class='camName'>"+camName+"</div>"+
 			 "<img src='./images/delete_blue_25x25.svg' onclick='showCameraDeletionDialog("+index+")' style='float:right;margin-right:10px;margin-top:20px;color:red;cursor:pointer'></img> </div>";
 			camGrid+=camera;
@@ -498,45 +497,34 @@ window.AccpClient = new function (){
 	
 	showCoords=function (event){
 		
-     var clickPos = $("#addCameraDialog").offset();
-	 
-     if(document.getElementById('addCameraDialog').style.display==='block')
-	{
+	var clickPos = $("#addCameraDialog").offset();
+
+	if(document.getElementById('addCameraDialog').style.display==='block'){
 		if(event.clientX>clickPos.left&&event.clientX<clickPos.left+$("#addCameraDialog").outerWidth()&&
-		   event.clientY>clickPos.top&&event.clientY<clickPos.top+$("#addCameraDialog").outerHeight())
-		;
-		else
-		if(!AccpClient.plusPress)
-		;
-		
-		
+		   event.clientY>clickPos.top&&event.clientY<clickPos.top+$("#addCameraDialog").outerHeight()){
+			// TODO ?
+		}else if(!AccpClient.plusPress){
+			// TODO ?
+		}
 	}
 	
 	//AccpClient.plusPress=false;
-    
-    
 }
-	var camerasLoop;
-	var pollingInterval=AccpClient.getCamerasInterval();
-	function updateCamerasLoop(){
-		   
-		   function updateCameras(){
+
+var camerasLoop;
+function updateCamerasLoop(){
+	function updateCameras(){
 		AccpApi.cameras().done(function(response){
-			
-			
-			AccpClient.cameraGrid(response);
-			
-			
-			
-			}).fail();
-		   }
-		   
-		   updateCameras();
-		   
-		  camerasLoop=setTimeout(updateCamerasLoop,pollingInterval);
-		   
-		
+			console.log("Update cameras list");
+			AccpClient.cameraGrid(response); 
+		}).fail(function(){
+			console.error("Could not get cameras list");
+		});
 	}
+	updateCameras();
+	camerasLoop = setTimeout(updateCamerasLoop,AccpClient.polingCamerasListInterval);
+}
+	
 function goToDemo(){
 	AccpApi.demo_login().done(function(response){
 		window.location = AccpApi.getSvcpAuthWebUrl_WithRedirect();

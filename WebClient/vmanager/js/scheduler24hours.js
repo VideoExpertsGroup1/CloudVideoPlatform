@@ -64,7 +64,6 @@ window.Scheduler24 = new function () {
 		localization_start : "Start",
 		localization_stop : "Stop",
 		base_api_url: "",
-		cameraId: "",
 		mode: "week",
 		test: false
 	};
@@ -650,59 +649,52 @@ window.Scheduler24 = new function () {
 		Scheduler24.intervalsCache = { "monday" : [], "tuesday" : [] };
 		Scheduler24.tmpInterval.draw = false;
 
-		$.ajax({
-			url: Scheduler24.config.base_api_url + "api/v2/cameras/" + Scheduler24.config.cameraId + "/schedule/",
-			type: 'GET',
-			success: function(data){
-				for (var i = 0; i < Scheduler24.config.week.length; i++) {
-					var day = Scheduler24.config.week[i];
-					Scheduler24.intervals[day] = [];
-					Scheduler24.intervalsCache[day] = [];
-					if (data[day]) {
-						inter = data[day];
-						// console.log(JSON.stringify(inter));
-						for(var i1 = 0; i1 < inter.length; i1++) {
-							Scheduler24.intervals[day].push({
-								'start' : inter[i1].start,
-								'stop' : inter[i1].stop,
-								'record' : inter[i1].record
-							});
-							Scheduler24.intervalsCache[day].push({
-								'start' : inter[i1].start,
-								'stop' : inter[i1].stop,
-								'record' : inter[i1].record
-							});
-						}
+		CloudAPI.cameraSchedule().done(function(data){
+			for (var i = 0; i < Scheduler24.config.week.length; i++) {
+				var day = Scheduler24.config.week[i];
+				Scheduler24.intervals[day] = [];
+				Scheduler24.intervalsCache[day] = [];
+				if (data[day]) {
+					inter = data[day];
+					// console.log(JSON.stringify(inter));
+					for(var i1 = 0; i1 < inter.length; i1++) {
+						Scheduler24.intervals[day].push({
+							'start' : inter[i1].start,
+							'stop' : inter[i1].stop,
+							'record' : inter[i1].record
+						});
+						Scheduler24.intervalsCache[day].push({
+							'start' : inter[i1].start,
+							'stop' : inter[i1].stop,
+							'record' : inter[i1].record
+						});
 					}
 				}
-				var nReplaces = 0;
-				if(Scheduler24.config.replaceByEventToOn){
-					console.log('[SCHEDULER] Ad-Hoc for replacement by_event -> on');
-					for(var day in Scheduler24.intervals){
-						for(var i1 = 0; i1 < Scheduler24.intervals[day].length; i1++) {
-							if(Scheduler24.intervals[day][i1].record == 'by_event'){
-								Scheduler24.intervals[day][i1].record = 'on';
-								nReplaces++;
-							}
+			}
+			var nReplaces = 0;
+			if(Scheduler24.config.replaceByEventToOn){
+				console.log('[SCHEDULER] Ad-Hoc for replacement by_event -> on');
+				for(var day in Scheduler24.intervals){
+					for(var i1 = 0; i1 < Scheduler24.intervals[day].length; i1++) {
+						if(Scheduler24.intervals[day][i1].record == 'by_event'){
+							Scheduler24.intervals[day][i1].record = 'on';
+							nReplaces++;
 						}
-						Scheduler24.intervals[day] = Scheduler24.joinNeighborIntervals(Scheduler24.intervals[day]);
 					}
+					Scheduler24.intervals[day] = Scheduler24.joinNeighborIntervals(Scheduler24.intervals[day]);
 				}
-				// alert(JSON.stringify(data));
-				Scheduler24.networkprocess = false;
-				Scheduler24.renderCanvas();
-				if(Scheduler24.config.replaceByEventToOn && nReplaces > 0){
-					console.log('[SCHEDULER] Ad-Hoc for replacement. save');
-					Scheduler24.save();
-				}				
-			},
-			error: function(xhr, status, error) {
-				alert("xhr.responseText" + xhr.responseText);
-				Scheduler24.networkprocess = false;
-				Scheduler24.renderCanvas();
-			},
-			data:  JSON.stringify(obj),
-			contentType: 'json'
+			}
+			// alert(JSON.stringify(data));
+			Scheduler24.networkprocess = false;
+			Scheduler24.renderCanvas();
+			if(Scheduler24.config.replaceByEventToOn && nReplaces > 0){
+				console.log('[SCHEDULER] Ad-Hoc for replacement. save');
+				Scheduler24.save();
+			}
+		}).fail(function(xhr, status, error){
+			alert("xhr.responseText" + xhr.responseText);
+			Scheduler24.networkprocess = false;
+			Scheduler24.renderCanvas();
 		});
 	}
 	
@@ -738,34 +730,23 @@ window.Scheduler24 = new function () {
 			}
 		}
 
-		var json_data = JSON.stringify(obj);
-
-		var saving_url = Scheduler24.config.base_api_url + "api/v2/cameras/" + Scheduler24.config.cameraId + "/schedule/";
+		var saving_url = Scheduler24.config.base_api_url + "api/v2/cameras/" + CloudAPI.cameraID() + "/schedule/";
 		console.log("Saving... URL: " + saving_url);
-		console.log("Saving... Data: " + json_data);
+		console.log("Saving... Data: ", obj);
 
-		$.ajax({
-			url: saving_url,
-			type: 'PUT',
-			success: function(data){
-				console.log("Saving... Success: " + data);
-				if (data == "")
-					console.log("Scheduler24hours: saved");
-				Scheduler24.networkprocess = false;
-				Scheduler24.renderCanvas();
-			},
-			error: function(xhr, status, error) {
-				// alert("status" + status);
-				// alert("error" + error);
-				console.log("Saving... error: [" + xhr.responseText + "]");
-				alert("Saving... Error.xhr.responseText" + xhr.responseText);
-				Scheduler24.networkprocess = false;
-				Scheduler24.renderCanvas();
-			},
-			data: json_data,
-			cache : false,
-			contentType: 'json'
-		});
+		// TODO redesign to work with CloudAPI
+		CloudAPI.updateCameraSchedule(obj).done(function(){
+			console.log("Saving... Success!");
+			console.log("Scheduler24hours: saved");
+			Scheduler24.networkprocess = false;
+			Scheduler24.renderCanvas();
+		}).fail(function(xhr, status, error){
+			console.log("Saving failed, xhr:", xhr);
+			console.log("Saving failed, status:", status);
+			console.log("Saving failed, error:", error);
+			Scheduler24.networkprocess = false;
+			Scheduler24.renderCanvas();
+		})
 	}
 	
 	this.localizeByPolyglot = function() {

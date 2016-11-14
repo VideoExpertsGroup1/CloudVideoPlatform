@@ -76,7 +76,6 @@ define(['config', 'backbone','underscore', 'application', '../views/camera_setti
 					}
 					Scheduler24.show('camera-settings-scheduler-editor-canvas');
 					Scheduler24.config.base_api_url = conf.base_api_url;
-					Scheduler24.config.cameraId = self.camera['id'];
 					Scheduler24.config.replaceByEventToOn = !SkyVR.isP2PStreaming();
 					Scheduler24.selectLegend('_');
 					Scheduler24.load("Monday");
@@ -86,36 +85,27 @@ define(['config', 'backbone','underscore', 'application', '../views/camera_setti
 				$('.settings-list-element.new-window .element-name').click(newWindowHandler);
 				$('form#camera_name').submit(function(event){
 					event.preventDefault();
+					if(SkyUI.isDemo()){SkyUI.showDialogDemo();return;}
 					form_data = _.object(_.map($(this).serializeArray(), _.values))
 					var obj = {};
 					obj.name = form_data['camera_name'];
 					self.camera.name = obj.name;
 					var el = $(this);
-					return $.ajax({
-						url: conf.base_api_url + "api/v2/cameras/"+ self.camera['id'] + "/",
-						type: 'PUT',
-						success: function(data){
-							el.parent().parent().find(".current-value").text(obj.name);
-						},
-						data:  JSON.stringify(obj),
-						contentType: 'application/json'
+					CloudAPI.updateCamera({"name": obj.name}).done(function(){
+						el.parent().parent().find(".current-value").text(obj.name);
 					});
 				});
 				
 				$('form#camera_url_edit').submit(function(event){
 					event.preventDefault();
+					if(SkyUI.isDemo()){SkyUI.showDialogDemo();return;}
 					form_data = _.object(_.map($(this).serializeArray(), _.values))
 					var obj = {};
 					obj.url = form_data['camera_url'];
 					obj.login = form_data['camera_login'];
 					obj.password = form_data['camera_password'];
 					var el = $(this);
-					$.ajax({
-						url: conf.base_api_url + "api/v2/cameras/"+ self.camera['id'] + "/",
-						type: 'PUT',
-						data:  JSON.stringify(obj),
-						contentType: 'application/json'
-					}).done(function(data){
+					CloudAPI.updateCamera(obj).done(function(){
 						el.parent().parent().find(".current-value").text(obj.url);
 					});
 				});
@@ -127,8 +117,9 @@ define(['config', 'backbone','underscore', 'application', '../views/camera_setti
 
 				$('#memory_card_format').click(function(event){
 					event.preventDefault();
+					if(SkyUI.isDemo()){SkyUI.showDialogDemo();return;}
 					if (confirm(app.polyglot.t('memory_card_format_confirm'))){
-						SkyVR.formatMemoryCard(function(response){
+						CloudAPI.formatMemoryCard().done(function(response){
 							console.log("formatMemoryCard");
 							console.log(response);
 							cam_settings_view.updateInformationAboutMemoryCard({"status":"formatting", "size" : 0, "free" : 0});
@@ -137,108 +128,70 @@ define(['config', 'backbone','underscore', 'application', '../views/camera_setti
 				});
 
 				$('form#camera_record_mode input').click(function(){
-					//console.log($(this).val());
-					/*var stream; 
-					$.ajax({
-						url : conf.base_api_url + "api/v2/cameras/" + self.camera['id'] + "/video/streams/video1",
-						type : "get",
-						async: false,
-						success : function(data){
-							stream = data;
-						}});*/
 					self.camera["rec_mode"] = $(this).val();
 					var obj = {};
 					obj.rec_mode = $(this).val();
-
 					title = $(this).next().text();
-					return $.ajax({
-						url: conf.base_api_url + "api/v2/cameras/" + self.camera['id'] + "/",
-						type: 'PUT',
-						success: function(data){
-							var ui = {value: title}
+					CloudAPI.updateCamera(obj).done(function(){
+						var ui = {value: title}
 							setSetting("camera_record_mode", ui);
-						},
-						data: JSON.stringify(obj),
-						contentType: 'application/json'
 					});
 				});
 				
 				$('form#camera_media_mode input').click(function(){
+					if(SkyUI.isDemo()){SkyUI.showDialogDemo();return;}
 					var data = {};
 					data.resolution = JSON.parse($(this).val());
 					title = $(this).next().text();
-					SkyVR.videoStreamUpdate('video1', data).done(function(){
+					var video_name = CloudAPI.cache.cameraVideoStreamName();
+					CloudAPI.updateCameraVideoStream(video_name, data).done(function(){
 						var ui = {value: title};
 						setSetting("camera_media_mode", ui);
 					});
 				});
 				$('form#camera_quality input').click(function(){
+					if(SkyUI.isDemo()){SkyUI.showDialogDemo();return;}
 					var title = $(this).next().text();
 					var vbr_quality = JSON.parse($(this).val());
-					SkyVR.cameraVideoStream('video1').done(function(stream){
-						vbr_quality = vbr_quality + stream.caps[0].vbr_quality[0];
-						SkyVR.setVBRQuality(vbr_quality, 'video1', function(data){
-							var ui = {value: title};
-							setSetting("camera_quality", ui);
-						});
-					});
+					var video_name = CloudAPI.cache.cameraVideoStreamName();
+					var stream = CloudAPI.cache.cameraVideoStreams()[video_name];
+					vbr_quality = vbr_quality + stream.caps[0].vbr_quality[0];
+					CloudAPI.updateCameraVideoStream(video_name, {
+						vbr_quality: vbr_quality,
+						vbr: true
+					}).done(function(){
+						var ui = {value: title};
+						setSetting("camera_quality", ui);
+					})
 				});
 
 				$('form#camera_rotate_image input').click(function(){
+					if(SkyUI.isDemo()){SkyUI.showDialogDemo();return;}
 					var obj = {};
 					obj.horz_flip = $(this).val(); // TODO: obj.horz_flip = obj.vert_flip = $(this).val();
 					obj.vert_flip = $(this).val();
 					title = $(this).next().text();
-					return SkyVR.setCameraVideo(obj, function(){
+					CloudAPI.updateCameraVideo(obj).done(function(){
 						var ui = {value: title};
 						setSetting("camera_rotate_image", ui);
 					});
 				});
 
 				$('form#camera_night_vision input').click(function(){
-					//console.log($(this).val());
-					var video; 
-					$.ajax({
-						url : conf.base_api_url + "api/v2/cameras/" + self.camera['id'] + "/video/",
-						type : "get",
-						async: false,
-						success : function(data){
-							video = data;
-						}});
-
-					//form_data = _.object(_.map($(this).serializeArray(), _.values))
-					//self.camera['name'] = form_data['camera_name'];
+					if(SkyUI.isDemo()){SkyUI.showDialogDemo();return;}
+					var video = {};
 					var value = JSON.parse($(this).val());
 					if(value["tdn"])
 						video.tdn = value["tdn"];
 					if(value["ir_light"])
 						video.ir_light = value["ir_light"];
-					
+
 					title = $(this).next().text();
-					return $.ajax({
-						url: conf.base_api_url + "api/v2/cameras/" + self.camera['id'] + "/video/",
-						type: 'PUT',
-						success: function(data){
-							var ui = {value: title};
-							setSetting("camera_night_vision", ui);
-						},
-						data:  JSON.stringify(video),
-						contentType: 'application/json'
+					CloudAPI.updateCameraVideo(video).done(function(){
+						var ui = {value: title};
+						setSetting("camera_night_vision", ui);
 					});
 				});
-
-
-				var getAudioSettings = function(){
-					var settings = null;
-					$.ajax({
-						url : conf.base_api_url + "api/v2/cameras/" + self.camera['id'] + "/audio/",
-						type : "get",
-						async: false,
-						success : function(data){
-							settings = data;
-						}});
-					return settings;
-				};
 
 				$('form#speaker .setting-slider').slider({
 					range: "max",
@@ -265,7 +218,7 @@ define(['config', 'backbone','underscore', 'application', '../views/camera_setti
 				});
 
 				var sendData = _.debounce(function(type, value){
-					var audio = getAudioSettings();
+					var audio = CloudAPI.cache.cameraAudio();
 					if(audio == null) return;
 
 					switch(type){
@@ -284,17 +237,7 @@ define(['config', 'backbone','underscore', 'application', '../views/camera_setti
 						default:
 							return;
 					}
-
-					$.ajax({
-						url: conf.base_api_url + "api/v2/cameras/" + self.camera['id'] + "/audio/",
-						type: 'PUT',
-						success: function (data) {
-							console.log(audio);
-						},
-						data: JSON.stringify(audio),
-						contentType: 'application/json'
-					});
-
+					CloudAPI.updateCameraAudio(audio);
 				}, 900);
 
 				var setSetting = function(type, ui){
@@ -335,15 +278,13 @@ define(['config', 'backbone','underscore', 'application', '../views/camera_setti
 						case "led":
 							$("form#led").parent().parent().find(".current-value").text(ui.value);
 							break;
-						case "p2p_streaming":
-							$("form#p2p_streaming").parent().parent().find(".current-value").text(ui.value);
-							break;
 					}
 
 					//sendData(type);
 				};
 
 				$("form#speaker .slider-toogle").click(function(){
+					if(SkyUI.isDemo()){SkyUI.showDialogDemo();return;}
 					$(this).toggleClass('off');
 					if($(this).hasClass("off")){
 						$('form#speaker .setting-slider').slider( "option", "disabled", true );
@@ -354,6 +295,7 @@ define(['config', 'backbone','underscore', 'application', '../views/camera_setti
 				});
 
 				$("form#microphone .slider-toogle").click(function(){
+					if(SkyUI.isDemo()){SkyUI.showDialogDemo();return;}
 					$(this).toggleClass('off');
 					if($(this).hasClass("off")){
 						$('form#microphone .setting-slider').slider( "option", "disabled", true );
@@ -365,129 +307,40 @@ define(['config', 'backbone','underscore', 'application', '../views/camera_setti
 				});
 
 				$('form#led input').click(function(){
+					if(SkyUI.isDemo()){SkyUI.showDialogDemo();return;}
 					var obj = {};
 					obj.led = ($(this).val() == 'true');
 					title = $(this).next().text();
-					return $.ajax({
-						url: conf.base_api_url + "api/v2/cameras/" + self.camera['id'] + "/",
-						type: 'PUT',
-						success: function(data){
-							var ui = {value: title};
-							setSetting("led", ui);
-						},
-						data:  JSON.stringify(obj),
-						contentType: 'application/json'
-					});
+					CloudAPI.updateCamera(obj).done(function(){
+						var ui = {value: title};
+						setSetting("led", ui);
+					})
 				});
-
-				$('form#p2p_streaming input').click(function(){
-					var result = $(this).val() == 'true';
-					obj = {'p2p_streaming' : result};
-					title = $(this).next().text();
-					var event_type = result ? 'by_event' : 'on';
-					var new_mode = result ? app.polyglot.t('menu_p2p_mode') : app.polyglot.t('menu_cloud_mode');
-					
-					$('#camera-settings-modal').hide();
-					app.createDialogModal({
-						'title' : app.polyglot.t('dialog_title_p2p_mode_switch'),
-						'content' : app.polyglot.t('dialog_content_p2p_mode_switch').replace("%S%", new_mode),
-						'buttons' : [
-							{id: 'p2p-mode-switch-yes', text: app.polyglot.t('Ok'), close: false},
-							{text: app.polyglot.t('Cancel'), close: true}
-						],
-						'beforeClose' : function() {
-							$('#camera-settings-modal').show();
-							// var ui = {value: title};
-							// setSetting("p2p_streaming", ui);
-							if(result){
-								$('#p2p_streaming_true').prop("checked",false);
-								$('#p2p_streaming_false').prop("checked",true);
-							}else{
-								$('#p2p_streaming_true').prop("checked",true);
-								$('#p2p_streaming_false').prop("checked",false);
-							}
-						}
-					});
-					app.showDialogModal();
-					$('#p2p-mode-switch-yes').unbind().click(function(){
-						SkyVR.cameraSetP2PSettings(obj).done(function(){
-							// var ui = {value: title};
-							// setSetting("p2p_streaming", ui);
-							// reset schedule only if success p2p_setting
-							// reset scheduler mode
-							// P2P mode - by_event
-							// Cloud mode - on
-							SkyVR.cameraSetSchedule({
-								'monday': [{'start': '00:00', 'stop': '23:59', 'record' : event_type}],
-								'tuesday': [{'start': '00:00', 'stop': '23:59', 'record' : event_type}],
-								'wednesday': [{'start': '00:00', 'stop': '23:59', 'record' : event_type}],
-								'thursday': [{'start': '00:00', 'stop': '23:59', 'record' : event_type}],
-								'friday': [{'start': '00:00', 'stop': '23:59', 'record' : event_type}],
-								'saturday': [{'start': '00:00', 'stop': '23:59', 'record' : event_type}],
-								'sunday': [{'start': '00:00', 'stop': '23:59', 'record' : event_type}]
-							});
-							SkyVR.cameraSetInfo({'rec_mode' : event_type, "mode": "on"});
-							app.showDialogModal();
-							$.arcticmodal('close');
-							SkyVR.cameraP2PSettings().done(function(){
-								event.trigger(event.TOGGLE_STREAMING);
-							});
-						}).fail(function(){
-							alert("Sorry something wrong. Try again later or say about it to administrator");
-							$.arcticmodal('close');
-						});
-					});
-				});
-
-				var sendAlarm = function(type, notify){
-					$.ajax({
-						url : conf.base_api_url + "api/v2/cameras/" + self.camera['id'] + "/event_processing/events/"+ type +"/",
-						type : "get",
-						async: false,
-						success : function(data){
-							var obj = {
-								name: type,
-								receive: data.receive,
-								record: data.caps.can_record,
-								snapshot: data.caps.can_shapshot,
-								notify: notify
-							};
-
-							$.ajax({
-								url: conf.base_api_url + "api/v2/cameras/" + self.camera['id'] + "/event_processing/events/"+ type +"/",
-								type: 'PUT',
-								success: function(data){
-									//backHandler();
-								},
-								data:  JSON.stringify(obj),
-								contentType: 'application/json'
-							});
-
-						}});
-				};
 
 				$('form#sound_alarm input').click(function(){
-					sendAlarm("sound", $(this).val() === "true");
-				});
-
-				$('form#sound_alarm input').change(function(){
-					$(this).parent().parent().parent().find(".current-value").text($(this).val() === "true" ? "On" : "Off");
+					if(SkyUI.isDemo()){SkyUI.showDialogDemo();return;}
+					var notify = $(this).val() === "true";
+					var el = this;
+					CloudAPI.updateCameraEventProcessingEventsSound({"notify": notify}).done(function(){
+						$(el).parent().parent().parent().find(".current-value").text($(el).val() === "true" ? CloudUI.polyglot.t("On") : CloudUI.polyglot.t("Off"));
+					})
+					
 				});
 
 				$('form#motion_alarm input').click(function(){
-					sendAlarm("motion", $(this).val() === "true");
+					if(SkyUI.isDemo()){SkyUI.showDialogDemo();return;}
+					var notify = $(this).val() === "true";
+					var el = this;
+					CloudAPI.updateCameraEventProcessingEventsMotion({"notify": notify}).done(function(){
+						$(el).parent().parent().parent().find(".current-value").text($(el).val() === "true" ? CloudUI.polyglot.t("On") : CloudUI.polyglot.t("Off"));
+					})
 				});
-
-				$('form#motion_alarm input').change(function(){
-					$(this).parent().parent().parent().find(".current-value").text($(this).val() === "true" ? "On" : "Off");
-				});
-
-				/*$('form#camera_media_mode').submit(function(event){
-				});*/
 
 				$(".camera-power-button").click(function(){
 					// TODO: synchronize with code from "files/js/lib/player.js:~545" ".power-button" 
 					// button: camera on/off in menu
+					if(SkyUI.isDemo()){SkyUI.showDialogDemo();return;}
+					
 					var status = !$(this).hasClass("off");
 					var camera = ctoggle.setValue(self.camera, "on", status);
 					if(camera){
@@ -520,42 +373,29 @@ define(['config', 'backbone','underscore', 'application', '../views/camera_setti
 				$("#go_scheduler").click(newWindowHandler);
 
 				$(".scheduler-power-button").click(function(){
+					if(SkyUI.isDemo()){SkyUI.showDialogDemo();return;}
 					var sched_status = $(this).hasClass("off");
-					$.ajax({
-						url : conf.base_api_url + "api/v2/cameras/" + self.camera['id'] + "/",
-						type : "get",
-						async: false,
-						success : function(data){
-							var obj = data;
-							var old_mode = obj.mode;
-							if(data.status == "active"){
-								if(!sched_status){
-									obj.mode = "on";
-								}else{
-									obj.mode = "on_till_sched";
-								}
-							}else{ // inactive or offline
-								if(!sched_status){
-									obj.mode = "off";
-								}else{
-									obj.mode = "off_till_sched";
-								}
+					CloudAPI.cameraInfo().done(function(data){
+						var old_mode = data.mode;
+						if(data.status == "active"){
+							if(!sched_status){
+								data.mode = "on";
+							}else{
+								data.mode = "on_till_sched";
 							}
-							
-							// TODO merge with ctoggle.setValue from file camera-toggle.js
-							console.log("Set camera mode (2 place) - (from [" + old_mode + "] to [" + obj.mode + "])");
-							$.ajax({
-								url: conf.base_api_url + "api/v2/cameras/" + self.camera['id'] + "/",
-								type: 'PUT',
-								success: function(data){
-									//backHandler();
-								},
-								data:  JSON.stringify(obj),
-								contentType: 'application/json'
-							});
-
-						}});
-
+						}else{ // inactive or offline
+							if(!sched_status){
+								data.mode = "off";
+							}else{
+								data.mode = "off_till_sched";
+							}
+						}
+						// TODO merge with ctoggle.setValue from file camera-toggle.js
+						console.log("Set camera mode (2 place) - (from [" + old_mode + "] to [" + data.mode + "])");
+						CloudAPI.updateCamera({"mode": data.mode}).done(function(){
+							//backHandler();
+						})
+					});
 					var parent = $(this).parent();
 					parent.find(".first-content").toggleClass("hide");
 					parent.find(".second-content").toggleClass("hide");
@@ -563,6 +403,7 @@ define(['config', 'backbone','underscore', 'application', '../views/camera_setti
 				});
 
 				$('form#timezone select').change(function(){
+					if(SkyUI.isDemo()){SkyUI.showDialogDemo();return;}
 					var tm_select = this;
 					event.trigger(event.TIMELINE_CLEANUP);
 					var cmngrid = SkyVR.cameraManagerID();

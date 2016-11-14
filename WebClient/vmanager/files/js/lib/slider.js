@@ -172,7 +172,6 @@ define('slider',['underscore','backbone','config','event','application'],functio
 			var self = this;
 			this.drawTrobber();
 			this.createWrapper();
-			this.initNewCamera(app);
 			SkyVR.camerasList().done(function(data){
 				
 				if(cc.sort_cameralist){
@@ -187,7 +186,6 @@ define('slider',['underscore','backbone','config','event','application'],functio
 					self.drawSlides(app);
 					self.bindEvents();
 					self.updatePreview(app);
-					self.initNewCamera(app);
                 });
 			});
         },
@@ -207,92 +205,6 @@ define('slider',['underscore','backbone','config','event','application'],functio
             );
             this.container.append(wrapper);
         },
-        initNewCamera: function(app){
-			if(cc.allow_add_cameras && cc.allow_add_cameras == true){
-				$('.sidebar-container-controls').show();
-			}else{
-				$('.sidebar-container-controls').hide();
-				return;
-			}
-			$('.sidebar-container-controls .new-camera').unbind('click').bind('click', function(e){
-				window['currentPage'] = 'newCamera';
-				app.createDialogModal({
-					title: app.polyglot.t('dialog_title_create_camera'),
-					content: '<div class="dialog_new_camera">'
-					+ '<p>' + app.polyglot.t('new_camera_name') + '</p>'
-					+ '<div class="description">' + app.polyglot.t('new_camera_name_description') + '</div>'
-					+ '<input id="new-camera-name" type="text" value=""/>'
-					+ '<p>' + app.polyglot.t('new_camera_live_stream_link') + '</p>'
-					+ '<div class="description">' + app.polyglot.t('new_camera_live_stream_link_description') + '</div>'
-					+ '<input id="new-camera-live-stream-link" type="text" placeholder="' + app.polyglot.t('new_camera_live_stream_url') + '" value=""/>'
-					+ '<input id="new-camera-live-stream-link-login" placeholder="' + app.polyglot.t('new_camera_live_stream_login') + '" type="text" value=""/>'
-					+ '<input id="new-camera-live-stream-link-password" placeholder="' + app.polyglot.t('new_camera_live_stream_password') + '" type="text" value=""/>'
-					+ '<p>' + app.polyglot.t('new_camera_timezone') + '</p>'
-					+ '<div class="description">' + app.polyglot.t('new_camera_timezone_description') + '</div>'
-					+ '<select id="new-camera-timezone"/>'
-					,
-					buttons: [
-						{id:'create_new_camera', text: app.polyglot.t('dialog_button_create_camera'), close: false},
-						{text: app.polyglot.t('dialog_button_close'), close: true}
-					],
-					'beforeClose' : function() {
-						window['currentPage'] = 'camlist';
-					}
-				});
-				var timezones_options = "";
-				var timezones = moment.tz.names();
-				for(var t in timezones){
-					timezones_options += '<option value=' + timezones[t] + '>(UTC' + moment.tz(timezones[t]).format("Z") + ') ' + timezones[t] + '</option>';
-				}
-				$('#new-camera-timezone').html(timezones_options);
-				$('#create_new_camera').unbind().bind('click', function(e){
-					var data = {};
-					data.name = $('#new-camera-name').val();
-					data.url = $('#new-camera-live-stream-link').val();
-					data.login = $('#new-camera-live-stream-link-login').val();
-					data.password = $('#new-camera-live-stream-link-password').val();
-					data.timezone = $('#new-camera-timezone').val();
-					
-					if(data.url.length == 0){
-						app.hideDialogModal();
-						app.showError(
-							app.polyglot.t('dialog_title_create_camera'),
-							app.polyglot.t('new_camera_error_url_could_not_be_empty'),
-							function(){ app.showDialogModal(); }
-						)
-						return;
-					}
-
-					if((data.timezone && data.timezone.length == 0) || !data.timezone){
-						app.hideDialogModal();
-						app.showError(
-							app.polyglot.t('dialog_title_create_camera'),
-							app.polyglot.t('new_camera_error_timezone_could_not_be_empty'),
-							function(){ app.showDialogModal(); }
-						)
-						return;
-					}
-
-					app.hideDialogModal();
-					app.showProcessing(app.polyglot.t('dialog_title_create_camera'), '');
-					SkyVR.hostNewCamera(data).done(function(result){
-						app.closeProcessing();
-						app.destroyDialogModal();
-						app.showInfo(app.polyglot.t('dialog_title_create_camera'), app.polyglot.t('dialog_content_create_camera_take_a_few_minutes'));
-						// SkyUI.updateCamlist(slider);
-					}).fail(function(){
-						app.closeProcessing();
-						app.showError(
-							app.polyglot.t('dialog_title_create_camera'),
-							app.polyglot.t('new_camera_error_url_could_not_create_camera'),
-							function(){ app.showDialogModal(); }
-						)
-					});
-				});
-				app.showDialogModal();
-				
-			});
-		},
         resizeHandler : function (app) {
 			$('.slider_wrapper .slides .slide-wrapper').css({'max-height': $(document).height() - 47});
             if(!app.slides.length){
