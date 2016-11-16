@@ -47,6 +47,7 @@ SOURCES += \
 	src/cmd_handlers/cmd_backward_start_handler.cpp \
 	src/cmd_handlers/cmd_set_cam_parameter_handler.cpp \
 	src/cmd_handlers/cmd_cam_get_log_handler.cpp \
+	src/cmd_handlers/cmd_cam_upgrade_firmware_handler.cpp \
 
 
 HEADERS += \
@@ -84,4 +85,5 @@ HEADERS += \
 	src/cmd_handlers/cmd_backward_start_handler.h \
 	src/cmd_handlers/cmd_set_cam_parameter_handler.h \
 	src/cmd_handlers/cmd_cam_get_log_handler.h \
+	src/cmd_handlers/cmd_cam_upgrade_firmware_handler.h \
 

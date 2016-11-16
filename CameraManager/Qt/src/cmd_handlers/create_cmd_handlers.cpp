@@ -36,6 +36,7 @@
 #include "cmd_backward_stop_handler.h"
 #include "cmd_set_cam_parameter_handler.h"
 #include "cmd_cam_get_log_handler.h"
+#include "cmd_cam_upgrade_firmware_handler.h"
 
 void create_cmd_handlers(QMap<QString, ICmdHandler *> &pHandlers){
 	QVector<ICmdHandler *> v;
@@ -63,6 +64,7 @@ void create_cmd_handlers(QMap<QString, ICmdHandler *> &pHandlers){
 	v.push_back(new CmdBackwardStopHandler());
 	v.push_back(new CmdSetCamParameterHandler());
 	v.push_back(new CmdCamGetLogHandler());
+	v.push_back(new CmdCamUpgradeFirmwareHandler());
 
 	for(int i = 0; i < v.size(); i++){
 		QString cmd = v[i]->cmd();
