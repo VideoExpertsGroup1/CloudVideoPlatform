@@ -37,6 +37,8 @@
 #include "cmd_set_cam_parameter_handler.h"
 #include "cmd_cam_get_log_handler.h"
 #include "cmd_cam_upgrade_firmware_handler.h"
+#include "cmd_cam_ptz_handler.h"
+#include "cmd_set_stream_config_handler.h"
 
 void create_cmd_handlers(QMap<QString, ICmdHandler *> &pHandlers){
 	QVector<ICmdHandler *> v;
@@ -65,6 +67,8 @@ void create_cmd_handlers(QMap<QString, ICmdHandler *> &pHandlers){
 	v.push_back(new CmdSetCamParameterHandler());
 	v.push_back(new CmdCamGetLogHandler());
 	v.push_back(new CmdCamUpgradeFirmwareHandler());
+	v.push_back(new CmdCamPtzHandler());
+	v.push_back(new CmdSetStreamConfigHandler());
 
 	for(int i = 0; i < v.size(); i++){
 		QString cmd = v[i]->cmd();
