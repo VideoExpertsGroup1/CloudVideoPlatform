@@ -1128,9 +1128,12 @@ class Camera:
         self.device_type = None  # Camera type: bullet, media server etc, could be empty
         parse_res = urlparse(globals.config['camera_feed'])
         self.video_source_type = parse_res.scheme
-        if self.video_source_type not in ['rtsp', 'dev']:
+        if self.video_source_type not in ['rtsp', 'dev', 'file']:
             raise RuntimeError('Unknown video source type %s' % self.video_source_type)
-        self.ip = parse_res.hostname
+        if self.video_source_type == 'rtsp':
+            self.ip = parse_res.hostname
+        else:
+            self.ip = '127.0.0.1'
 
         """
         Capabilities determined by camera hardware and could not be changed dynamically
@@ -1182,6 +1185,15 @@ class Camera:
             self.media_streams = [MediaStreamInfo(stream_id='primary',
                                                   video_stream_id='video1',
                                                   media_url=parse_res.path)]
+        elif self.video_source_type == 'file':
+            url_parts = []
+            if parse_res.netloc != '':
+                url_parts.extend([parse_res.netloc.upper(), ':'])
+            url_parts.append(parse_res.path)
+            self.media_streams = [MediaStreamInfo(stream_id='primary',
+                                                  video_stream_id='video1',
+                                                  audio_stream_id='audio1',
+                                                  media_url=''.join(url_parts))]
         else:
             self.media_streams = [MediaStreamInfo(stream_id='primary',
                                                   video_stream_id='video1',
@@ -1952,8 +1964,11 @@ class Camera:
 
         if self.video_source_type == 'dev':
             self._initialize_camera()
-            args = [FFMPEG, '-f', 'v4l2', '-video_size', 'vga', '-framerate', '25', '-input_format', 'h264', '-i',
-                    camera_url, '-vcodec', 'copy', '-an', '-f', 'flv', publish_url]
+            args = [FFMPEG, '-v', 'quiet', '-f', 'v4l2', '-video_size', 'vga', '-framerate', '25', '-input_format',
+                    'h264', '-i', camera_url, '-vcodec', 'copy', '-an', '-f', 'flv', publish_url]
+        elif self.video_source_type == 'file':
+            args = [FFMPEG, '-re', '-stream_loop', '0', '-v', 'quiet', '-i', camera_url,
+                    '-c', 'copy', '-f', 'flv', '-map', '0', publish_url]
         else:
             args = [FFMPEG, '-rtsp_transport', 'tcp', '-v', 'quiet', '-i', camera_url,
                     '-c', 'copy', '-an', '-f', 'flv', '-map', '0', '-bsf:v', 'dump_extra',
@@ -1997,7 +2012,7 @@ class Camera:
         :param stream_id: string, media stream to get snapshot from
         :return: string path to JPEG file or None in case of error
         """
-        if self.video_source_type == 'dev':
+        if self.video_source_type in ['dev', 'file']:
             raise NotImplementedError
 
         filename = 'snap_%s.jpg' % get_iso_8601_time_str(time())

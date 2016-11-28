@@ -21,6 +21,7 @@ password = ''
 # Source camera feed to retranslate to server. Supported following feeds:
 #  - RTSP : 'rtsp://sample.url/feed_address'
 #  - hardware video source: 'dev:///dev/video0' for *nix /dev/video0 device
+#  - local file: 'file://c/dir/file.mp4' for WIN and 'file:///dir/file.mp4' for *nix
 src_camera_feed = 'dev:///dev/video0'
 # CM server address. Do not edit that if you not sure what does it means.
 cm_host = 'cam.skyvr.videoexpertsgroup.com'
