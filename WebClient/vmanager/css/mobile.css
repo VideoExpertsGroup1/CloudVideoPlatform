@@ -250,7 +250,7 @@ body{
     bottom: 130px;
 	box-shadow: 0 0 10px rgba(0,0,0,0.5);
     margin-right: 5px;
-    background: rgba(0,0,0,0.6);
+    background-color: rgba(0,0,0,0.6);
 }
 
 #camera-settings-modal .settings-popup.camera-settings-popup{

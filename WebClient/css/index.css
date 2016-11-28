@@ -221,13 +221,19 @@ form{
 	padding-top: 15px;
 }
 .camName{
+	width:250px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	
 	font-family: "Open Sans",sans-serif;
     font-weight: 400;
     font-size: 16px;
     color: #FFF;
 	float:left;
 	margin-left:5px;
-	margin-top:20px
+	margin-top:20px;
+	
 }
 .actions{
 	font-family: "Open Sans",sans-serif;

@@ -51,6 +51,7 @@ define("event", ["underscore", "backbone",'marionette'], function (e, t) {
             "CALENDAR_CLEANUP",
             "RECORD_ENDED",
 			"MD_FILTERS_CHANGE",
+			"MDZONES_CHECK_VIDEOSIZE",
             "RECORD_ADDED"
 		];
         s = t.Wreqr.EventAggregator.extend({
@@ -86,6 +87,7 @@ define('application',['config','jquery','backbone','underscore','polyglot','mari
 		conf.base_api_url = localStorage.getItem("svcp_host");
 	}
 	console.log("URL: " + conf.base_api_url);
+    
 	SkyVR.setURL(conf.base_api_url);
 
 	application.JSONparse = function (json_str){
@@ -1387,8 +1389,6 @@ define('app',['config','backbone','underscore','application','marionette','event
 				if(window['ApplicationMobileInterface']){
 					ApplicationMobileInterface.logout();
 				}
-			}else if(window['currentPage'] == 'newCamera'){
-				$('.settings-popup.camera-settings-popup .header .box-modal_close.arcticmodal-close').click();
 			}else if(window['currentPage'] == "settings"){
 				if(cc.goto_first_camera)
 					SkyUI.trigger('showfirstcameraplayer', app, event);

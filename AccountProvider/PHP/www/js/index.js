@@ -2,7 +2,7 @@ function ShowCameras(){
 	AccpClient.updateJsonAcl();
 	AccpApi.setacls(JSON.parse($('#jsonacls').val()));
 	var iss = encodeURIComponent(location.origin + '/openid');
-	var newWin = window.open("http://auth2-web-1723830871.us-east-1.elb.amazonaws.com/svcauth/init?iss=" + iss + "&uatype=web", "_blank");
+	var newWin = window.open("http://web.skyvr.videoexpertsgroup.com/svcauth/init?iss=" + iss + "&uatype=web", "_blank");
 	newWin.focus();
 }
 

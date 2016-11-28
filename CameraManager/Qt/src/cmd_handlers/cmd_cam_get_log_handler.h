@@ -11,8 +11,8 @@
 //  use the contact form at https://www.videoexpertsgroup.com/contact-vxg/
 //
 
-#ifndef VXGCLOUDCAMERA_CMD_GET_CAM_AUDIO_CONF_HANDLER_H
-#define VXGCLOUDCAMERA_CMD_GET_CAM_AUDIO_CONF_HANDLER_H
+#ifndef VXGCLOUDCAMERA_CMD_CAM_GET_LOG_HANDLER_H
+#define VXGCLOUDCAMERA_CMD_CAM_GET_LOG_HANDLER_H
 
 #include "../interfaces/icmdhandler.h"
 #include "../interfaces/iwebsocketclient.h"
@@ -20,10 +20,11 @@
 #include <QString>
 #include <QVariant>
 
-class CmdGetCamAudioConfHandler : public ICmdHandler {
+class CmdCamGetLogHandler : public ICmdHandler {
+	
 	public:
 		virtual QString cmd();
 		virtual void handle(QJsonObject obj, IWebSocketClient *wsc);
 };
 
-#endif // VXGCLOUDCAMERA_CMD_GET_CAM_AUDIO_CONF_HANDLER_H
+#endif // VXGCLOUDCAMERA_CMD_CAM_GET_LOG_HANDLER_H

@@ -11,19 +11,25 @@
 //  use the contact form at https://www.videoexpertsgroup.com/contact-vxg/
 //
 
-#ifndef VXGCLOUDCAMERA_CMD_GET_CAM_AUDIO_CONF_HANDLER_H
-#define VXGCLOUDCAMERA_CMD_GET_CAM_AUDIO_CONF_HANDLER_H
+#include "cmd_cam_upgrade_firmware_handler.h"
 
-#include "../interfaces/icmdhandler.h"
-#include "../interfaces/iwebsocketclient.h"
+QString CmdCamUpgradeFirmwareHandler::cmd(){
+	return "cam_upgrade_firmware";
+}
 
-#include <QString>
-#include <QVariant>
+void CmdCamUpgradeFirmwareHandler::handle(QJsonObject obj, IWebSocketClient *wsc){
 
-class CmdGetCamAudioConfHandler : public ICmdHandler {
-	public:
-		virtual QString cmd();
-		virtual void handle(QJsonObject obj, IWebSocketClient *wsc);
-};
+	QString firmware_url = "";
+	int cam_id = 0;
+	if(obj.contains("url")){
+		firmware_url = obj["url"].toString();
+	}
 
-#endif // VXGCLOUDCAMERA_CMD_GET_CAM_AUDIO_CONF_HANDLER_H
+	if(obj.contains("cam_id")){
+		cam_id = obj["cam_id"].toInt();
+	}
+	
+	// TODO firmware upgrade
+	
+	wsc->sendMessage(wsc->makeCommandDone(cmd(), obj["msgid"].toInt(), "OK"));
+}

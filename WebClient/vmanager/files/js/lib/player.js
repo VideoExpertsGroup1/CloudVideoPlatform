@@ -406,6 +406,7 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 					
 					
 					if(this.model.get("live")){
+						$(".cards .card-title .live").text(app.polyglot.t('camera_state_live'));
 						$(".cards .card-title .live").show();
 						if(!$('.player-control-container').hasClass("controls-locked")){
 							if(this.supportBackward == true){
@@ -507,6 +508,7 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 
 			// update caption live
 			if(this.model.get("live") && !$(".power-button").hasClass("off")){
+				$(".cards .card-title .live").text(app.polyglot.t('camera_state_live'));
 				$(".cards .card-title .live").show();
 			}else{
 				$(".cards .card-title .live").hide();
@@ -582,6 +584,7 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 						var h = mPlayer.videoHeight();
 
 						if((w != 0 && h != 0) && (h != self.liveVideoHeight || w != self.liveVideoWidth)){
+							console.log("[PLAYER] PLAYER_LIVE_CHECK_SIZE");
 							var w1 = $('#full-player-container').width();
 							$('#full-player-container').width(w1+5);
 							setTimeout(function(){
@@ -799,6 +802,13 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 						event.trigger(event.PLAYER_TIME_CHANGED, t);
 						event.trigger(event.PLAYER_LIVE_CHECK_SIZE);
 						self.hideSpinner();
+
+						// TODO optimize this function
+						var size = {};
+						size.height = mPlayer.videoHeight();
+						size.width = mPlayer.videoWidth();
+						event.trigger(event.MDZONES_CHECK_VIDEOSIZE, size);
+						
 					}else{
 						self.showSpinner();
 						var idle = self.model.get("lastLiveIdle");
@@ -815,6 +825,16 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 					var mPlayer = self.getCurrentPlayer();
 					var tCurrentTime = self.model.get("record").startTime + mPlayer.currentTime()*1000;
 					// console.log("[PLAYER] Playback time buffered: " + mPlayer.bufferedPercent() + "%");
+
+					try{
+						// TODO optimize this function
+						var size = {};
+						size.height = mPlayer.videoHeight();
+						size.width = mPlayer.videoWidth();
+						event.trigger(event.MDZONES_CHECK_VIDEOSIZE, size);
+					}catch(e){
+						console.error(e)
+					}
 
 					// if not loaded data yet, we just show position
 					if(mPlayer.readyState() != 4 && self.model.has("expectedPosition")){
@@ -1482,6 +1502,8 @@ define('player',['backbone','underscore','player-model','event','config','is','c
             //});
 
             $(".power-button").unbind("click").bind("click", function(){
+                if(SkyUI.isDemo()){SkyUI.showDialogDemo(); return; }
+              
 				self.model.set({"streaming_paused": false});
                 // TODO: synchronize with code from "files/js/app/controllers/camera_settings_controller.js:~416" ".camera-power-button"
                 // button: camera on/off in right-top

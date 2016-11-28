@@ -80,8 +80,10 @@ QUrl WebSocketClient::makeURL(){
 	QUrl url;
 	if(m_pSettings->servercm_needreconnect()){
 		url = QUrl(m_sProtocol + "://" + m_pSettings->servercm_reconnection_host() + ":" + QString::number(m_nPort) + suffix);
+	}else{
+		url = QUrl(m_sProtocol + "://" + m_sHost + ":" + QString::number(m_nPort) + suffix);
 	}
-	return QUrl(m_sProtocol + "://" + m_sHost + ":" + QString::number(m_nPort) + suffix);
+	return url;
 }
 
 // ---------------------------------------------------------------------

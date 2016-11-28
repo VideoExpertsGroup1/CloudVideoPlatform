@@ -78,6 +78,42 @@ class CloudStreamerSettings {
 		bool camevents_enabled();
 		void camevents_enabled(bool val);
 
+		bool audioconf_caps_mic();
+		void audioconf_caps_mic(bool val);
+		bool audioconf_caps_spkr();
+		void audioconf_caps_spkr(bool val);
+		bool audioconf_caps_backward();
+		void audioconf_caps_backward(bool val);
+		QStringList audioconf_caps_echo_cancel();
+		void audioconf_caps_echo_cancel(QStringList val);
+		bool audioconf_spkr_mute();
+		void audioconf_spkr_mute(bool val);
+		int audioconf_spkr_vol();
+		void audioconf_spkr_vol(int val);
+		int audioconf_mic_gain();
+		void audioconf_mic_gain(int val);
+		bool audioconf_mic_mute();
+		void audioconf_mic_mute(bool val);
+		QString audioconf_echo_cancel();
+		void audioconf_echo_cancel(QString val);
+
+		QStringList videoconf_caps_vert_flip();
+		void videoconf_caps_vert_flip(QStringList val);
+		QStringList videoconf_caps_horz_flip();
+		void videoconf_caps_horz_flip(QStringList val);
+		QStringList videoconf_caps_tdn();
+		void videoconf_caps_tdn(QStringList val);
+		QStringList videoconf_caps_ir_light();
+		void videoconf_caps_ir_light(QStringList val);
+		QString videoconf_vert_flip();
+		void videoconf_vert_flip(QString val);
+		QString videoconf_horz_flip();
+		void videoconf_horz_flip(QString val);
+		QString videoconf_tdn();
+		void videoconf_tdn(QString val);
+		QString videoconf_ir_light();
+		void videoconf_ir_light(QString val);
+
 		QString streams_video_stream_command();
 		QString streams_preview_command();
 		
@@ -87,8 +123,12 @@ class CloudStreamerSettings {
 	private:
 		void loadSessionIni();
 		void saveSessionIni();
+		void loadAudioConf(QSettings &sett);
+		void loadVideoConf(QSettings &sett);
+		
 		int readIntFromSettings(QSettings &sett, QString settName, int defaultValue);
 		QString readStringFromSettings(QSettings &sett, QString settName, QString defaultValue);
+		QStringList readStringListFromSettings(QSettings &sett, QString settName, QStringList defaultValue);
 		bool readBooleanFromSettings(QSettings &sett, QString settName, bool defaultValue);
 		
 		QString m_sFilename;
@@ -128,6 +168,25 @@ class CloudStreamerSettings {
 		
 		bool m_bCamEvents_enabled;
 		bool m_bCamEvents_memorycard_active;
+		
+		bool m_bAudioConf_caps_mic;
+		bool m_bAudioConf_caps_spkr;
+		bool m_bAudioConf_caps_backward;
+		QStringList m_slistAudioConf_caps_echo_cancel;
+		bool m_bAudioConf_spkr_mute;
+		int m_nAudioConf_spkr_vol;
+		int m_nAudioConf_mic_gain;
+		bool m_bAudioConf_mic_mute;
+		QString m_sAudioConf_echo_cancel;
+
+		QStringList m_slistVideoConf_caps_vert_flip;
+		QStringList m_slistVideoConf_caps_horz_flip;
+		QStringList m_slistVideoConf_caps_tdn;
+		QStringList m_slistVideoConf_caps_ir_light;
+		QString m_sVideoConf_vert_flip;
+		QString m_sVideoConf_horz_flip;
+		QString m_sVideoConf_tdn;
+		QString m_sVideoConf_ir_light;
 		
 		QString m_sStreams_video_stream_command;
 		QString m_sStreams_preview_command;

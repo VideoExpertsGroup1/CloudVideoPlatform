@@ -31,6 +31,7 @@ SOURCES += \
 	src/cmd_handlers/cmd_get_cam_audio_conf_handler.cpp \
 	src/cmd_handlers/cmd_set_cam_audio_conf_handler.cpp \
 	src/cmd_handlers/cmd_get_stream_by_event_handler.cpp \
+	src/cmd_handlers/cmd_get_stream_config_handler.cpp \
 	src/cmd_handlers/cmd_get_motion_detection_handler.cpp \
 	src/cmd_handlers/cmd_set_motion_detection_handler.cpp \
 	src/cmd_handlers/cmd_get_audio_detection_handler.cpp \
@@ -44,6 +45,11 @@ SOURCES += \
 	src/cmd_handlers/cmd_stream_stop_handler.cpp \
 	src/cmd_handlers/cmd_backward_stop_handler.cpp \
 	src/cmd_handlers/cmd_backward_start_handler.cpp \
+	src/cmd_handlers/cmd_set_cam_parameter_handler.cpp \
+	src/cmd_handlers/cmd_cam_get_log_handler.cpp \
+	src/cmd_handlers/cmd_cam_upgrade_firmware_handler.cpp \
+	src/cmd_handlers/cmd_cam_ptz_handler.cpp \
+	src/cmd_handlers/cmd_set_stream_config_handler.cpp \
 
 
 HEADERS += \
@@ -65,6 +71,7 @@ HEADERS += \
 	src/cmd_handlers/cmd_get_cam_audio_conf_handler.h \
 	src/cmd_handlers/cmd_set_cam_audio_conf_handler.h \
 	src/cmd_handlers/cmd_get_stream_by_event_handler.h \
+	src/cmd_handlers/cmd_get_stream_config_handler.h \
 	src/cmd_handlers/cmd_get_motion_detection_handler.h \
 	src/cmd_handlers/cmd_set_motion_detection_handler.h \
 	src/cmd_handlers/cmd_get_audio_detection_handler.h \
@@ -78,5 +85,9 @@ HEADERS += \
 	src/cmd_handlers/cmd_stream_stop_handler.h \
 	src/cmd_handlers/cmd_backward_stop_handler.h \
 	src/cmd_handlers/cmd_backward_start_handler.h \
-
+	src/cmd_handlers/cmd_set_cam_parameter_handler.h \
+	src/cmd_handlers/cmd_cam_get_log_handler.h \
+	src/cmd_handlers/cmd_cam_upgrade_firmware_handler.h \
+	src/cmd_handlers/cmd_cam_ptz_handler.h \
+	src/cmd_handlers/cmd_set_stream_config_handler.h \
 

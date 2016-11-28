@@ -11,19 +11,13 @@
 //  use the contact form at https://www.videoexpertsgroup.com/contact-vxg/
 //
 
-#ifndef VXGCLOUDCAMERA_CMD_GET_CAM_AUDIO_CONF_HANDLER_H
-#define VXGCLOUDCAMERA_CMD_GET_CAM_AUDIO_CONF_HANDLER_H
+#include "cmd_set_stream_config_handler.h"
 
-#include "../interfaces/icmdhandler.h"
-#include "../interfaces/iwebsocketclient.h"
+QString CmdSetStreamConfigHandler::cmd(){
+	return "set_stream_config";
+}
 
-#include <QString>
-#include <QVariant>
-
-class CmdGetCamAudioConfHandler : public ICmdHandler {
-	public:
-		virtual QString cmd();
-		virtual void handle(QJsonObject obj, IWebSocketClient *wsc);
-};
-
-#endif // VXGCLOUDCAMERA_CMD_GET_CAM_AUDIO_CONF_HANDLER_H
+void CmdSetStreamConfigHandler::handle(QJsonObject obj, IWebSocketClient *wsc){
+	// TODO
+	wsc->sendMessage(wsc->makeCommandDone(cmd(), obj["msgid"].toInt(), "OK"));	
+}

@@ -11,19 +11,16 @@
 //  use the contact form at https://www.videoexpertsgroup.com/contact-vxg/
 //
 
-#ifndef VXGCLOUDCAMERA_CMD_GET_CAM_AUDIO_CONF_HANDLER_H
-#define VXGCLOUDCAMERA_CMD_GET_CAM_AUDIO_CONF_HANDLER_H
+#include "cmd_cam_ptz_handler.h"
 
-#include "../interfaces/icmdhandler.h"
-#include "../interfaces/iwebsocketclient.h"
+QString CmdCamPtzHandler::cmd(){
+	return "cam_ptz";
+}
 
-#include <QString>
-#include <QVariant>
-
-class CmdGetCamAudioConfHandler : public ICmdHandler {
-	public:
-		virtual QString cmd();
-		virtual void handle(QJsonObject obj, IWebSocketClient *wsc);
-};
-
-#endif // VXGCLOUDCAMERA_CMD_GET_CAM_AUDIO_CONF_HANDLER_H
+void CmdCamPtzHandler::handle(QJsonObject obj, IWebSocketClient *wsc){
+	if(obj.contains("action")){
+		// TODO
+		// wsc->sendMessage(wsc->makeCommandDone(cmd(), obj["msgid"].toInt(), "OK"));	
+	}
+	
+}

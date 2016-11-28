@@ -14,6 +14,66 @@ window.SkyUI = new function (){
 			}
 		}
 	};
+	this.showDialogDemo = function(){
+		this.reinitDemoVersionDialog();
+		$('.skyvr-dialog-content-demo-version').text('Settings changing is disabled in the demo version');
+		$('.skyvr-dialog-is-demo-version').show();
+		SkyUI.mobileNavPages.push('demoversiondialog');
+	};
+	this.mobileNavPages = {};
+	this.mobileNavPages.stack_pages = [];
+	this.mobileNavPages.push = function(new_page){
+		if(self.mobileNavPages.last() == new_page){
+			return;
+		}
+		console.log("mobileNavPages.push: " + JSON.stringify(self.mobileNavPages.stack_pages));
+		console.log("mobileNavPages.push: " + new_page);
+		self.mobileNavPages.stack_pages.push(new_page);
+	};
+	this.mobileNavPages.pop = function(){
+		if(self.mobileNavPages.stack_pages.length > 0){
+			var page = self.mobileNavPages.last();
+			console.log("mobileNavPages.pop: " + page);
+			self.mobileNavPages.stack_pages.pop();
+			console.log("mobileNavPages.pop: " + JSON.stringify(self.mobileNavPages.stack_pages));
+			return page;
+		}
+	}
+	this.mobileNavPages.last = function(){
+		if(self.mobileNavPages.stack_pages.length > 0){
+			var page = self.mobileNavPages.stack_pages[self.mobileNavPages.stack_pages.length-1];
+			return page;
+		}
+	}
+	this.isDemo=function(){
+		return localStorage.getItem('is_opened_like_demo')==="true";
+		};
+	this.reinitDemoVersionDialog = function(){
+
+		console.log("showDialogDemo " + $('.skyvr-dialog-is-demo-version').length);
+		var html = $('.skyvr-dialog-is-demo-version').html();
+		$('.skyvr-dialog-is-demo-version').remove();
+		$('body').append($('<div class="skyvr-dialog-is-demo-version" style="display: none;">' + html + '</div>'));
+		$('.skyvr-dialog-is-demo-version .skyvr-dlg-hdr-right').unbind().click(function(){
+			SkyUI.mobileNavPages.pop();
+			$('.skyvr-dialog-is-demo-version').hide();
+		});
+
+		var bClickOnWindow = false;
+		$('.skyvr-dialog-is-demo-version .skyvr-clipshow-window').unbind().click(function(){
+			bClickOnWindow = true;
+		});
+
+		$('.skyvr-dialog-is-demo-version .skyvr-clipshow-cell').unbind().click(function(){
+			if(bClickOnWindow == true){
+				bClickOnWindow = false;
+				return;
+			}
+			bClickOnWindow = false;
+			SkyUI.mobileNavPages.pop();
+			$('.skyvr-dialog-is-demo-version').hide();
+		});
+	};
 	this.prevContainer = function(){
 		var childrens = $('.content').children();
 		var c = -1;
@@ -452,10 +512,12 @@ SkyUI.clips = new function(){
 	}
 
 	this.hasAccessAll = function(clip){
+		if(SkyUI.isDemo())return true;
 		return clip['access'][0] == 'all';
 	}
 	
 	this.hasAccessPlay = function(clip){
+		if(SkyUI.isDemo())return true;
 		return clip['access'][0] == 'play';
 	}
 		
@@ -1109,7 +1171,7 @@ window.CloudUI.getRealVideoSize = function (){
 	return size;
 }
 
-window.CloudUI.calculateMotionZoneSize = function(){
+window.CloudUI.calculateMotionZoneSize = function(from_size){
 	var size = {};
 	size.height = 0;
 	size.width = 0;
@@ -1120,11 +1182,20 @@ window.CloudUI.calculateMotionZoneSize = function(){
 	flash_size.width = $('.flash-player-container')[0].clientWidth;
 	
 	var video_size = CloudUI.getRealVideoSize();
-	
-	if(video_size.height == 0){
-		size.height = flash_size.height;
-		size.width = flash_size.width;
-		return size;
+	if(from_size){
+		video_size = from_size;
+	}else{
+		if(video_size.height == 0){
+			size.height = flash_size.height;
+			size.width = flash_size.width;
+			return size;
+		}
 	}
-	return video_size;
+	
+	var k = flash_size.height / video_size.height;
+	size.height = flash_size.height;
+	size.width = Math.round(k*video_size.width);
+	size.left = Math.ceil((flash_size.width - size.width)/2);
+	
+	return size;
 }

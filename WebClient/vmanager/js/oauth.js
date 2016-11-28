@@ -10,6 +10,11 @@ SkyVR.oauth = function(){
 		});
 	}
 
+	if(SkyVR.containsPageParam("vendor")){
+		SkyVR.config.vendor = SkyVR.pageParams['vendor'];
+		SkyVR.loadVendorScripts(SkyVR.pageParams['vendor'], './');
+	}
+
 	if(window.location.pathname == '/share/clips/index.html' || window.location.pathname == '/share/clips/'){
 		if(SkyVR.containsPageParam("vendor")){
 			SkyVR.config.vendor = SkyVR.pageParams['vendor'];
@@ -33,18 +38,6 @@ SkyVR.oauth = function(){
 			loadAccountInfo_();
 		}).fail(function(){
 			console.log('Failed updated api token');
-		});
-	}else if(SkyVR.containsPageParam("login")){
-		// TODO deprecated
-		console.log('new oauth authorization!');
-		SkyVR.anonToken().done(function(anon){
-			var data = {email: SkyVR.pageParams['login']};
-			SkyVR.accountLogin(data).done(function(token){
-				console.log('oauth authorization! logined');
-				loadAccountInfo_()
-			}).fail(function(){
-				// could not authorize
-			});
 		});
 	}else if(!SkyVR.isExpiredApiToken()){
 		console.log('oauth authorization! old token is not expered');
