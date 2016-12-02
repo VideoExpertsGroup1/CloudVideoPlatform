@@ -1,6 +1,6 @@
 window.AccpApi = new function (){
 	var self = this;
-	self.base_url = location.origin + '/';
+	self.base_url = location.origin + '/' + location.pathname;
 	this.login = function(username,password){
 		var d = $.Deferred();
 		$.ajaxSetup({
@@ -14,7 +14,7 @@ window.AccpApi = new function (){
 		data.username = username;
 		data.password = password;
 		$.ajax({
-			url: self.base_url + "api/v1/account/signin/",
+			url: self.base_url + "api/v1/account/login/",
 			type: 'POST',
 			data:  JSON.stringify(data),
 			contentType: 'application/json',
@@ -22,18 +22,14 @@ window.AccpApi = new function (){
 			  withCredentials: true
 		   }
 		}).done(function(response){
-			if(response['result'] == 'ok'){
-				d.resolve(response);
-			}else{
-				d.reject();
-			}
+			d.resolve(response);
 		}).fail(function(){
 			d.reject();
 		});
 		return d;
 	};
 
-	this.signout = function(){
+	this.logout = function(){
 		var d = $.Deferred();
 		$.ajaxSetup({
 			crossDomain: true,
@@ -41,7 +37,7 @@ window.AccpApi = new function (){
 		});
 		var data = {};
 		$.ajax({
-			url: self.base_url + "api/v1/account/signout/",
+			url: self.base_url + "api/v1/account/logout/",
 			type: 'POST',
 			data:  JSON.stringify(data),
 			contentType: 'application/json',
@@ -87,8 +83,8 @@ window.AccpApi = new function (){
 		});
 		return d;
 	};
-
-	this.checkAuthorization = function(){
+	
+	this.account = function(){
 		var d = $.Deferred();
 		$.ajaxSetup({
 			crossDomain: true,
@@ -96,10 +92,8 @@ window.AccpApi = new function (){
 		});
 		var data = {};
 		$.ajax({
-			url: self.base_url + "api/v1/account/checkauth/",
-			type: 'POST',
-			data:  JSON.stringify(data),
-			contentType: 'application/json',
+			url: self.base_url + "api/v1/account/",
+			type: 'GET',
             xhrFields: {
 			  withCredentials: true
 		   }

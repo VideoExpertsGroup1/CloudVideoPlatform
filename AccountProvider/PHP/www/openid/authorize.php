@@ -15,11 +15,11 @@ if (!$server->validateAuthorizeRequest($request, $response)) {
 	return;
 }
 
-$is_authorized = isset($_COOKIE['AccpToken']);
+$is_authorized = isset($_COOKIE['sessionid']);
 $user_id = -1;
 
 if($is_authorized){
-	$token = $_COOKIE['AccpToken'];
+	$token = $_COOKIE['sessionid'];
 	$conn = new PDO('mysql:host='.$config['db']['host'].';dbname='.$config['db']['dbname'].';charset=utf8',
 			$config['db']['username'],
 			$config['db']['userpass']);

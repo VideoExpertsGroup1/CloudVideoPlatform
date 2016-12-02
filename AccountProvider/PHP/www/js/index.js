@@ -167,7 +167,7 @@ window.AccpClient = new function (){
 	}
 
 	this.signout = function(){
-		AccpApi.signout().done(function(){
+		AccpApi.logout().done(function(){
 			self.showLoginForm();
 		});
 	}

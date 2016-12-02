@@ -13,8 +13,8 @@ include_once ($apilib);
 $response = APIHelpers::startpage_post();
 $request = APIHelpers::$REQUEST;
 
-if(isset($_COOKIE['AccpToken'])){
-	$token = $_COOKIE['AccpToken'];
+if(isset($_COOKIE['sessionid'])){
+	$token = $_COOKIE['sessionid'];
 	$conn = APIHelpers::createConnection();
 	$query = 'SELECT * FROM users_tokens WHERE token = ?';
 	$stmt = $conn->prepare($query);

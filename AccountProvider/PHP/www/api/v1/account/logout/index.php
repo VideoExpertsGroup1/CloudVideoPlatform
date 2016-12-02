@@ -13,14 +13,14 @@ include_once ($apilib);
 $response = APIHelpers::startpage_post();
 $request = APIHelpers::$REQUEST;
 
-if(isset($_COOKIE['AccpToken'])){
+if(isset($_COOKIE['sessionid'])){
 	$conn = APIHelpers::createConnection();
 	$query = 'DELETE FROM users_token WHERE token = ?';
 	$stmt = $conn->prepare($query);
-	$stmt->execute(array($_COOKIE['AccpToken']));
+	$stmt->execute(array($_COOKIE['sessionid']));
 
-	unset($_COOKIE['AccpToken']);
-	setcookie('AccpToken', null, -1, '/');
+	unset($_COOKIE['sessionid']);
+	setcookie('sessionid', null, -1, '/');
 	$response['result'] = 'ok';
 }
 

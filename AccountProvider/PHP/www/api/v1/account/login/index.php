@@ -1,17 +1,20 @@
 <?php
 /*
- * API_NAME: Signin
+ * API_NAME: api/v1/account/login/
  * API_METHOD: POST
  * API_DESCRIPTION: Method for login user in the system
  * API_ACCESS: all
  * API_INPUT: email - string, Identificator of the user
  * API_INPUT: password - string, Password of a user
- * API_OKRESPONSE: { "result":"ok", "token":"76558894-0AA9-11E4-09F0-D353D3CF86D5" }
  */
 
 $curdir = dirname(__FILE__);
-$apilib = $curdir.'/../../../lib/api.helpers.php';
-include_once ($apilib);
+include_once ($curdir.'/../../../lib/api.helpers.php');
+
+if(!APIHelpers::isPostRequest()){
+	APIHelpers::error_unsupperted_method();
+	exit;
+}
 
 $response = APIHelpers::startpage_post();
 $request = APIHelpers::$REQUEST;
@@ -38,13 +41,15 @@ if ($row = $stmt->fetch()) {
 			'role' => $row['role'],
 		),
 	);
-	$response['result'] = 'ok';
+	
+	$response['svcp_auth_web_url'] = 'http://web.skyvr.videoexpertsgroup.com/svcauth/init?iss=http%3A//emagin.videoexpertsgroup.com/openid&vendor=VXG&uatype=web';
+	$response['svcp_auth_app_url'] = 'http://web.skyvr.videoexpertsgroup.com/svcauth/init?iss=http%3A//emagin.videoexpertsgroup.com/openid&vendor=VXG&uatype=app';
 	APIHelpers::$TOKEN = APIHelpers::gen_guid();
-	setcookie('AccpToken', APIHelpers::$TOKEN, 2000000000, '/');
+	setcookie('sessionid', APIHelpers::$TOKEN, 2000000000, '/');
 	APIHelpers::saveByToken();
-	$response['data']['token'] = APIHelpers::$TOKEN;
 }else{
-	APIHelpers::showerror(1001, 'Could not authorize. Wrong parameters "username" and/or "password"');
+	APIHelpers::error_unauthorized();
+	exit;
 }
 
 APIHelpers::endpage($response);

@@ -9,3 +9,5 @@
 	$config['db']['dbname'] = "vxgaccpphp";
 
 	$config['openid']['issuer'] = "http://your_account_provider_host/openid";
+	
+	$config['COOKIE_NAME'] = 'sessionid';

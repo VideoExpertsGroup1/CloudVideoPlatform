@@ -9,12 +9,10 @@
 	<script type="text/javascript" src="./js/index.js"></script>
 	<script>
 		$( document ).ready(function() {
-			AccpApi.checkAuthorization().done(function(response){
-				if(response['result'] == 'ok'){
-					AccpClient.showACLs();
-				}else{
-					AccpClient.showLoginForm();
-				}
+			AccpApi.account().done(function(response){
+				AccpClient.showACLs();
+			}).fail(function(){
+				AccpClient.showLoginForm();
 			})
 		});
 	</script>
