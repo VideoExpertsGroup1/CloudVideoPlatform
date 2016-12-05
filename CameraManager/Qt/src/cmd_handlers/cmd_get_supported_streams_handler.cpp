@@ -25,10 +25,10 @@ void CmdGetSupportedStreamsHandler::handle(QJsonObject obj, IWebSocketClient *ws
 	
 	QJsonArray audio_es;
 	audio_es.append("Aud");
-	supported_streams["audio_es"] = wsc->settings()->camera_brand();
+	supported_streams["audio_es"] = audio_es;
 	
 	QJsonArray video_es;
-	video_es.append("Aud");
+	video_es.append("Vid");
 	supported_streams["video_es"] = video_es;
 	
 	QJsonArray streams;
