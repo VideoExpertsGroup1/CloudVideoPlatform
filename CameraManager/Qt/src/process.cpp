@@ -26,7 +26,8 @@ Process::~Process(){
 
 void Process::start(QString command){
 	stop();
-	m_pProcess->start(command);
+	m_pProcess->start("sh", QStringList() << "-c" << command);
+	// m_pProcess->start(command);
 };
 
 void Process::stop(){
