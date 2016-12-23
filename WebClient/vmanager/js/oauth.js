@@ -13,12 +13,20 @@ SkyVR.oauth = function(){
 	if(SkyVR.containsPageParam("vendor")){
 		SkyVR.config.vendor = SkyVR.pageParams['vendor'];
 		SkyVR.loadVendorScripts(SkyVR.pageParams['vendor'], './');
+	}else{
+		// load default vendor
+		SkyVR.config.vendor = 'VXG';
+		SkyVR.loadVendorScripts(SkyVR.config.vendor, './');
 	}
 
 	if(window.location.pathname == '/share/clips/index.html' || window.location.pathname == '/share/clips/'){
 		if(SkyVR.containsPageParam("vendor")){
 			SkyVR.config.vendor = SkyVR.pageParams['vendor'];
 			SkyVR.loadVendorScripts(SkyVR.pageParams['vendor'], '../../');
+		}else{
+			// load default
+			SkyVR.config.vendor = 'VXG';
+			SkyVR.loadVendorScripts(SkyVR.config.vendor, '../../');
 		}
 		if(SkyVR.containsPageParam("token")){
 			SkyVR.config.shareToken.token = SkyVR.pageParams['token'];
@@ -31,13 +39,17 @@ SkyVR.oauth = function(){
 		if(SkyVR.containsPageParam("vendor")){
 			SkyVR.config.vendor = SkyVR.pageParams['vendor'];
 			SkyVR.loadVendorScripts(SkyVR.pageParams['vendor'], './');
+		}else{
+			// load default
+			SkyVR.config.vendor = 'VXG';
+			SkyVR.loadVendorScripts(SkyVR.config.vendor, './');
 		}
 		SkyVR.updateApiToken().done(function(new_token){
 			SkyVR.applyApiToken();
 			console.log('new oauth authorization!');
 			loadAccountInfo_();
 		}).fail(function(){
-			console.log('Failed updated api token');
+			console.log('Failed updated api token ' + window.location.href);
 		});
 	}else if(!SkyVR.isExpiredApiToken()){
 		console.log('oauth authorization! old token is not expered');
@@ -45,13 +57,25 @@ SkyVR.oauth = function(){
 		if(SkyVR.containsPageParam("vendor")){
 			SkyVR.config.vendor = SkyVR.pageParams['vendor'];
 			SkyVR.loadVendorScripts(SkyVR.pageParams['vendor'], './');
+		}else{
+			// load default
+			SkyVR.config.vendor = 'VXG';
+			SkyVR.loadVendorScripts(SkyVR.config.vendor, './');
 		}
 		loadAccountInfo_();
 	}
 }
 
-if(localStorage.getItem("svcp_host")){
-	SkyVR.setURL(localStorage.getItem("svcp_host"));
+if(CloudAPI.containsPageParam("svcp_host")){
+	console.log("[OAUTH2] svcp_host=" + CloudAPI.pageParams['svcp_host']);
+	CloudAPI.setURL(CloudAPI.pageParams['svcp_host']);
+}
+
+if(window['ApplicationMobileInterface']){
+	var svcp_host = ApplicationMobileInterface.getSvcpHost();
+	console.log("[OAUTH2] svcp_host " + svcp_host);
+	localStorage.setItem("svcp_host", svcp_host)
+	SkyVR.setURL(svcp_host);
 }
 
 SkyVR.oauth();

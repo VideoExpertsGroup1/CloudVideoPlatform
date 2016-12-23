@@ -284,8 +284,6 @@ form{
 	font-size: medium;
 	text-align: center;
 	display: none
-	
-	
 }
 
 /*#menulogout{
@@ -299,3 +297,45 @@ form{
 	right: 15px;
 	cursor: pointer;
 }*/
+
+.social-signin{
+	padding-top: 10px;
+	height: 50px;
+	color: #FFF;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.social-caption{
+	display: inline-block;
+	height: 45px;
+    line-height: 45px;
+    top: -35%;
+    position: relative;
+	padding-right: 10px;
+}
+
+.social-gplus{
+	display: inline-block;
+    background-image: url(../images/gplusicon.svg);
+    background-repeat: no-repeat;
+    background-size: 45px 45px;
+    width: 45px;
+    height: 45px;
+    cursor: pointer;
+}
+
+.camera-item{
+	float:left;
+	width:300px;
+	height:270px;
+	background:#3788b1;
+	margin-left:20px;
+	margin-top:20px;
+	background-color:#3788b1;
+}
+
+.camera-preview{
+	margin-top:3px;
+	cursor:pointer;
+}

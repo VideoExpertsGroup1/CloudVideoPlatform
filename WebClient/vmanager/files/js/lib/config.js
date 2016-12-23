@@ -118,9 +118,6 @@ define('config',['underscore'],function(_){
 			}
 			
 		},
-        player:{
-            status_update_timeout: 10
-        },
 		time_zones:[
 			{'value': 'Africa/Abidjan', 'name': '(UTC+00:00)'},
 		]

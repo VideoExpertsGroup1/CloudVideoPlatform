@@ -730,7 +730,7 @@ window.Scheduler24 = new function () {
 			}
 		}
 
-		var saving_url = Scheduler24.config.base_api_url + "api/v2/cameras/" + CloudAPI.cameraID() + "/schedule/";
+		var saving_url = CloudAPI.config.url_cameras + CloudAPI.cameraID() + "/schedule/";
 		console.log("Saving... URL: " + saving_url);
 		console.log("Saving... Data: ", obj);
 

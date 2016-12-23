@@ -263,6 +263,7 @@ window.SkyVR = new function (){
 			console.log("Set URL: " + this.config.url);
 			this.config.url_api = url+"api/v2/";
 			this.config.url_cameras = url+"api/v2/cameras/";
+			this.config.url_camsess = url+"api/v2/camsess/";
 			this.config.url_server = url+"api/v2/server/";
 			this.config.url_account = url+"api/v2/account/";
 			this.config.url_cmngrs = url+"api/v2/cmngrs/";
@@ -295,7 +296,7 @@ window.SkyVR = new function (){
 
 	console.log("Href: " + window.location.href);
 
-	this.setURL("http://" + window.location.host.toString() + "/");
+	this.setURL( window.location.protocol + "//" + window.location.host.toString() + "/");
 
 	this.isExpiredApiToken = function(){
 		if(SkyVR.config.apiToken.expireTimeUTC){
@@ -344,6 +345,11 @@ window.SkyVR = new function (){
 			js.onload = function(){
 				SkyVR.updatePageProgressCaption();
 			}
+			js.onerror = function(){
+				console.error("Not found vendor use default");
+				SkyVR.config.vendor = 'VXG';
+				CloudAPI.loadVendorScripts(SkyVR.config.vendor, path);
+			}
 
 			var cc_css = document.createElement("link");
 			cc_css.rel = "stylesheet";
@@ -354,6 +360,10 @@ window.SkyVR = new function (){
 			cc_css2.rel = "stylesheet";
 			cc_css2.href = (path ? path : './') + "vendor/" + vendor + "/pageloader.min.css";
 			document.head.appendChild(cc_css2);
+		}else{
+			// Load default scripts
+			console.log('Not found vendor');
+			CloudAPI.loadVendorScripts('VXG', path);
 		}
 	};
 	/*this.loadVendorTranslates = function(vendor, path){
@@ -621,19 +631,26 @@ window.SkyVR = new function (){
 		params.push("p=" +encodeURIComponent(page));
 		return "?" + params.join("&");
 	}
+
 	this.changeLocationState = function(newPageParams){
 		var url = '';
 		var params = [];
 		if(this.containsPageParam("lang"))
 			params.push('lang=' + encodeURIComponent(this.pageParams['lang']))
+		if(this.containsPageParam("fcno"))
+			params.push('fcno=' + encodeURIComponent(this.pageParams['fcno']))
 		if(this.containsPageParam("vendor"))
 			params.push('vendor=' + encodeURIComponent(this.pageParams['vendor']))
+		if(this.containsPageParam("demo"))
+			params.push('demo=' + encodeURIComponent(this.pageParams['demo']))
+		if(this.containsPageParam("svcp_host"))
+			params.push('svcp_host=' + encodeURIComponent(this.pageParams['svcp_host']))
 		if(this.containsPageParam("mobile"))
 			params.push('mobile=' + encodeURIComponent(this.pageParams['mobile']))
 		for(var p in newPageParams){
 			params.push(encodeURIComponent(p) + "=" + encodeURIComponent(newPageParams[p]));
 		}
-		var new_url = window.location.protocol + "//" + window.location.hostname + window.location.pathname + '?' + params.join("&");
+		var new_url = window.location.protocol + "//" + window.location.host + window.location.pathname + '?' + params.join("&");
 		console.log("changeLocationState: " + new_url);
 		try{
 			if(window.history.pushState)
@@ -672,17 +689,17 @@ window.SkyVR = new function (){
 	
 	this.hasAccessClips = function(caminfo){
 		if(SkyUI.isDemo())return true;
-		return SkyVR.hasAccess(caminfo, "clipping") || SkyVR.hasAccess(caminfo, "cplay") || SkyVR.hasAccess(caminfo, "all");
+		return SkyVR.hasAccess(caminfo, "clipping") || SkyVR.hasAccess(caminfo, "clipplay") || SkyVR.hasAccess(caminfo, "watch") || SkyVR.hasAccess(caminfo, "cplay") || SkyVR.hasAccess(caminfo, "all");
 	}
 	
 	this.hasAccessLive = function(caminfo){
 		if(SkyUI.isDemo())return true;
-		return SkyVR.hasAccess(caminfo, "ptz") || SkyVR.hasAccess(caminfo, "live") || SkyVR.hasAccess(caminfo, "all");
+		return SkyVR.hasAccess(caminfo, "ptz") || SkyVR.hasAccess(caminfo, "live") || SkyVR.hasAccess(caminfo, "watch") || SkyVR.hasAccess(caminfo, "all");
 	}
 
 	this.hasAccessPlayback = function(caminfo){
 		if(SkyUI.isDemo())return true;
-		return SkyVR.hasAccess(caminfo, "clipping") || SkyVR.hasAccess(caminfo, "splay") || SkyVR.hasAccess(caminfo, "all");
+		return SkyVR.hasAccess(caminfo, "clipping") || SkyVR.hasAccess(caminfo, "play") || SkyVR.hasAccess(caminfo, "watch") || SkyVR.hasAccess(caminfo, "splay") || SkyVR.hasAccess(caminfo, "all");
 	}
 
 	this.hasAccessMakeClip = function(caminfo){
@@ -831,6 +848,27 @@ window.SkyVR = new function (){
 		}).done(function(response){
 			CloudAPI.cache.updateCameraEventProcessingEventsSound(camid, response);
 			d.resolve(response);
+		}).fail(function(){
+			d.reject();
+		});
+		return d;
+	}
+	
+	this.cameraSendPtz = function(data){
+		var d = $.Deferred();
+		if(!CloudAPI.isCameraID()) {
+			d.reject();
+			return d;
+		}
+		var camid = CloudAPI.cameraID();
+		$.ajax({
+			url : this.config.url_cameras + camid + "/send_ptz/",
+			type : 'POST',
+			data:  JSON.stringify(data),
+			contentType: 'application/json'
+		}).done(function(response){
+			console.log(response);
+			d.resolve();
 		}).fail(function(){
 			d.reject();
 		});
@@ -986,7 +1024,8 @@ window.SkyVR = new function (){
 			contentType: 'application/json'
 		}).done(function(){
 			d.resolve();
-		}).fail(function(){
+		}).fail(function(jqXHR, textStatus){
+			console.error("[CLOUDAPI] cameraFirmwaresUpgrade, " + textStatus, jqXHR);
 			d.reject();
 		});
 		return d;
@@ -996,11 +1035,16 @@ window.SkyVR = new function (){
 	this.getAccount = function(cb_success, cb_error){
 		cb_success = (cb_success == undefined) ? SkyVR.handleNothing : cb_success;
 		cb_error = (cb_error == undefined) ? SkyVR.handleError : cb_error;
+		console.log(SkyVR.config.url_account);
 		return $.ajax({
 			url: SkyVR.config.url_account,
 			type: 'GET',
 			success: cb_success,
 			error: cb_error
+		}).done(function(){
+			console.log("Done " + SkyVR.config.url_account);
+		}).fail(function(xhr, ajaxOptions, thrownError){
+			console.log("Fail " + SkyVR.config.url_account);
 		});
 	};
 	this.accountInfo = this.getAccount;
@@ -1095,6 +1139,7 @@ window.SkyVR = new function (){
 				console.log("cameraInfo has not in cache for camid=" + response.id);
 				SkyVR.cameraMemoryCard(response.id);	
 			}
+			
 			
 			// SET to cache
 			if(SkyVR.cache.setCameraInfo(response)){
@@ -2169,3 +2214,33 @@ window.SkyVR = new function (){
 }();
 
 window.CloudAPI = window.SkyVR;
+
+CloudAPI.camsessList = function(params){
+	params = params || {};
+	return $.ajax({
+		url: CloudAPI.config.url_camsess,
+		data: params,
+		type: 'GET',
+		cache : false,
+	});
+}
+
+CloudAPI.camsessInfo = function(id, params){
+	params = params || {};
+	return $.ajax({
+		url: CloudAPI.config.url_camsess + id + '/',
+		data: params,
+		type: 'GET',
+		cache : false,
+	});
+}
+
+CloudAPI.camsessRecords = function(id, params){
+	params = params || {};
+	return $.ajax({
+		url: CloudAPI.config.url_camsess + id + '/records/',
+		data: params,
+		type: 'GET',
+		cache : false,
+	});
+}

@@ -11,7 +11,7 @@ define('player-model',['backbone'], function(backbone){
     return model;
 });
 
-define('player',['backbone','underscore','player-model','event','config','is','camera-toggle'], function(backbone, underscore,m, event, conf, is, ctoggle){
+define('player',['backbone','underscore','player-model','event','is','camera-toggle'], function(backbone, underscore, m, event, is, ctoggle){
     var obj = underscore.extend({},backbone.Events);
     underscore.extend(obj,{
         className:'player',
@@ -82,6 +82,7 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 			}else{
 				$(mPlayer.el()).css({'transform' : 'scale('+ zoom +')', 'left': '', 'top': ''});
 			}
+			CloudPlayer.generatedZoomPreview = false;
 		},
         initialize: function (a){
             this.model = m;
@@ -136,6 +137,10 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 			// update ui by first options
 			self.refreshCameraStatus(SkyVR.cache.cameraInfo());
 
+			if(CloudAPI.cache.cameraInfo().brand == "RaspRobotD2"){
+				CloudPlayer.enablePTZControls();
+			}
+			
 			if(a.cam.status == 'active'){
 				this.startWatchDocUserActivity();
 			}
@@ -158,7 +163,7 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 							if(self.previousCameraState != currentState && currentState == "active"){
 								if(self.model.get("live")){
 									// console.log("[PLAYER] CAMERA activated (live)");
-									self.model.set({lastLiveIdle: 0});
+									CloudPlayer.lastLiveIdle = 0;
 									event.trigger(event.PLAYER_START_LIVE);
 								}else{
 									if(SkyVR.isP2PStreaming()){
@@ -177,7 +182,7 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 							}else if(self.previousCameraState != currentState && currentState != "active"){
 								if(self.model.get("live")){
 									// console.log("[PLAYER] CAMERA deactivated");
-									self.model.set({lastLiveIdle: 0});
+									CloudPlayer.lastLiveIdle = 0;
 									// todo check already paused or not
 									if(!self.getLivePlayer().paused())
 										event.trigger(event.PLAYER_SET_PAUSE);
@@ -218,19 +223,19 @@ define('player',['backbone','underscore','player-model','event','config','is','c
                     });
                     // console.log("statusCheck - end");
                 };
-                var statusUpdateInterval = setInterval(getCameraAndUpdate, conf.player.status_update_timeout*1000);
+                var statusUpdateInterval = setInterval(getCameraAndUpdate, CloudPlayer.status_update_timeout);
                 self.model.set({statusCheck: statusUpdateInterval});
                 // console.log("CAMERA - END2");
             });
             // console.log("CAMERA - END");
 
-			self.supportBackward = false;
-			self.statusBackward = "";
+			CloudPlayer.supportBackward = false;
+			CloudPlayer.statusBackward = "";
 			if(!SkyVR.cache.cameraInfo().url){
 				SkyVR.cameraAudio().done(function(audio_struct){
 					if(audio_struct.caps && audio_struct.caps.backward && audio_struct.caps.backward == true){
-						self.supportBackward = true;
-						self.statusBackward = "deactivated";
+						CloudPlayer.supportBackward = true;
+						CloudPlayer.statusBackward = "deactivated";
 						$('.microphone').show();
 					} else {
 						$('.microphone').hide();
@@ -244,10 +249,11 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 
             this.setPlayerControllers();
 
+			CloudPlayer.lastLiveIdle = 0;
             var reconnectInterval = setInterval(function(){
 				// console.log("[PLAYER] reconnectInterval");
 				// todo check camera status  must be active
-                if(is.desktop() && self.model.get("live") && self.model.has("lastLiveIdle") && (self.model.get("lastLiveIdle") >=10)){
+                if(is.desktop() && self.model.get("live") && (CloudPlayer.lastLiveIdle >=10)){
                     // console.log("[Player] Live reconnect");
 					self.getLivePlayer().pause();
 					//self.reinitLivePlayer();
@@ -270,7 +276,7 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 						self.getLivePlayer().load(); // -> chrome loop loading 
 					}
                     self.getLivePlayer().play();*/
-                    self.model.set({lastLiveIdle: 0});
+                    CloudPlayer.lastLiveIdle = 0;
                 }
                 
                 if(self.model.get("live") && self.camera.status == "active" && !self.hasWatchDog()){
@@ -310,6 +316,10 @@ define('player',['backbone','underscore','player-model','event','config','is','c
             });
             
             $('.camera-streaming-paused.overlay .goto-live').unbind('click').bind('click', function(){
+				event.trigger(event.PLAYER_START_LIVE);
+			});
+			
+			$('.camera-videojs-live-is-not-available.overlay .goto-live').unbind('click').bind('click', function(){
 				event.trigger(event.PLAYER_START_LIVE);
 			});         
         },
@@ -375,6 +385,8 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 				$(".state-overlay-container .big.overlay-container .camera-videojs-deny-live.overlay").hide();
 				$(".state-overlay-container .big.overlay-container .camera-has-not-live-urls.overlay").hide();
 				$(".state-overlay-container .big.overlay-container .camera-streaming-paused.overlay").hide();
+				$(".state-overlay-container .big.overlay-container .camera-videojs-live-is-not-available.overlay").hide();
+
 				$(".player-button.goto-live").hide();
 				// $('.playback-goto-live').hide();
 				$('.microphone').hide();
@@ -392,7 +404,7 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 						$('.playback-play-pause').removeClass('playback-pause');
 					}
 				}else{
-					if($('.card-container').hasClass('deny-live')){
+					if(CloudPlayer.isLiveAccessDenied()){
 						$(".state-overlay-container .big.overlay-container").show();
 						$(".state-overlay-container .big.overlay-container .camera-videojs-deny-live.overlay").show();	
 					}
@@ -418,12 +430,12 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 							$('.microphone').hide();
 						}
 
-						if($('.card-container').hasClass('livestreamnotfound')){
+						if(($('.card-container').hasClass('livestreamnotfound') && CloudPlayer.isLiveAccessDenied()) || CloudPlayer.isLiveAccessDenied()){
 							$(".state-overlay-container .big.overlay-container").show();
 							$(".state-overlay-container .big.overlay-container .camera-videojs-deny-live.overlay").show();	
 						}else if($('.card-container').hasClass('livestreamnotfound')){
 							$(".state-overlay-container .big.overlay-container").show();
-							$(".state-overlay-container .big.overlay-container .camera-has-not-live-urls.overlay").show();	
+							$(".state-overlay-container .big.overlay-container .camera-videojs-live-is-not-available.overlay").show();	
 						} else if(mLivePlayer_code && mLivePlayer_code == 4){
 							// console.log("[PLAYER] Live player has error 4");
 							$(".state-overlay-container .big.overlay-container").show();
@@ -446,7 +458,7 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 					$(".cards .card-title .live").hide();
 					// $(".player-button.goto-live").show();
 					if(this.model.get("live")){
-						if($('.card-container').hasClass('deny-live')){
+						if(CloudPlayer.isLiveAccessDenied()){
 							$(".state-overlay-container .big.overlay-container").show();
 							$(".state-overlay-container .big.overlay-container .camera-videojs-deny-live.overlay").show();	
 						}else{
@@ -465,7 +477,7 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 					statusButton.addClass("off");
 					$(".cards .card-title .live").hide();
 					if(this.model.get("live") || SkyVR.isP2PStreaming()){
-						if($('.card-container').hasClass('deny-live')){
+						if(CloudPlayer.isLiveAccessDenied()){
 							$(".state-overlay-container .big.overlay-container").show();
 							$(".state-overlay-container .big.overlay-container .camera-videojs-deny-live.overlay").show();	
 						}else{
@@ -484,7 +496,7 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 					this.hideSpinner();
 					statusButton.removeClass("on");
 					statusButton.addClass("off");
-					if($('.card-container').hasClass('deny-live')){
+					if(CloudPlayer.isLiveAccessDenied()){
 						$(".state-overlay-container .big.overlay-container").show();
 						$(".state-overlay-container .big.overlay-container .camera-videojs-deny-live.overlay").show();
 					}else{
@@ -605,7 +617,7 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 
 					if(AudioStreaming.support() && this.supportBackward == true){
 						console.log("status: " + AudioStreaming.status());
-						self.statusBackward = AudioStreaming.status();
+						CloudPlayer.statusBackward = AudioStreaming.status();
 					}
 
 					if($('.microphone').hasClass('microphone-off')){
@@ -661,6 +673,7 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 					self.reinitPlayer('record-container2', 'secondRecordPlayer');
 					self.model.set({"streaming_paused": false});
 				}
+				$('.card-container').removeClass("livestreamnotfound");
                 self.playLive();
             });
 
@@ -758,26 +771,26 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 
 					if(AudioStreaming.support() && self.supportBackward == true){
 						var newVal = AudioStreaming.status();
-						if(newVal != self.statusBackward && newVal == "activated"){
+						if(newVal != CloudPlayer.statusBackward && newVal == "activated"){
 							// TODO redesign to events
 							self.startDeactivateBackwardAfter();
-						} else if (newVal != self.statusBackward && newVal == "deactivated"){
+						} else if (newVal != CloudPlayer.statusBackward && newVal == "deactivated"){
 							// TODO redesign to events
 							self.stopDeactivateBackwardAfter();
 						}
-						self.statusBackward = newVal;
-						// console.log("statusBackwardAudio: " + self.statusBackward);
-						if(self.statusBackward == "activated" && $('.microphone').hasClass('microphone-off')){
+						CloudPlayer.statusBackward = newVal;
+						// console.log("statusBackwardAudio: " + CloudPlayer.statusBackward);
+						if(CloudPlayer.statusBackward == "activated" && $('.microphone').hasClass('microphone-off')){
 							$('.microphone').show();
 							$('.microphone').removeClass('microphone-off');
-						}else if(self.statusBackward == "deactivated" && !$('.microphone').hasClass('microphone-off')){
+						}else if(CloudPlayer.statusBackward == "deactivated" && !$('.microphone').hasClass('microphone-off')){
 							$('.microphone').show();
 							$('.microphone').addClass('microphone-off');
-						/*}else if(self.statusBackward != "deactivated" && self.statusBackward != "activated"){
+						/*}else if(CloudPlayer.statusBackward != "deactivated" && self.statusBackward != "activated"){
 							$('.microphone').hide(); // unknown status
 							$('.audio-streaming-swf-container').show();
 						}*/
-						}else if(self.statusBackward != "deactivated" && self.statusBackward != "activated"){
+						}else if(CloudPlayer.statusBackward != "deactivated" && CloudPlayer.statusBackward != "activated"){
 							// $('.microphone').hide(); // unknown status
 						}
 					}else{
@@ -792,13 +805,24 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 					}
 
 					if(!self.model.has("lastLivePosition")){
-						self.model.set({lastLivePosition: tCurrentTime, lastLiveIdle: 0});
+						self.model.set({lastLivePosition: tCurrentTime});
+						CloudPlayer.lastLiveIdle = 0;
 					}
 
 					if(self.model.get("lastLivePosition") != tCurrentTime){
-						var t = SkyVR.getCurrentTimeUTC();				
+						var t = SkyVR.getCurrentTimeUTC();
+						if(!CloudPlayer.generatedZoomPreview){
+							CloudPlayer.generatedZoomPreview = true;
+							console.log("Digital zoom: first time changed");
+							setTimeout(function(){
+								console.log("Digital zoom: force update preview once after 100ms");
+								self.updatePreviewVideoScalePosition();
+							},100);
+						}
+						
 						// console.log("[PLAYER] Live time change event: " + t);
-						self.model.set({lastLivePosition: tCurrentTime, lastLiveIdle: 0});
+						self.model.set({lastLivePosition: tCurrentTime});
+						CloudPlayer.lastLiveIdle = 0;
 						event.trigger(event.PLAYER_TIME_CHANGED, t);
 						event.trigger(event.PLAYER_LIVE_CHECK_SIZE);
 						self.hideSpinner();
@@ -811,10 +835,10 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 						
 					}else{
 						self.showSpinner();
-						var idle = self.model.get("lastLiveIdle");
+						var idle = CloudPlayer.lastLiveIdle;
 						idle = parseInt("" + idle, 10);
 						idle = idle + 1;
-						self.model.set({lastLiveIdle: idle});
+						CloudPlayer.lastLiveIdle = idle;
 						// console.log("[PLAYER] Live time idle: " + idle + " sec");
 						if (this.debug && this.debug == true){
 							$(".camera-idle").show();
@@ -914,7 +938,7 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 				});
 				$('#user-inactive-disconnect-now').unbind().bind('click', function(){
 					clearInterval(self.user_inactive_countdown);
-					if(!cc.goto_first_camera){
+					if(!CloudUI.isPlayerSingleMode()){
 						app.hideDialogModal();
 						app.destroyDialogModal();
 						app.trigger('closedeck');
@@ -945,7 +969,7 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 						app.hideDialogModal();
 						app.destroyDialogModal();
 						var cam_name = SkyVR.cache.cameraInfo().name;
-						if(!cc.goto_first_camera){
+						if(!CloudUI.isPlayerSingleMode()){
 							app.trigger('closedeck');
 						}else{
 							self.model.set({"streaming_paused": true});
@@ -1306,8 +1330,9 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 				SkyVR.cameraLiveUrls().done(function(data){
 					self.initVideoFromResponse(data);
 				}).fail(function(){
-					console.error("Could not found live stream URLs. Please check your camera.");
-					$('.card-container').addClass("livestreamnotfound");
+					console.error("[CLOUDPLAYER] Could not found live stream URLs. Please check your camera. (1)");
+					CloudPlayer.setLiveStreamNotFound();
+					self.refreshCameraStatus(CloudAPI.cache.cameraInfo());
 				});
             };
 
@@ -1325,8 +1350,8 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 						SkyVR.cameraLiveUrls().done(function(data){
 							self.initVideoFromResponse(data);
 						}).fail(function(){
-							console.error("Could not found live stream URLs. Please check your camera.");
-							$('.card-container').addClass("livestreamnotfound");
+							console.error("[CLOUDPLAYER] Could not found live stream URLs. Please check your camera. (2)");
+							CloudPlayer.setLiveStreamNotFound();
 						});
 					}
 				});
@@ -1392,7 +1417,7 @@ define('player',['backbone','underscore','player-model','event','config','is','c
         },
 
         showSpinner: function(){
-            if(this.statusBackward != "transitive")
+            if(CloudPlayer.statusBackward != "transitive")
 				$(".camera-spinner").show();
 			else
 				$(".camera-spinner").hide();
@@ -1704,6 +1729,71 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 				$(".player-button.reset-zoom").prop("disabled", false);
 			}
 		},
+		updatePreviewVideoScalePosition: function(){
+			var self = this;
+			if(self.model.get("live")){
+				var el = document.getElementById('live-container_Flash_api');
+				if(!el) {
+					console.error("Digital zoom: live-container_Flash_api not found");
+					return;
+				}
+				console.log("Digital zoom: take screen");
+				$('.video-scale-position-cursor-background-image-loader').attr({"src": 'data:image/png;base64,' + el.vjs_takeScreenshot()});
+				
+				// test begin
+				/*var a = document.body.appendChild(
+					document.createElement("a")
+				);
+				a.download = "sceenshot.png";
+				a.href = $('.video-scale-position-cursor-background-image-loader').attr('src');
+				a.innerHTML = "download";
+				a.click();*/
+				// test end
+
+				console.log("Digital zoom: take screen done");
+				$('.video-scale-position-cursor-background-image-loader').unbind().load(function(){
+					var v_w = $('.video-scale-position-cursor-background-image-loader').width();
+					var v_h = $('.video-scale-position-cursor-background-image-loader').height();
+					var w = $('#video-scale-position-canvas').width() + 2;
+					var h = $('#video-scale-position-canvas').height() + 2;
+					var k = (h/v_h);
+					var new_w = Math.floor(v_w*k);
+					var new_h = Math.floor(v_h*k);
+					var left = Math.floor((w - new_w)/2);
+					var top = 0;
+					if (left < 0){
+						// todo scale by width
+					}
+					var c = $('#video-scale-position-canvas')[0].getContext('2d');
+					c.width = w;
+					c.height = h;
+					console.log("Digital zoom: drawImage");
+					c.drawImage(this,left,top,new_w,new_h);
+				});
+			}else{
+				// console.log("[PLAYER] make image from player");
+				var mPlayer = self.getCurrentPlayer();
+				if(!mPlayer) return
+				if(!mPlayer.el()) return;
+				var v = document.getElementById($('#' + mPlayer.el().id + ' video')[0].id);
+				var v_w = mPlayer.videoWidth();
+				var v_h = mPlayer.videoHeight();
+				var w = $('#video-scale-position-canvas').width() + 2;
+				var h = $('#video-scale-position-canvas').height() + 2;
+				var k = (h/v_h);
+				var new_w = Math.floor(v_w*k);
+				var new_h = Math.floor(v_h*k);
+				var left = Math.floor((w - new_w)/2);
+				var top = 0;
+				if (left < 0){
+					// todo scale by width
+				}
+				var c = $('#video-scale-position-canvas')[0].getContext('2d');
+				c.width = w;
+				c.height = h;
+				c.drawImage(v,left,top,new_w,new_h);
+			}
+		},
         bindZoomButtons: function(){
 			var self = this;
 
@@ -1752,58 +1842,10 @@ define('player',['backbone','underscore','player-model','event','config','is','c
 					self.setZoom(zoom, left + '%', top + '%');
 				}
 			});
-			var updatePreviewVideoScalePosition = function(){
-				if(self.model.get("live")){
-					var el = document.getElementById('live-container_Flash_api');
-					if(!el) return;
-					$('.video-scale-position-cursor-background-image-loader').attr("src", 'data:image/png;base64,' + el.vjs_takeScreenshot())
-					$('.video-scale-position-cursor-background-image-loader').unbind().load(function(){
-						var v_w = $('.video-scale-position-cursor-background-image-loader').width();
-						var v_h = $('.video-scale-position-cursor-background-image-loader').height();
-						var w = $('#video-scale-position-canvas').width() + 2;
-						var h = $('#video-scale-position-canvas').height() + 2;
-						var k = (h/v_h);
-						var new_w = Math.floor(v_w*k);
-						var new_h = Math.floor(v_h*k);
-						var left = Math.floor((w - new_w)/2);
-						var top = 0;
-						if (left < 0){
-							// todo scale by width
-						}
-						var c = $('#video-scale-position-canvas')[0].getContext('2d');
-						c.width = w;
-						c.height = h;
-						c.drawImage(this,left,top,new_w,new_h);
-					});
-				}else{
-					// console.log("[PLAYER] make image from player");
-					var mPlayer = self.getCurrentPlayer();
-					if(!mPlayer) return
-					if(!mPlayer.el()) return;
-					var v = document.getElementById($('#' + mPlayer.el().id + ' video')[0].id);
-					var v_w = mPlayer.videoWidth();
-					var v_h = mPlayer.videoHeight();
-					var w = $('#video-scale-position-canvas').width() + 2;
-					var h = $('#video-scale-position-canvas').height() + 2;
-					var k = (h/v_h);
-					var new_w = Math.floor(v_w*k);
-					var new_h = Math.floor(v_h*k);
-					var left = Math.floor((w - new_w)/2);
-					var top = 0;
-					if (left < 0){
-						// todo scale by width
-					}
-					var c = $('#video-scale-position-canvas')[0].getContext('2d');
-					c.width = w;
-					c.height = h;
-					c.drawImage(v,left,top,new_w,new_h);
-				}
-			};
-
 			clearInterval(self.updatePreviewVideoScalePositionInterval);
 			self.updatePreviewVideoScalePositionInterval = setInterval(function(){
 				if($('.video-scale-position').css('opacity') == "1" && $('.video-scale-position').css('display') == 'block')
-					updatePreviewVideoScalePosition();
+					self.updatePreviewVideoScalePosition();
 			}, 3000);
 
             $(".player-button.zoom-in").unbind().bind("click",function(){
@@ -1813,7 +1855,7 @@ define('player',['backbone','underscore','player-model','event','config','is','c
                 var zoom = slider.slider( "value" )/100;
                 self.model.set({zoom : zoom});
 				self.setZoom(zoom, '', '');
-				updatePreviewVideoScalePosition();
+				self.updatePreviewVideoScalePosition();
             });
 
             $(".player-button.zoom-out").unbind().bind("click",function(){

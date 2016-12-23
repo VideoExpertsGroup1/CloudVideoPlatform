@@ -442,6 +442,10 @@
 																	<button class="player-button playback-play-pause hiding-button"></button>
 																	<button class="player-button playback-forward hiding-button"></button>
 																	<button class="player-button playback-goto-live hiding-button"></button>
+																	<button class="player-button ptz-left hiding-button"></button>
+																	<button class="player-button ptz-right hiding-button"></button>
+																	<button class="player-button ptz-top hiding-button"></button>
+																	<button class="player-button ptz-bottom hiding-button"></button>
 
 																	<div class="group-right">
 																		<div class="volume player-button" >
@@ -518,8 +522,13 @@
 				                                                           <h2><%= app.polyglot.t("access_deny") %></h2>
 				                                                       </div>
 				                                                       
+				                                                       <div class="camera-videojs-live-is-not-available overlay"  style="display: none;">
+				                                                           <h1><%= app.polyglot.t("live_video_is_not_available") %></h1>
+				                                                           <h2><%= app.polyglot.t("start_live") %>:<br> <div class="goto-live"></div></h2>
+				                                                       </div>
+				                                                       
 				                                                       <div class="camera-has-not-live-urls overlay" style="display: none;">
-				                                                           <h1><%= app.polyglot.t("Your camera has not live-stream") %></h1>
+				                                                           <h1><%= app.polyglot.t("your_camera_has_not_live_stream") %></h1>
 				                                                           <h2><%= app.polyglot.t("please_check_your_camera") %></h2>
 				                                                       </div>
 

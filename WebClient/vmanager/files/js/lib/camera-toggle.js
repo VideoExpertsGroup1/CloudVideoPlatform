@@ -5,7 +5,7 @@ define(['backbone','underscore', 'config'], function (bb,_, conf) {
         getSettings: function(camera){
             var NCamera = null;
             $.ajax({
-                url : conf.base_api_url + "api/v2/cameras/" + camera['id'] + "/",
+                url : CloudAPI.config.url_cameras + camera['id'] + "/",
                 type : "get",
                 async: false,
                 success : function(data){
@@ -34,7 +34,7 @@ define(['backbone','underscore', 'config'], function (bb,_, conf) {
 				camera.mode = new_mode;
 
                 $.ajax({
-                    url: conf.base_api_url + "api/v2/cameras/" + camera['id'] + "/",
+                    url: CloudAPI.config.url_cameras + camera['id'] + "/",
                     type: 'PUT',
                     success: function (data) {
                     },

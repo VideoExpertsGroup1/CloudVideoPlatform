@@ -1,0 +1,141 @@
+.spec-background{
+	background: #2980b9;
+    /*background: -moz-linear-gradient(top, #2980b9 0%, #00698c 100%);
+    background: -webkit-linear-gradient(top, #2980b9 0%,#00698c 100%);
+    background: -o-linear-gradient(top, #2980b9 0%,#00698c 100%);
+    background: -ms-linear-gradient(top, #2980b9 0%,#00698c 100%);
+    background: linear-gradient(top, #2980b9 0%,#00698c 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#2980b9', endColorstr='#00698c');*/
+}
+h2{
+	color: white;
+	font-family: "Open Sans",sans-serif;
+	font-size: 36px;
+	color: #FFF;
+	text-align: center;
+	width: 100%;
+	margin: 0px 0px 12px;
+	display: inline-block;
+	font-weight: 400;
+	font-style: normal;
+}
+body{
+	padding: 0px;
+	margin: 0px;
+	width: 100%;
+	height: 100%;
+}
+
+.description{
+	margin-top:7px;
+	margin-left: 30px;
+	margin-bottom:7px;
+	font-size: small;
+}
+.table-content {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+.cell-content {
+    display: table-cell;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    vertical-align: top;
+}
+
+.content{
+	text-align: center;
+    vertical-align: middle;
+}
+
+.camsess-filter{
+	margin-top: 25px;
+}
+
+.camsess-list{
+	display: inline-table;
+	margin-top: 25px;
+	padding-left: 100px;
+    padding-right: 100px;
+}
+
+.camsess-item{
+	display: table-row;
+	cursor: pointer;
+}
+
+.camsess-item:hover{
+	background-color: #EEE;
+}
+
+.camsess-preview{
+	display: table-cell;
+	background-image: url(../images/camsess.png);
+	width: 340px;
+    height: 260px;
+	padding: 10px;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.camsess-info{
+	display: table-cell;
+	height: 260px;
+	padding: 10px;
+	min-width: 100px;
+}
+
+.camsess-title{
+	font-size: 25;
+	text-align: left;
+}
+
+.camsess-author{
+	text-align: left;
+}
+
+.camsess-starttime{
+	text-align: left;
+}
+
+.camsess-duration{
+	text-align: left;
+}
+
+.camsess-coord{
+	text-align: left;
+}
+
+.camsess-player{
+	position: fixed;
+	left: 100%;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	transition: left 0.8s ease-in-out;
+	display: table;
+}
+
+.camsess-player-background{
+	opacity: 0.5;
+    background-color: #000;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.camsess-player0{
+	display: table-cell;
+	vertical-align: middle;
+    text-align: center;
+}
+
+.video-js{
+	display: inline-block;
+}
+
+.video-js.vjs-fullscreen {
+	display: block;
+}

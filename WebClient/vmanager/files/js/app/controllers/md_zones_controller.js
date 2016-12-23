@@ -733,7 +733,7 @@ define(['config', 'backbone','underscore', 'application', 'raphael', 'is', '../v
 		console.log({ objects: md_zones.motion_detection.regions});
 		
 		$.ajax({
-				url : conf.base_api_url + "api/v2/cameras/" + self.camera['id'] + "/motion_detection/regions/",
+				url : CloudAPI.config.url_cameras + self.camera['id'] + "/motion_detection/regions/",
 				type : 'PUT',
 				async: false,
 				contentType: "application/json",
@@ -1061,7 +1061,7 @@ define(['config', 'backbone','underscore', 'application', 'raphael', 'is', '../v
 		event.trigger(event.GET_CAMERA,function(cam){
 			self.camera = cam;
 		});
-		/*$.get( conf.base_api_url + "api/v2/cameras/" + self.camera['id'] + "/motion_detection", function(data){
+		/*$.get( CloudAPI.config.url_cameras + self.camera['id'] + "/motion_detection", function(data){
 			console.log(data);
 		});*/
 		

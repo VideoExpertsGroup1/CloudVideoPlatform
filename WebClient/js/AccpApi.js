@@ -2,7 +2,7 @@ window.AccpApi = new function (){
 	var self = this;
 
 	var debugServer="http://10.20.16.28/accp_frontend/";
-	self.base_url =(window.location.host!=="10.20.16.28")?window.location.protocol+"//"+window.location.host+"/":debugServer;
+	self.base_url =(window.location.host!=="10.20.16.28") ? window.location.protocol+"//"+window.location.host+"/":debugServer;
 	this.getBaseUrl=function(){return self.base_url;};
 	this.isDebuggable=function(){return debug;};
 	this.getDebugServer=function(){return debugServer;};
@@ -13,20 +13,56 @@ window.AccpApi = new function (){
 		return window.location.protocol + "//" + window.location.host + current_url.join("/") + "/";
 	}
 	
-	this.getSvcpAuthWebUrl_WithRedirect = function(){
+	this.generateRedirectURL = function(params){
 		var vmanager_path = window.location.pathname.split("/");
 		vmanager_path.pop();
 		vmanager_path.push("vmanager");
-		var redirect_url = window.location.protocol + "//" + window.location.host + vmanager_path.join("/") + "/";
-		return localStorage.getItem("svcp_auth_web_url") + "&redirect=" + redirect_url;
+		var vmanager_params = []
+		for(var n in params){
+			vmanager_params.push( encodeURIComponent(n) + "=" + encodeURIComponent(params[n]))
+		}
+		vmanager_params.push("svcp_host=" + encodeURIComponent(this.getSvcpHost()))
+		var url = encodeURIComponent(window.location.protocol + "//" + window.location.host + vmanager_path.join("/") + "/?" + vmanager_params.join("&"));
+		console.log("url redirect: " + url);
+		return url;
 	}
 	
+	this.getSvcpAuthWebUrl_WithRedirect = function(params){
+		return localStorage.getItem("svcp_auth_web_url") + "&redirect=" + this.generateRedirectURL(params);
+	}
+	
+	this.getSvcpAuthWebUrl_WithRedirect_camsess = function(params){
+		var vmanager_path = window.location.pathname.split("/");
+		vmanager_path.pop();
+		var vmanager_params = []
+		for(var n in params){
+			vmanager_params.push( encodeURIComponent(n) + "=" + encodeURIComponent(params[n]))
+		}
+		vmanager_params.push("svcp_host=" + encodeURIComponent(this.getSvcpHost()))
+		var url = encodeURIComponent(window.location.protocol + "//" + window.location.host + vmanager_path.join("/") + "/?" + vmanager_params.join("&"));
+		return localStorage.getItem("svcp_auth_web_url") + "&redirect=" + url;
+	}
+
+	this.getSvcpAuthWebUrl_WithRedirect_GPLUS = function(){
+		if(window.location.host == "54.173.34.172:12050"){
+			var svcp_host = window.location.protocol + "//ec2-54-173-34-172.compute-1.amazonaws.com/";
+			var svcp_auth_web_url = svcp_host + "svcauth/init?&src=doc&provider=ST_GOOGLE&vendor=VXG_DEV";
+			localStorage.setItem("svcp_host", svcp_host);
+			return svcp_auth_web_url + "&redirect=" + this.generateRedirectURL();	
+		}else if(window.location.host == "cnvrclient2.videoexpertsgroup.com" || window.location.host == "localhost"){
+			var svcp_host = window.location.protocol + "//web.skyvr.videoexpertsgroup.com/";
+			var svcp_auth_web_url = svcp_host + "svcauth/init?&src=doc&provider=VXG_DOC_GOOGLE&vendor=VXG_DOC";
+			localStorage.setItem("svcp_host", svcp_host);
+			return svcp_auth_web_url + "&redirect=" + this.generateRedirectURL();
+		}
+	}
+
 	this.getSvcpHost = function(){
-		return localStorage.setItem("svcp_host");
+		return localStorage.getItem("svcp_host");
 	}
-	
+
 	this.getSvcpAuthWebUrl = function(){
-		return localStorage.setItem("svcp_host");
+		return localStorage.getItem("svcp_auth_web_url");
 	}
 	
 	this.setSvcpAuthWebUrl = function(svcpAuthWebUrl){
@@ -57,12 +93,19 @@ window.AccpApi = new function (){
 		localStorage.setItem("is_opened_like_demo", false);
 		localStorage.removeItem('selectedCam');
 		var d = $.Deferred();
+		$.ajaxSetup({
+			crossDomain: true,
+			cache: false,
+		});
 		$.ajax({
 			url: self.base_url + "api/v1/account/demo_login/",
 			type: 'POST',
-            xhrFields: {
-			  withCredentials: true
-		   }
+			xhrFields: {
+				withCredentials: true
+			},
+			beforeSend: function(xhr,settings) {
+				// xhr.setRequestHeader('Access-Control-Allow-Credentials', true);
+			}
 		}).done(function(response){
 			self.setSvcpAuthWebUrl(response.svcp_auth_web_url);
 			// self.svcp_auth_app_url = response.svcp_auth_app_url;

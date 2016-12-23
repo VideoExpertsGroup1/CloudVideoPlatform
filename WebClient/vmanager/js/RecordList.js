@@ -169,7 +169,9 @@ window.RecordList = function (event){
 				res[i].startTime = Date.parse(res[i].start + 'Z');
 				res[i].endTime = Date.parse(res[i].end + 'Z');
 				if(res[i].endTime < res[i].startTime){ // this logic because bad server format on camera;
-					res[i].endTime += 86400000;
+					console.error("Wrong times: ", res[i]);
+					continue;
+					// res[i].endTime += 86400000;
 				}
 				minT = minT == undefined ? res[i].startTime : Math.min(minT, res[i].startTime);
 				maxT = maxT == undefined ? res[i].endTime : Math.max(maxT, res[i].endTime);

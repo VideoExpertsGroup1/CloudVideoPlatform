@@ -3,13 +3,15 @@ $( document ).ready(function() {
 		localStorage.removeItem('selectedCam');
 		AccpApi.logout().done(function(){
 			window.location = AccpApi.getCurrentUrl();
+		}).fail(function(){
+			window.location = AccpApi.getCurrentUrl();
 		});
 		return;
 	}
 	
 	if(AccpClient.containsPageParam("demo") || AccpApi.isDemo()){
 		AccpApi.demo_login().done(function(response){
-			window.location = AccpApi.getSvcpAuthWebUrl_WithRedirect();
+			window.location = AccpApi.getSvcpAuthWebUrl_WithRedirect({"demo":""});
 		});
 		return;
 	}
@@ -35,7 +37,6 @@ $( document ).ready(function() {
 });
 
 window.AccpClient = new function (){
-	
 	this.videoServerURL="http://54.173.34.172";
 	this.thereIsNoCameras=undefined;
 	this.svcpLink='';
@@ -66,6 +67,12 @@ window.AccpClient = new function (){
 	this.containsPageParam = function(name){
 		return (typeof this.pageParams[name] !== "undefined");
 	};
+	this.canShowGoogleAuthButton = function(){
+		return window.location.host == "54.173.34.172:12050"
+			|| window.location.host == "cnvrclient2.videoexpertsgroup.com"
+			|| window.location.host == "localhost";
+	}
+	
 	this.signinForm = function(){
 		var result = ""
 		+ "<h2>Video Experts Group<\/h2>"
@@ -75,11 +82,19 @@ window.AccpClient = new function (){
 		result += "		<input placeholder=\"Username\" id=\"username\" maxlength=\"254\" onfocus='$(\".error\").hide()' name=\"username\" type=\"text\"><br>";
 		result += "		<input placeholder='Password' id=\"password\" name=\"password\" onfocus='$(\".error\").hide()' type=\"password\"><br>";
 		result += "		<div class=\"error\" id='loginError'><\/div>";
-		result += "	   <input value=\"Sign In\" type='submit'>";
-		result += "   </form>";
-		result += "	  <button class='signup'>Sign Up</button><br>"+
-		"<a id=\"forgot-password\" href=\"#\">Forgot your password ?</a>"+
-		"<a id=\"see-demo\" href='javascript:goToDemo()'  style=''>See Demo</a>";
+		result += "		<input value=\"Sign In\" type='submit'>";
+		result += "	</form>";
+
+		// only for debug server
+		if(this.canShowGoogleAuthButton()){
+			result += "	   	<div class='social-signin'>"
+			+ " <div class='social-caption'>Or:</div>"
+			+ " <div class='social-gplus'></div>"
+			+ "		</div>";
+		}
+		result += "	<button class='signup'>Sign Up</button><br> " +
+		// "<a id=\"forgot-password\" href=\"#\">Forgot your password ?</a>"+
+		'<div id="see-demo">See Demo</div>';
 		result += "</div>";
 		result += "<div class='row-content-powered-by'>";
 		result += "<div class='powered-by'>Powered by VXG Cloud Platform</div>";
@@ -160,9 +175,7 @@ window.AccpClient = new function (){
 		  newDiv1.appendChild(child1);
 		  newDiv1.appendChild(child2);
 		  Grid.appendChild(newDiv1);
-		
-		
-		};
+	};
     this.clearGrid=function(){
 		
 		  var Grid=document.getElementById("camGrid");
@@ -175,8 +188,6 @@ window.AccpClient = new function (){
 		
 	} 
 	this.cameraGrid = function(cameras){
-	    
-		
 		var camera="";
 		this.camerasInfo=cameras;
 		var Grid=document.getElementById('camGrid');
@@ -186,46 +197,30 @@ window.AccpClient = new function (){
 		var l=cameras.objects.length;
 		
 		var camName='';
-		if(Grid===null)
-		{
-		var camGrid="<div class='camGrid' id='camGrid'>";
+		if(Grid===null){
+			var camGrid="<div class='camGrid' id='camGrid'>";
+	
+			//l=0;
+			for(var i=0;i<l;i++){
+				preview=this.getPreview(cameras.objects[i].status,cameras.objects[i]);
+				camName=this.getCamName(cameras.objects[i].name);
+				var index=i.toString();
+				camera='<div  class="camera-item">'+
+				"<img class='camera-preview' src=\"./vmanager/images/transparent_2x2.png\" onload='this.src=\""+preview+"\";this.onload=\"\" ' onerror='this.src=\"./images/camimg_default.png\";' onclick='AccpClient.openVManager(this,"+index+")' width='294px' height='210px'/>"+
+				"<div  class='camName'>"+camName+"</div>"+
+				"<img src='./images/delete_blue_25x25.svg' onclick='showCameraDeletionDialog("+index+")' style='float:right;margin-right:10px;margin-top:20px;color:red;cursor:pointer'></img> </div>";
+				camGrid+=camera;
+			}
 		
-		
-		
-		//l=0;
-		for(var i=0;i<l;i++)
-		{
-						
-
-			preview=this.getPreview(cameras.objects[i].status,cameras.objects[i]);
-			
-			camName=this.getCamName(cameras.objects[i].name);
-			
-			 var index=i.toString();
-			 
-			 //camera="<div onclick='goToVideo(this,"+index+")' style='float:left;width:300px;height:300px;background:blue;margin-left:20px;"+
-			 //"margin-top:20px;background-image:url("+preview+");background-repeat:no-repeat;background-size: 181px 131px;background-position:center'>"+
-			 //"<div  style='margin-top:100px'>"+camName+"</div> </div>";
-			 
-			 camera="<div  style='float:left;width:300px;height:270px;background:#3788b1;margin-left:20px;"+
-			 "margin-top:20px;background-color:#3788b1'>"+
-			 //(cameras.objects[i].status=="not_started"&&cameras.objects[i].preview!==undefined?"<div style='width:300px;height:270px;background:black;opacity:0.1'></div>":"")+
-			 "<img src=\"./vmanager/images/transparent_2x2.png\" onload='this.src=\""+preview+"\";this.onload=\"\" ' onerror='this.src=\"./images/camimg_default.png\";' onclick='goToVideo(this,"+index+")' width='294px' height='210px' style='margin-top:3px;cursor:pointer'></img>"+
-			 "<div  class='camName'>"+camName+"</div>"+
-			 "<img src='./images/delete_blue_25x25.svg' onclick='showCameraDeletionDialog("+index+")' style='float:right;margin-right:10px;margin-top:20px;color:red;cursor:pointer'></img> </div>";
-			camGrid+=camera;
-		}
-		
-		if(l==0)
-		{
-		      camera="<div id='bigPlusDiv' style='float:left;width:300px;height:270px;background:#3788b1;margin-left:20px;"+
-			 "margin-top:20px;background-color:#3788b1'>"+
-			 "<div  style='width:300px;height:200px;background:#3788b1;color: #FFF;font-size:200;cursor:pointer' onclick='addCameraDialog()'>+</div>"+
-			 "<div style='width:300px;height:70px;background:#3788b1;color: #FFF;font-size:16;font-family: \"Open Sans\",sans-serif;'>There are no cameras yet.</div>"+
-			"</div>";
-			camGrid+=camera;
-			this.thereIsNoCameras=true;
-		}
+			if(l==0){
+				  camera="<div id='bigPlusDiv' style='float:left;width:300px;height:270px;background:#3788b1;margin-left:20px;"+
+				 "margin-top:20px;background-color:#3788b1'>"+
+				 "<div  style='width:300px;height:200px;background:#3788b1;color: #FFF;font-size:200;cursor:pointer' onclick='addCameraDialog()'>+</div>"+
+				 "<div style='width:300px;height:70px;background:#3788b1;color: #FFF;font-size:16;font-family: \"Open Sans\",sans-serif;'>There are no cameras yet.</div>"+
+				"</div>";
+				camGrid+=camera;
+				this.thereIsNoCameras=true;
+			}
 		//set ActionBar and UserName contents
 		var actionBarContent="<div id='menulogout' class='actions' style='margin-right:10px'>Logout</div>"+
 		"<div  class='actions' style='font-size:xx-large;font-weight: bold;' onclick='addCameraDialog(true)'>+</div>"+
@@ -301,7 +296,7 @@ window.AccpClient = new function (){
 			 camchild1.src=preview;
 			 //if(cam.childNodes[1].childNodes.length>0)
 			 //cam.childNodes[1].removeChild(cam.childNodes[1].childNodes[0]);
-			 cam.childNodes[0].setAttribute('onclick','goToVideo(this,'+ind+')');
+			 cam.childNodes[0].setAttribute('onclick','AccpClient.openVManager(this,'+ind+')');
 			 cam.childNodes[1].innerHTML="";
 			 cam.childNodes[1].appendChild(document.createTextNode(camName));
 			 cam.childNodes[2].setAttribute('onclick','showCameraDeletionDialog('+ind+')');
@@ -315,17 +310,18 @@ window.AccpClient = new function (){
 		  this.thereIsNoCameras=true;
 		  
 		}
-			
-			
+
 		}
-		
-		
 	};
 	// login
 	this.signinBindButtons = function(){
 		$('#loginform').unbind().submit(function(e){
 			e.preventDefault();
 			AccpApi.login($('#username').val(), $('#password').val()).done(function(response){
+				if ("next" in AccpClient.pageParams) {
+					window.location.replace(window.location.protocol + '//' + window.location.host + AccpClient.pageParams['next'])
+					return;
+				}
 				AccpApi.profile().done(function(response){
 					AccpClient.username = response.username;
 					AccpClient.email = response.email;
@@ -351,6 +347,16 @@ window.AccpClient = new function (){
 			document.getElementById('username').style.color='#046B90';
 			AccpClient.signupBindButtons();
 		});
+		
+		$('.social-gplus').unbind().bind('click', function(e){
+			window.location = AccpApi.getSvcpAuthWebUrl_WithRedirect_GPLUS();
+		});
+		
+		$('#see-demo').unbind().bind('click', function(){
+			AccpApi.demo_login().done(function(response){
+				window.location = AccpApi.getSvcpAuthWebUrl_WithRedirect({"demo":""});
+			});
+		})
 	}
 	
 	// registration
@@ -409,36 +415,28 @@ window.AccpClient = new function (){
 	}
 }
 
-    //go to the camera
-     goToVideo=function(el,ind){
-		
-	    var thisServerUrl=AccpApi.getBaseUrl();
-		var index=parseInt(ind);
-		if(AccpClient.camerasInfo.objects[index]===null)alert("null");
-		localStorage.setItem("selectedCam",JSON.stringify(AccpClient.camerasInfo.objects[index]));
-		window.location = AccpApi.getSvcpAuthWebUrl_WithRedirect();
-	}
+AccpClient.openVManager = function(el,ind){
+	var index=parseInt(ind);
+	var selectedCam = AccpClient.camerasInfo.objects[index];
+	if(AccpClient.camerasInfo.objects[index]===null) {alert("null"); return}
+	var camid = selectedCam['svcp_id'];
+	window.location = AccpApi.getSvcpAuthWebUrl_WithRedirect({"camid":camid});
+}
+     
 	
 	addCameraDialog=function(isThereAnyCamera){
-		
-	   
-	   document.getElementById("new-camera-timezone").style.width='330px';
-	 	
-	  var timezones_options = "";
-	  var timezones = moment.tz.names();
-	 
-	  for(var t in timezones){
-					timezones_options += '<option value=' + timezones[t] + '>(UTC' + moment.tz(timezones[t]).format("Z") + ') ' + timezones[t] + '</option>';
-				}
-		$('#new-camera-timezone').html(timezones_options);
-				
-         //AccpClient.plusPress=true;	
-        $("#shadow").show();
-	 
-       document.getElementById('addCameraDialog').style.display="block";
-		
+		document.getElementById("new-camera-timezone").style.width='330px';
+		var timezones_options = "";
+		var timezones = moment.tz.names();
 
-		
+		for(var t in timezones){
+			timezones_options += '<option value=' + timezones[t] + '>(UTC' + moment.tz(timezones[t]).format("Z") + ') ' + timezones[t] + '</option>';
+		}
+		$('#new-camera-timezone').html(timezones_options);
+
+		//AccpClient.plusPress=true;	
+		$("#shadow").show();
+		document.getElementById('addCameraDialog').style.display="block";
 	}
 	
 	closeAddCamDialog=function(){
@@ -524,12 +522,6 @@ function updateCamerasLoop(){
 	updateCameras();
 	camerasLoop = setTimeout(updateCamerasLoop,AccpClient.polingCamerasListInterval);
 }
-	
-function goToDemo(){
-	AccpApi.demo_login().done(function(response){
-		window.location = AccpApi.getSvcpAuthWebUrl_WithRedirect();
-	});
-}	
 	
 function stopUpdateCamerasLoop() {
     clearTimeout(camerasLoop);

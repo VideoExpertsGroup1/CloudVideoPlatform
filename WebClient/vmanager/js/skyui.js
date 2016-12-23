@@ -18,7 +18,7 @@ window.SkyUI = new function (){
 		this.reinitDemoVersionDialog();
 		$('.skyvr-dialog-content-demo-version').text('Settings changing is disabled in the demo version');
 		$('.skyvr-dialog-is-demo-version').show();
-		SkyUI.mobileNavPages.push('demoversiondialog');
+		CloudUI.mobileNavPages.push('demoversiondialog');
 	};
 	this.mobileNavPages = {};
 	this.mobileNavPages.stack_pages = [];
@@ -46,8 +46,9 @@ window.SkyUI = new function (){
 		}
 	}
 	this.isDemo=function(){
-		return localStorage.getItem('is_opened_like_demo')==="true";
-		};
+		return localStorage.getItem('is_opened_like_demo')==="true" || CloudAPI.containsPageParam("demo");
+	};
+	
 	this.reinitDemoVersionDialog = function(){
 
 		console.log("showDialogDemo " + $('.skyvr-dialog-is-demo-version').length);
@@ -55,7 +56,7 @@ window.SkyUI = new function (){
 		$('.skyvr-dialog-is-demo-version').remove();
 		$('body').append($('<div class="skyvr-dialog-is-demo-version" style="display: none;">' + html + '</div>'));
 		$('.skyvr-dialog-is-demo-version .skyvr-dlg-hdr-right').unbind().click(function(){
-			SkyUI.mobileNavPages.pop();
+			CloudUI.mobileNavPages.pop();
 			$('.skyvr-dialog-is-demo-version').hide();
 		});
 
@@ -70,7 +71,7 @@ window.SkyUI = new function (){
 				return;
 			}
 			bClickOnWindow = false;
-			SkyUI.mobileNavPages.pop();
+			CloudUI.mobileNavPages.pop();
 			$('.skyvr-dialog-is-demo-version').hide();
 		});
 	};
@@ -116,7 +117,7 @@ window.SkyUI = new function (){
 			type: 'GET',
 			contentType: 'application/json'
 		}).done(function(translates){
-			SkyUI.polyglot.translates = translates;
+			CloudUI.polyglot.translates = translates;
 			d.resolve();
 		}).fail(function(){
 			d.reject();
@@ -167,9 +168,9 @@ window.SkyUI = new function (){
 	}
 	this.triggers = {};
 	this.trigger = function(eventname, app, event){ // app, event - temporary variables
-		if(SkyUI.triggers[eventname]){
+		if(CloudUI.triggers[eventname]){
 			setTimeout(function(){
-				SkyUI.triggers[eventname](app, event);
+				CloudUI.triggers[eventname](app, event);
 			},1);
 		}
 	}
@@ -182,30 +183,47 @@ window.SkyUI = new function (){
 			delete this.triggers[eventname];
 		}
 	};
-	
-	this.htmlEscape = function(str){
-		return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-	};
 }();
 
-SkyUI.on('showcameranotfound', function(app, event){
-	$('.skyvr-cell-content').html('<div class="camera_not_found">' + SkyUI.polyglot.t("camera_not_found") + '</div>');
+// for feature
+window.CloudUI = window.SkyUI;
+
+CloudUI.htmlEscape = function(str){
+	return String(str).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+};
+
+CloudUI.on('showcameranotfound', function(app, event){
+	$('.skyvr-cell-content').html('<div class="camera_not_found">' + CloudUI.polyglot.t("camera_not_found") + '</div>');
 });
 
-SkyUI.on('showfirstcameraplayer', function(app, event){
-	console.log("[SKYUI] showfirstcameraplayer");
+CloudUI.isPlayerSingleMode = function(){
+	return cc.goto_first_camera && !CloudAPI.containsPageParam("fcno");
+}
+
+CloudUI.on('showfirstcameraplayer', function(app, event){
+	console.log("[CLOUDUI] showfirstcameraplayer");
 	SkyVR.camerasList().done(function(data){
 		if(data.objects.length == 0){
-			SkyUI.trigger('showcameranotfound', app, event);
+			CloudUI.trigger('showcameranotfound', app, event);
 		}else{
 			if(data.objects.length > 1)
-				console.warn('[SKYUI] Cameras more than one please check cc.goto_first_camera');
+				console.warn('[CLOUDUI] Cameras more than one please check cc.goto_first_camera');
 			var main_content_template = _.template($('#templates #main-content').html());
 			var cnt = $(main_content_template({app: app}));
 			$('.content').html(cnt);
 			var openCam = null;
 			var openCamId = 0;
-			if(localStorage.getItem('selectedCam') != null){
+			if(CloudAPI.containsPageParam('camid')){
+				var camid = CloudAPI.pageParams['camid'];
+				for(var i = 0; i < data.objects.length; i++){
+					if(camid == data.objects[i].id) {
+						console.log("ID"+i+":"+data.objects[i].id);
+						openCam = data.objects[i];
+						openCamId = data.objects[i].id;
+						break;
+					}
+				}
+			} else if(localStorage.getItem('selectedCam') != null){
 				var choosenCam=JSON.parse(localStorage.getItem('selectedCam'));
 				console.log("ID "+choosenCam.svcp_id);
 				for(var i = 0; i < data.objects.length; i++){
@@ -225,15 +243,16 @@ SkyUI.on('showfirstcameraplayer', function(app, event){
 			console.log('selection camera', SkyVR.cache.cameraInfo());
 			event.trigger(event.CAMERA_SELECTED, [openCam]);
 		}
+	}).fail(function(){
+		console.error("Could not found cameras or unathorized");
 	});
 	// event.trigger(event.CAMERA_SELECTED, [SkyVR.cache.cameraInfo() || cam]);
 	// app.trigger('ShowMainPage');
 });
 
-
 		
 // experiment
-SkyUI.templates.createPageClips = function(options){
+CloudUI.templates.createPageClips = function(options){
 	var divCardClips = document.createElement('div');
 	divCardClips.className = 'card type-clips';
 	
@@ -242,7 +261,7 @@ SkyUI.templates.createPageClips = function(options){
 	divCardHeader.className = "card-header";
 	var h1CardTitle = document.createElement('h1');
 	h1CardTitle.className = "card-title";
-	h1CardTitle.innerHTML = SkyUI.polyglot.t("clips_title");
+	h1CardTitle.innerHTML = CloudUI.polyglot.t("clips_title");
 	divCardHeader.appendChild(h1CardTitle);
 	if(!options.sharepage){
 		var aHref = document.createElement('a');
@@ -298,7 +317,7 @@ SkyUI.templates.createPageClips = function(options){
 	inputTitle.type='text';
 	inputTitle.value='';
 	inputTitle.list='clips_title_list';
-	inputTitle.placeholder=SkyUI.polyglot.t('clip_title');
+	inputTitle.placeholder=CloudUI.polyglot.t('clip_title');
 	inputTitle.onmouseup = "focus();";
 	inputTitle.onmousedown = "focus();";
 	inputTitle.onmouseover = "focus();";
@@ -308,7 +327,7 @@ SkyUI.templates.createPageClips = function(options){
 	inputGroup.type='text';
 	inputGroup.value='';
 	inputGroup.list='clips_group_list';
-	inputGroup.placeholder=SkyUI.polyglot.t('clip_group');
+	inputGroup.placeholder=CloudUI.polyglot.t('clip_group');
 	inputGroup.onmouseup = "focus();";
 	inputGroup.onmousedown = "focus();";
 	inputGroup.onmouseover = "focus();";
@@ -326,13 +345,13 @@ SkyUI.templates.createPageClips = function(options){
 	return divCardClips;
 }
 
-SkyUI.clips = new function(){
+CloudUI.clips = new function(){
 	var self = this;
 	this.clipFilter = function(clip){
 		var filter_title = $('.skyvr-clips-filter-title').val();
 		var filter_group = $('.skyvr-clips-filter-group').val();
-		var untitled = SkyUI.polyglot.t('clip_untitled');
-		var ungrouped = SkyUI.polyglot.t('clip_ungrouped');
+		var untitled = CloudUI.polyglot.t('clip_untitled');
+		var ungrouped = CloudUI.polyglot.t('clip_ungrouped');
 		var title_contains_filter = clip.title.toUpperCase().indexOf(filter_title.toUpperCase()) >= 0;
 		var group_contains_filter = clip.group.toUpperCase().indexOf(filter_group.toUpperCase()) >= 0;
 
@@ -378,14 +397,14 @@ SkyUI.clips = new function(){
 	this.shareToken = '';
 	
 	this.funcClipList = function(){
-		if(SkyUI.clips.onlyclips)
-			return SkyVR.storageClipListAnon(SkyUI.clips.shareToken);
+		if(CloudUI.clips.onlyclips)
+			return SkyVR.storageClipListAnon(CloudUI.clips.shareToken);
 		return SkyVR.storageClipList();
 	}
 	
 	this.funcClipInfo = function(clipid){
-		if(SkyUI.clips.onlyclips)
-			return SkyVR.storageClipAnon(clipid, SkyUI.clips.shareToken);
+		if(CloudUI.clips.onlyclips)
+			return SkyVR.storageClipAnon(clipid, CloudUI.clips.shareToken);
 		return SkyVR.storageClip(clipid);
 	}
 	
@@ -400,16 +419,16 @@ SkyUI.clips = new function(){
 		}
 		var clipid = $('.skyvr-dlg-hdr-title').attr('clipid');
 		clipid = parseInt(clipid, 10);
-		SkyUI.clips.funcClipList().done(function(clips){
+		CloudUI.clips.funcClipList().done(function(clips){
 			var arr_ids = [];
 			for(var i = 0; i < clips.objects.length; i++){
-				if(clips.objects[i].status == "done" && SkyUI.clips.clipFilter(clips.objects[i]))
+				if(clips.objects[i].status == "done" && CloudUI.clips.clipFilter(clips.objects[i]))
 					arr_ids.push(clips.objects[i].id);
 			}
 			if(arr_ids.length == 0){
 				$('.skyvr-dialog-clipshow').hide();
-				try{SkyUI.clips.mPlayer.dispose();}catch(e){};
-				$('#' + SkyUI.clips.elemId).remove();
+				try{CloudUI.clips.mPlayer.dispose();}catch(e){};
+				$('#' + CloudUI.clips.elemId).remove();
 				delete page_params['clipid'];
 				SkyVR.changeLocationState(page_params);
 				return;
@@ -424,9 +443,9 @@ SkyUI.clips = new function(){
 				next_clip = arr_ids[new_ind];
 			}
 			if(next_clip && next_clip != clipid && next_clip >= 0){
-				try{SkyUI.clips.mPlayer.dispose();}catch(e){};
-				$('#' + SkyUI.clips.elemId).remove();
-				SkyUI.clips.showClipViewer(next_clip);
+				try{CloudUI.clips.mPlayer.dispose();}catch(e){};
+				$('#' + CloudUI.clips.elemId).remove();
+				CloudUI.clips.showClipViewer(next_clip);
 				page_params['clipid'] = next_clip;
 				SkyVR.changeLocationState(page_params);
 			}
@@ -436,8 +455,8 @@ SkyUI.clips = new function(){
 	this.startUpdatingClipList = function(){
 		self.stopUpdatingClipList();
 		self.updateClipListInterval = setInterval(function(){
-			SkyUI.clips.funcClipList().done(function(clips){
-				SkyUI.clips.updateClipListView(clips);
+			CloudUI.clips.funcClipList().done(function(clips){
+				CloudUI.clips.updateClipListView(clips);
 			});
 		},30000);
 	};
@@ -447,8 +466,8 @@ SkyUI.clips = new function(){
 	};
 	
 	this.updateClipList = function(){
-		SkyUI.clips.funcClipList().done(function(clips){
-			SkyUI.clips.updateClipListView(clips);
+		CloudUI.clips.funcClipList().done(function(clips){
+			CloudUI.clips.updateClipListView(clips);
 		});
 	};
 
@@ -459,12 +478,12 @@ SkyUI.clips = new function(){
 		var groups_upper = [];
 		for(var i = 0; i < clips.objects.length; i++){
 			var clip = clips.objects[i];
-			var title = clip.title != '' ? clip.title : SkyUI.polyglot.t('clip_untitled');
+			var title = clip.title != '' ? clip.title : CloudUI.polyglot.t('clip_untitled');
 			if(titles_upper.indexOf(title.toUpperCase()) < 0){
 				titles.push(title);
 				titles_upper.push(title.toUpperCase());
 			}
-			var group = clip.group != '' ? clip.group : SkyUI.polyglot.t('clip_ungrouped');
+			var group = clip.group != '' ? clip.group : CloudUI.polyglot.t('clip_ungrouped');
 			if(groups_upper.indexOf(group.toUpperCase()) < 0){
 				groups.push(group);
 				groups_upper.push(group.toUpperCase());
@@ -487,11 +506,11 @@ SkyUI.clips = new function(){
 		var d = $.Deferred();
 		// clip_delete_confirm
 		app.createDialogModal({
-			'title' : SkyUI.polyglot.t('dialog_title_clip_delete'),
-			'content' : SkyUI.polyglot.t('dialog_content_clip_delete'),
+			'title' : CloudUI.polyglot.t('dialog_title_clip_delete'),
+			'content' : CloudUI.polyglot.t('dialog_content_clip_delete'),
 			'buttons' : [
-				{id: 'clip-delete-yes', text: SkyUI.polyglot.t('clip_delete_yes'), close: false},
-				{text: SkyUI.polyglot.t('clip_delete_no'), close: true}
+				{id: 'clip-delete-yes', text: CloudUI.polyglot.t('clip_delete_yes'), close: false},
+				{text: CloudUI.polyglot.t('clip_delete_no'), close: true}
 			],
 			'beforeClose' : function() {
 			}
@@ -512,27 +531,27 @@ SkyUI.clips = new function(){
 	}
 
 	this.hasAccessAll = function(clip){
-		if(SkyUI.isDemo())return true;
+		if(CloudUI.isDemo())return true;
 		return clip['access'][0] == 'all';
 	}
 	
 	this.hasAccessPlay = function(clip){
-		if(SkyUI.isDemo())return true;
+		if(CloudUI.isDemo())return true;
 		return clip['access'][0] == 'play';
 	}
 		
 	this.makeClipTile = function(clip){
-		var clip_duration = SkyUI.clips.makeClipTime(clip.duration);
+		var clip_duration = CloudUI.clips.makeClipTime(clip.duration);
 		var clip_start_time = SkyVR.parseUTCTime(clip.start);
 		//clip_start_time = clip_start_time + SkyVR.getOffsetTimezone();
 		clip_start_time = SkyVR.convertUTCTimeToStr(clip_start_time);
 		var poster = clip.thumb ? clip.thumb.url : "";
-		var title = clip.title != "" ? clip.title : SkyUI.polyglot.t('clip_untitled');
-		var group = clip.group != "" ? clip.group : SkyUI.polyglot.t('clip_ungrouped');
+		var title = clip.title != "" ? clip.title : CloudUI.polyglot.t('clip_untitled');
+		var group = clip.group != "" ? clip.group : CloudUI.polyglot.t('clip_ungrouped');
 		var shared = '';
 		
 		console.log(clip);
-		var bAccessAll = SkyUI.clips.hasAccessAll(clip);
+		var bAccessAll = CloudUI.clips.hasAccessAll(clip);
 		if(cc.shared_clips && bAccessAll){
 			shared = '<button class="share-icon ' + (clip.shared ? 'white' : 'blue') + '" shared="' + clip.shared + '" clipid="' + clip.id + '"></button>'
 		}
@@ -555,8 +574,8 @@ SkyUI.clips = new function(){
 			+ '		<div class="load-spinner"></div>'
 			+ '	</div>'
 			+ '	<div class="video error">'
-			+ '		<div class="fade"><div class="text">' + SkyUI.polyglot.t('clip_problem_processing') + '<br/><br/><img src="images/warn_yellow_32x32.svg"></img><br/><br/>'
-			+ (clip.error_code ? SkyUI.polyglot.t('clip_error_' + clip.error_code) : '')
+			+ '		<div class="fade"><div class="text">' + CloudUI.polyglot.t('clip_problem_processing') + '<br/><br/><img src="images/warn_yellow_32x32.svg"></img><br/><br/>'
+			+ (clip.error_code ? CloudUI.polyglot.t('clip_error_' + clip.error_code) : '')
 			+ '</div></div>'
 			+ delete_clip
 			+ '	</div>'
@@ -582,7 +601,7 @@ SkyUI.clips = new function(){
 
 		self.updateClipListViewProcessed = true;
 		try{
-			SkyUI.clips.updateClipTags(clips);
+			CloudUI.clips.updateClipTags(clips);
 
 			// remove clips which has not exists or changed tag			
 			var list = $('.camera-with-clips').children();
@@ -606,14 +625,14 @@ SkyUI.clips = new function(){
 				var clip = clips.objects[i];
 				if(clip.shared)
 					countOfSharedClips++;
-				if(SkyUI.clips.clipFilter(clip)){
+				if(CloudUI.clips.clipFilter(clip)){
 					found++;
 					var clip_el = $('#clip_' + clip.id);
 					if(clip_el.length == 0){
 						// add clip to list
 						var clip_tile = ''
 							+ '<div class="clip tile ' + clip.status + '" id="clip_' + clip.id + '" clipid="' + clip.id + '">'
-							+ SkyUI.clips.makeClipTile(clip)
+							+ CloudUI.clips.makeClipTile(clip)
 							+ '</div>' + "\n";
 						// $('.camera-with-clips').append(clip_tile);
 						if (prev_id == '')
@@ -633,12 +652,12 @@ SkyUI.clips = new function(){
 						status = clip_el.hasClass('error') ? 'error' : status;
 						title = clip_el.find('.title').text();
 						group = clip_el.find('.group').text();
-						clip.title = clip.title == "" ? SkyUI.polyglot.t('clip_untitled') : clip.title;
-						clip.group = clip.group == "" ? SkyUI.polyglot.t('clip_ungrouped') : clip.group;
+						clip.title = clip.title == "" ? CloudUI.polyglot.t('clip_untitled') : clip.title;
+						clip.group = clip.group == "" ? CloudUI.polyglot.t('clip_ungrouped') : clip.group;
 						if (status != clip.status || clip.title != title || (cc.clips_tags && clip.group != group)){
 							clip_el.removeClass(status);
 							clip_el.addClass(clip.status);
-							clip_el.html(SkyUI.clips.makeClipTile(clip));
+							clip_el.html(CloudUI.clips.makeClipTile(clip));
 						}
 					}
 					prev_id = clip.id;
@@ -649,28 +668,28 @@ SkyUI.clips = new function(){
 			var search_request_group = '"' + $('.skyvr-clips-filter-group').val() + '"';
 			var searches = [];
 			if($('.skyvr-clips-filter-title').val() != ''){
-				searches.push(SkyUI.polyglot.t("clip_title") + ' "' + $('.skyvr-clips-filter-title').val() + '"');
+				searches.push(CloudUI.polyglot.t("clip_title") + ' "' + $('.skyvr-clips-filter-title').val() + '"');
 			}
 			if($('.skyvr-clips-filter-group').val() != ''){
-				searches.push(SkyUI.polyglot.t("clip_group") + ' "' + $('.skyvr-clips-filter-group').val() + '"');
+				searches.push(CloudUI.polyglot.t("clip_group") + ' "' + $('.skyvr-clips-filter-group').val() + '"');
 			}
 			var msg = "";
 			if(searches.length > 0){
-				msg += SkyUI.polyglot.t("search_request").replace('%S%', searches.join(", ")) + ". ";
+				msg += CloudUI.polyglot.t("search_request").replace('%S%', searches.join(", ")) + ". ";
 			}
 
 			
 			if(found == 0){
-				msg += SkyUI.polyglot.t("clips_did_not_found");
+				msg += CloudUI.polyglot.t("clips_did_not_found");
 				$('.camera-with-clips-info-search').text(msg);
 			}else if(found == 1){
-				msg += SkyUI.polyglot.t("clips_one_found");
+				msg += CloudUI.polyglot.t("clips_one_found");
 				$('.camera-with-clips-info-search').text(msg);
 			}else if(found > 1 && found < 5 ){
-				msg += SkyUI.polyglot.t("clips_2_3_4_found").replace('%N%', found);
+				msg += CloudUI.polyglot.t("clips_2_3_4_found").replace('%N%', found);
 				$('.camera-with-clips-info-search').text(msg);
 			}else{
-				msg += SkyUI.polyglot.t("clips_n_found").replace('%N%', found);
+				msg += CloudUI.polyglot.t("clips_n_found").replace('%N%', found);
 				$('.camera-with-clips-info-search').text(msg);
 			}
 
@@ -689,7 +708,7 @@ SkyUI.clips = new function(){
 			$('.video.done').unbind().click(function(e){
 				e.stopPropagation();
 				var clipid = $(this).attr('clipid');
-				SkyUI.clips.showClipViewer(clipid);
+				CloudUI.clips.showClipViewer(clipid);
 			});
 
 			$('.delete-icon').unbind().click(function(e){
@@ -742,11 +761,11 @@ SkyUI.clips = new function(){
 				}
 				// clip_delete_confirm
 				app.createDialogModal({
-					'title' : SkyUI.polyglot.t('dialog_title_clips_delete'),
-					'content' : SkyUI.polyglot.t('dialog_content_clips_delete').replace('%N%', clips_to_delete.length),
+					'title' : CloudUI.polyglot.t('dialog_title_clips_delete'),
+					'content' : CloudUI.polyglot.t('dialog_content_clips_delete').replace('%N%', clips_to_delete.length),
 					'buttons' : [
-						{id: 'clips-delete-yes', text: SkyUI.polyglot.t('clips_delete_yes'), close: false},
-						{text: SkyUI.polyglot.t('clips_delete_no'), close: true}
+						{id: 'clips-delete-yes', text: CloudUI.polyglot.t('clips_delete_yes'), close: false},
+						{text: CloudUI.polyglot.t('clips_delete_no'), close: true}
 					],
 					'beforeClose' : function() {
 					}
@@ -778,12 +797,12 @@ SkyUI.clips = new function(){
 
 					function delete_next(){
 						if(indx < clips_del){
-							app.showProcessing(SkyUI.polyglot.t('dialog_title_clips_delete'),(100*indx/clips_del).toFixed(0) + '%');
+							app.showProcessing(CloudUI.polyglot.t('dialog_title_clips_delete'),(100*indx/clips_del).toFixed(0) + '%');
 							var clipid = clips_to_delete[indx];
 							indx = indx + 1;
 							deleteClip_silent(clipid).done(delete_next).fail(delete_next);
 						}else{
-							app.showProcessing(SkyUI.polyglot.t('dialog_title_clips_delete'),(100*indx/clips_del).toFixed(0) + '%');
+							app.showProcessing(CloudUI.polyglot.t('dialog_title_clips_delete'),(100*indx/clips_del).toFixed(0) + '%');
 							setTimeout(function(){
 								if($('.delete-icon.white').length > 0){
 									$('.skyvr-clips-delete-visible-clips').addClass('active');
@@ -803,7 +822,7 @@ SkyUI.clips = new function(){
 				if(event.which == 13) {
 					$('.skyvr-clips-filter-back').css({left: ''});
 					$('.skyvr-clips-filter-open').removeClass('inactive');
-					SkyUI.clips.updateClipList();
+					CloudUI.clips.updateClipList();
 				}
 				return false;
 			}).click(function(e){
@@ -814,7 +833,7 @@ SkyUI.clips = new function(){
 				if(event.which == 13) {
 					$('.skyvr-clips-filter-back').css({left: ''});
 					$('.skyvr-clips-filter-open').removeClass('inactive');
-					SkyUI.clips.updateClipList();
+					CloudUI.clips.updateClipList();
 				}
 				return false;
 			}).click(function(e){
@@ -824,7 +843,7 @@ SkyUI.clips = new function(){
 			$('.skyvr-clips-filter-apply').unbind().click(function(event) {
 				$('.skyvr-clips-filter-back').css({left: ''});
 				$('.skyvr-clips-filter-open').removeClass('inactive');
-				SkyUI.clips.updateClipList();
+				CloudUI.clips.updateClipList();
 				return false;
 			});
 			
@@ -861,13 +880,13 @@ SkyUI.clips = new function(){
 						var token = response['token'];
 						var url = window.location.protocol + '//' + window.location.host + '/share/clips/?vendor=' + cc.vendor + '&token=' + token;
 						app.createDialogModal({
-							'title' : SkyUI.polyglot.t('dialog_title_sharing'),
-							'content' : SkyUI.polyglot.t('dialog_content_sharing') + shared_clips.length + '</br>'
+							'title' : CloudUI.polyglot.t('dialog_title_sharing'),
+							'content' : CloudUI.polyglot.t('dialog_content_sharing') + shared_clips.length + '</br>'
 								+ '<input readonly text="" id="copy_link_url" value="' + url + '">'
 								+ '<font color="red" id="copy_link_error"></font>',
 							'buttons' : [
-								{id:'copy_link', text: SkyUI.polyglot.t('copy_link'), close: false},
-								{text: SkyUI.polyglot.t('dialog_close'), close: true},
+								{id:'copy_link', text: CloudUI.polyglot.t('copy_link'), close: false},
+								{text: CloudUI.polyglot.t('dialog_close'), close: true},
 							],
 							'beforeClose' : function(){
 							}
@@ -877,7 +896,7 @@ SkyUI.clips = new function(){
 							var successful = false;
 							try{var successful = document.execCommand('copy');} catch (err) {}
 							if(!successful){
-								$('#copy_link_error').text(SkyUI.polyglot.t('dialog_content_copy_link_failed' + (SkyUI.osname() == "mac" ? '_mac' : '')));
+								$('#copy_link_error').text(CloudUI.polyglot.t('dialog_content_copy_link_failed' + (CloudUI.osname() == "mac" ? '_mac' : '')));
 							}
 						});
 						app.showDialogModal();
@@ -895,7 +914,7 @@ SkyUI.clips = new function(){
 
 	
 	this.updateClipViewer = function(clip){
-		if(cc.shared_clips && SkyUI.clips.hasAccessAll(clip)){
+		if(cc.shared_clips && CloudUI.clips.hasAccessAll(clip)){
 			$('.skyvr-clipviewer-share').show();
 		}else{
 			$('.skyvr-clipviewer-share').hide();
@@ -908,21 +927,21 @@ SkyUI.clips = new function(){
 		$('.skyvr-dlg-hdr-title').attr('clipid', clip.id);
 		
 		$('#skyvr-clipviewer-title').val(clip.title);
-		$('#skyvr-clipviewer-title').attr('placeholder', SkyUI.polyglot.t('clip_untitled'));
-		var title = clip.title != "" ? clip.title : SkyUI.polyglot.t('clip_untitled');
+		$('#skyvr-clipviewer-title').attr('placeholder', CloudUI.polyglot.t('clip_untitled'));
+		var title = clip.title != "" ? clip.title : CloudUI.polyglot.t('clip_untitled');
 		if(cc.clips_tags){
-			var group = clip.group != "" ? clip.group : SkyUI.polyglot.t('clip_ungrouped');
+			var group = clip.group != "" ? clip.group : CloudUI.polyglot.t('clip_ungrouped');
 			$('#skyvr-clipviewer-groupview').text(group + '/' + title);
 		}else{
 			$('#skyvr-clipviewer-groupview').text(title);
 		}
 		$('#skyvr-clipviewer-group').val(clip.group);
-		$('#skyvr-clipviewer-group').attr('placeholder', SkyUI.polyglot.t('clip_ungrouped'));
+		$('#skyvr-clipviewer-group').attr('placeholder', CloudUI.polyglot.t('clip_ungrouped'));
 	};
 	
 	this.updateClipList = function(){
-		SkyUI.clips.funcClipList().done(function(clips){
-			SkyUI.clips.updateClipListView(clips);
+		CloudUI.clips.funcClipList().done(function(clips){
+			CloudUI.clips.updateClipListView(clips);
 		});
 	};
 	this.elemId = '';
@@ -937,14 +956,14 @@ SkyUI.clips = new function(){
 
 			videojs.options.flash.swf = cc.custom_videojs_swf ? cc.custom_videojs_swf : "swf/video-js-custom-SkyVR.swf";
 			$('#skyvr-dialog-clipshow-content').html(
-				'<video class="video-js vjs-default-skin" controls="true" autoplay="true" preload="auto" controls="true" id="' + SkyUI.clips.elemId + '">'
+				'<video class="video-js vjs-default-skin" controls="true" autoplay="true" preload="auto" controls="true" id="' + CloudUI.clips.elemId + '">'
 				+ '<source src="' + clip.url + '" type="video/mp4" />'
 				+ '</video>'
 			);
 
-			SkyUI.clips.updateClipViewer(clip);
+			CloudUI.clips.updateClipViewer(clip);
 
-			if(SkyUI.clips.onlyclips){
+			if(CloudUI.clips.onlyclips){
 				$('#skyvr-clipviewer-group').hide();
 				$('#skyvr-clipviewer-title').hide();
 				$('.skyvr-clipshow-save').hide();
@@ -957,8 +976,8 @@ SkyUI.clips = new function(){
 				$('#skyvr-clipviewer-group').hide();
 			}
 
-			$('.skyvr-clipviewer-next').unbind().bind('click', SkyUI.clips.changeClip);
-			$('.skyvr-clipviewer-prev').unbind().bind('click', SkyUI.clips.changeClip);
+			$('.skyvr-clipviewer-next').unbind().bind('click', CloudUI.clips.changeClip);
+			$('.skyvr-clipviewer-prev').unbind().bind('click', CloudUI.clips.changeClip);
 			$('.skyvr-clipshow-window').unbind().bind('click', function(){
 				console.log("click window");
 				bClickOnWindow = true;
@@ -971,15 +990,15 @@ SkyUI.clips = new function(){
 					return;
 				}
 				$('.skyvr-dialog-clipshow').hide();
-				try{SkyUI.clips.mPlayer.dispose();}catch(e){};
-				$('#' + SkyUI.clips.elemId).remove();
+				try{CloudUI.clips.mPlayer.dispose();}catch(e){};
+				$('#' + CloudUI.clips.elemId).remove();
 				var page_params = SkyVR.parsePageParams();
 				delete page_params['clipid'];
 				SkyVR.changeLocationState(page_params);
 			});
 
 			$('.skyvr-dialog-clipshow').show();
-			SkyUI.clips.mPlayer = videojs(SkyUI.clips.elemId);
+			CloudUI.clips.mPlayer = videojs(CloudUI.clips.elemId);
 
 			// console.log("make test thumbnails");
 			var obj = {};
@@ -1000,7 +1019,7 @@ SkyUI.clips = new function(){
 				new_thumbnails[ind].style['height'] = obj.height + 'px';
 				new_thumbnails[ind].style['background-position'] = (-1*obj.thumbnails[t].x) + "px " + (-1*obj.thumbnails[t].y) + "px";
 			}
-			SkyUI.clips.mPlayer.thumbnails(new_thumbnails);
+			CloudUI.clips.mPlayer.thumbnails(new_thumbnails);
 
 			if(cc.shared_clips){
 				$('.skyvr-clipviewer-share').unbind().bind('click', function(){
@@ -1010,13 +1029,13 @@ SkyUI.clips = new function(){
 						var url = window.location.protocol + '//' + window.location.host + '/share/clips/?vendor=' + cc.vendor + '&token=' + token;
 						
 						app.createDialogModal({
-							'title' : SkyUI.polyglot.t('dialog_title_clip_shared'),
-							'content' : SkyUI.polyglot.t('dialog_content_clip_shared') + clip.title + '</br>'
+							'title' : CloudUI.polyglot.t('dialog_title_clip_shared'),
+							'content' : CloudUI.polyglot.t('dialog_content_clip_shared') + clip.title + '</br>'
 								+ '<input readonly text="" id="copy_link_url" value="' + url + '">'
 								+ '<font color="red" id="copy_link_error"></font>',
 							'buttons':[
-								{id:'copy_link', text: SkyUI.polyglot.t('copy_link'), close: false},
-								{text: SkyUI.polyglot.t('dialog_close'), close: true},
+								{id:'copy_link', text: CloudUI.polyglot.t('copy_link'), close: false},
+								{text: CloudUI.polyglot.t('dialog_close'), close: true},
 							],
 							'beforeClose' : function() {
 							}
@@ -1026,14 +1045,14 @@ SkyUI.clips = new function(){
 							var successful = false;
 							try{var successful = document.execCommand('copy');} catch (err) {}
 							if(!successful){
-								$('#copy_link_error').text(SkyUI.polyglot.t('dialog_content_copy_link_failed' + (SkyUI.osname() == "mac" ? '_mac' : '')));
+								$('#copy_link_error').text(CloudUI.polyglot.t('dialog_content_copy_link_failed' + (CloudUI.osname() == "mac" ? '_mac' : '')));
 							}
 						});
 						
 						// close player dialog
 						$('.skyvr-dialog-clipshow').hide();
-						try{SkyUI.clips.mPlayer.dispose();}catch(e){};
-						$('#' + SkyUI.clips.elemId).remove();
+						try{CloudUI.clips.mPlayer.dispose();}catch(e){};
+						$('#' + CloudUI.clips.elemId).remove();
 
 						app.showDialogModal();
 
@@ -1043,32 +1062,32 @@ SkyUI.clips = new function(){
 				});
 			}
 			// $('#videojs-clipshow').addClass('vjs-has-started');
-			$('.skyvr-clipshow-save').text(SkyUI.polyglot.t("Save"));
+			$('.skyvr-clipshow-save').text(CloudUI.polyglot.t("Save"));
 			$('.skyvr-clipshow-save').unbind().bind('click', function(){
 				var new_title = $('.skyvr-clipviewer-title').val();
 				var new_group = $('.skyvr-clipshow-tag').val();
 				SkyVR.storageClipUpdate(clipid, {title: new_title, group: new_group}).done(function(clip){
-					SkyUI.clips.updateClipViewer(clip);
+					CloudUI.clips.updateClipViewer(clip);
 					// $('.skyvr-clipshow-titleview').text(clip.title);
 					$('.skyvr-clipviewer-title').val(clip.title);
 					if($('.skyvr-clips-filter-title').val().length > 0)
 						$('.skyvr-clips-filter-title').val(CloudUI.htmlEscape(clip.title));
-					SkyUI.clips.updateClipList();
+					CloudUI.clips.updateClipList();
 				});
 			});
 
 			$('.skyvr-clipshow-delete').unbind().bind('click', function(){
-				SkyUI.clips.deleteClip(clipid).done(function(){
+				CloudUI.clips.deleteClip(clipid).done(function(){
 					$('.skyvr-dialog-clipshow').hide();
-					try{SkyUI.clips.mPlayer.dispose();}catch(e){};
-					$('#' + SkyUI.clips.elemId).remove();
+					try{CloudUI.clips.mPlayer.dispose();}catch(e){};
+					$('#' + CloudUI.clips.elemId).remove();
 				});
 			});
 
 			$('#skyvr-clipviewer-close').unbind().bind('click', function(){
 				$('.skyvr-dialog-clipshow').hide();
-				try{SkyUI.clips.mPlayer.dispose();}catch(e){};
-				$('#' + SkyUI.clips.elemId).remove();
+				try{CloudUI.clips.mPlayer.dispose();}catch(e){};
+				$('#' + CloudUI.clips.elemId).remove();
 				var page_params = SkyVR.parsePageParams();
 				delete page_params['clipid'];
 				SkyVR.changeLocationState(page_params);
@@ -1084,22 +1103,22 @@ SkyUI.clips = new function(){
 
 }();
 
-SkyUI.showPageClips = function(app){
+CloudUI.showPageClips = function(app){
 	var d = $.Deferred();
 	var page_params = SkyVR.parsePageParams();
 	var options = {'sharepage': false};
 	if(SkyVR.containsPageParam('token')){
-		SkyUI.clips.shareToken = SkyVR.pageParams['token'];
-		SkyUI.clips.onlyclips = true;
+		CloudUI.clips.shareToken = SkyVR.pageParams['token'];
+		CloudUI.clips.onlyclips = true;
 		options['sharepage'] = true;
 	}else{
-		SkyUI.clips.onlyclips = false;
+		CloudUI.clips.onlyclips = false;
 	}
 
-	SkyUI.clips.mPlayer = undefined;
-	SkyUI.clips.elemId = "videojs-clipshow";
+	CloudUI.clips.mPlayer = undefined;
+	CloudUI.clips.elemId = "videojs-clipshow";
 	
-	var el = SkyUI.templates.createPageClips(options);
+	var el = CloudUI.templates.createPageClips(options);
 	$('.clip-container').html($(el));
 	
 	if(!cc.account_sharing_clips){
@@ -1125,16 +1144,13 @@ SkyUI.showPageClips = function(app){
 	
 	// $('.card-container').addClass('incoming-container');
 
-	SkyUI.clips.updateClipList();
+	CloudUI.clips.updateClipList();
 
 	// if(param_clipid) showClipViewer(param_clipid);
 	
 	d.resolve();
 	return d;
 };
-
-// for feature
-window.CloudUI = window.SkyUI;
 
 window.CloudUI.getRealVideoSize = function (){
 	var size = {}
