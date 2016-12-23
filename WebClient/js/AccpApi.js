@@ -216,29 +216,25 @@ window.AccpApi = new function (){
 		});
 		return d;
 	};
-	this.deleteCamera=function(id){
-		
-		
+	this.cameraDelete=function(id){
 		$.ajax({
 			url: self.base_url + "api/v1/cameras/"+id+"/",
-			type: 'DELETE'}
-           ).done();
-		
-		
+			type: 'DELETE',
+            xhrFields: {
+				withCredentials: true
+			},
+		});
 	}
-    this.newCamera=function(){
-		
-		 var data = {};
-		     data.name = $('#new-camera-name').val();
-			 data.url = $('#new-camera-live-stream-link').val();
-			 data.login = $('#new-camera-live-stream-link-login').val();
-			 data.password = $('#new-camera-live-stream-link-password').val();
-			 data.timezone = $('#new-camera-timezone').val();
+    this.cameraCreate=function(data){
+		 data = data || {};
 		var d = $.Deferred();
 		$.ajax({
 			url: self.base_url+"api/v1/cameras/",
 			type: 'POST',
 			data: JSON.stringify(data),
+            xhrFields: {
+				withCredentials: true
+			},
 			contentType: 'application/json',
 			cache : false
 		}).done(function(response){
@@ -246,26 +242,17 @@ window.AccpApi = new function (){
 		}).fail(function(){
 			d.reject();
 		});
-		
         return d;
-		
 	};
 	
 	this.cameras = function(data){
 		var d = $.Deferred();
-		$.ajaxSetup({
-			crossDomain: true,
-			
-			cache: false,
-			beforeSend: function(xhr,settings) {
-				// xhr.setRequestHeader('Access-Control-Allow-Credentials', true);
-			}
-		});
-
 		$.ajax({
 			url:  self.base_url+"api/v1/cameras/",
-			type: 'GET'
-            
+			type: 'GET',
+            xhrFields: {
+			  withCredentials: true
+		   }
 		}).done(function(response){
 			d.resolve(response);
 		}).fail(function(){

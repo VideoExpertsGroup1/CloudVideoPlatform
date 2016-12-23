@@ -1,4 +1,5 @@
 $( document ).ready(function() {
+	AccpApi.base_url = "http://cnvrclient2.videoexpertsgroup.com/";
 	if(AccpClient.containsPageParam("demo_logout")){
 		localStorage.removeItem('selectedCam');
 		AccpApi.logout().done(function(){
@@ -428,69 +429,60 @@ AccpClient.openVManager = function(el,ind){
 		document.getElementById("new-camera-timezone").style.width='330px';
 		var timezones_options = "";
 		var timezones = moment.tz.names();
-
 		for(var t in timezones){
 			timezones_options += '<option value=' + timezones[t] + '>(UTC' + moment.tz(timezones[t]).format("Z") + ') ' + timezones[t] + '</option>';
 		}
 		$('#new-camera-timezone').html(timezones_options);
-
 		//AccpClient.plusPress=true;	
 		$("#shadow").show();
 		document.getElementById('addCameraDialog').style.display="block";
 	}
-	
 	closeAddCamDialog=function(){
-	   $('#url-error').hide();
-	   $('#name-error').hide();
-	   $("#shadow").hide();
-	   $("#addCameraDialog").hide();
-		
-		}
-	closeCameraDeletionDialog=function()
-	{
+		$('#url-error').hide();
+		$('#name-error').hide();
+		$("#shadow").hide();
+		$("#addCameraDialog").hide();
+	}
+	closeCameraDeletionDialog=function(){
 		
 		$("#shadow").hide();
 		$("#deleteCameraDialog").hide();
 	}
-	showCameraDeletionDialog=function(index)
-	{
+	showCameraDeletionDialog=function(index){
 		AccpClient.DelIndex=index;
 		$("#shadow").show();
 		$("#deleteCameraDialog").show();
 	}
-	
 	deleteCamera=function(){
-		
 		closeCameraDeletionDialog();
 		var index=parseInt(AccpClient.DelIndex);
 		document.getElementById('camGrid').childNodes[index].style.display='none';
-		if(AccpClient.camerasInfo.objects.length==1)
-		{
+		if(AccpClient.camerasInfo.objects.length==1){
 			AccpClient.clearGrid();
 			AccpClient.appendBigPlusDivToGrid();
 		}
-		AccpApi.deleteCamera(AccpClient.camerasInfo.objects[index].id);
+		AccpApi.cameraDelete(AccpClient.camerasInfo.objects[index].id);
 		
 	}
 	addCamera=function(){
-		
-		if($("#new-camera-name").val()!==""&&$("#new-camera-live-stream-link").val()!=="")
-		{
-		closeAddCamDialog();
-		AccpApi.newCamera().done();
-		}
-		else
-		{
+		if($("#new-camera-name").val()!==""&&$("#new-camera-live-stream-link").val()!==""){
+			var data = {};
+			data.name = $('#new-camera-name').val();
+			data.url = $('#new-camera-live-stream-link').val();
+			data.login = $('#new-camera-live-stream-link-login').val();
+			data.password = $('#new-camera-live-stream-link-password').val();
+			data.timezone = $('#new-camera-timezone').val();
+			AccpApi.cameraCreate(data).done(function(){
+				closeAddCamDialog();
+			}).fail(function(){
+				closeAddCamDialog();
+			});
+		}else{
 			if($("#new-camera-name").val()==="")
-			$("#name-error").show();
-			else
-			if($("#new-camera-live-stream-link").val()==="")
-			   $("#url-error").show();
-			
-			
+				$("#name-error").show();
+			else if($("#new-camera-live-stream-link").val()==="")
+				$("#url-error").show();
 		}
-		
-	
 	}
 	
 	showCoords=function (event){
