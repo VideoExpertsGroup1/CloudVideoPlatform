@@ -1,11 +1,5 @@
 window.AccpApi = new function (){
 	var self = this;
-
-	var debugServer="http://10.20.16.28/accp_frontend/";
-	self.base_url =(window.location.host!=="10.20.16.28") ? window.location.protocol+"//"+window.location.host+"/":debugServer;
-	this.getBaseUrl=function(){return self.base_url;};
-	this.isDebuggable=function(){return debug;};
-	this.getDebugServer=function(){return debugServer;};
 	
 	this.getCurrentUrl = function(){
 		var current_url = window.location.pathname.split("/");
@@ -98,7 +92,7 @@ window.AccpApi = new function (){
 			cache: false,
 		});
 		$.ajax({
-			url: self.base_url + "api/v1/account/demo_login/",
+			url: AccpConfig.base_url + "api/v1/account/demo_login/",
 			type: 'POST',
 			xhrFields: {
 				withCredentials: true
@@ -132,7 +126,7 @@ window.AccpApi = new function (){
 		data.username = username;
 		data.password = password;
 		$.ajax({
-			url: self.base_url + "api/v1/account/login/",
+			url: AccpConfig.base_url + "api/v1/account/login/",
 			type: 'POST',
 			data:  JSON.stringify(data),
 			contentType: 'application/json',
@@ -158,7 +152,7 @@ window.AccpApi = new function (){
 		});
 
 		$.ajax({
-			url: self.base_url + "api/v1/account/register/",
+			url: AccpConfig.base_url + "api/v1/account/register/",
 			type: 'POST',
 			data:  JSON.stringify(data),
 			contentType: 'application/json',
@@ -181,7 +175,7 @@ window.AccpApi = new function (){
 		});
 
 		$.ajax({
-			url: self.base_url + "api/v1/account/",
+			url: AccpConfig.base_url + "api/v1/account/",
 			type: 'GET',
             xhrFields: {
 			  withCredentials: true
@@ -203,7 +197,7 @@ window.AccpApi = new function (){
 		});
 
 		$.ajax({
-			url: self.base_url + "api/v1/account/logout/",
+			url: AccpConfig.base_url + "api/v1/account/logout/",
 			type: 'POST',
             xhrFields: {
 			  withCredentials: true
@@ -218,7 +212,7 @@ window.AccpApi = new function (){
 	};
 	this.cameraDelete=function(id){
 		$.ajax({
-			url: self.base_url + "api/v1/cameras/"+id+"/",
+			url: AccpConfig.base_url + "api/v1/cameras/"+id+"/",
 			type: 'DELETE',
             xhrFields: {
 				withCredentials: true
@@ -229,7 +223,7 @@ window.AccpApi = new function (){
 		 data = data || {};
 		var d = $.Deferred();
 		$.ajax({
-			url: self.base_url+"api/v1/cameras/",
+			url: AccpConfig.base_url+"api/v1/cameras/",
 			type: 'POST',
 			data: JSON.stringify(data),
             xhrFields: {
@@ -248,7 +242,7 @@ window.AccpApi = new function (){
 	this.cameras = function(data){
 		var d = $.Deferred();
 		$.ajax({
-			url:  self.base_url+"api/v1/cameras/",
+			url:  AccpConfig.base_url+"api/v1/cameras/",
 			type: 'GET',
             xhrFields: {
 			  withCredentials: true

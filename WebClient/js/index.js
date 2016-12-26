@@ -1,5 +1,5 @@
 $( document ).ready(function() {
-	AccpApi.base_url = "http://cnvrclient2.videoexpertsgroup.com/";
+
 	if(AccpClient.containsPageParam("demo_logout")){
 		localStorage.removeItem('selectedCam');
 		AccpApi.logout().done(function(){
