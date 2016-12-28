@@ -1,0 +1,265 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".activities.LoginActivity"
+    android:background="@drawable/bg_cnvrclient2">
+
+    <TextView
+        android:id="@+id/tvVersionApp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:text="Ver: "
+        android:textColor="#fff" />
+
+    <!-- Login progress -->
+    <LinearLayout
+        android:id="@+id/progress_form"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        >
+        <ProgressBar
+            android:id="@+id/login_progress"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="#fff" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/registry_camera_processing"
+            android:textColor="#fff" />
+    </LinearLayout>
+
+
+    <ScrollView
+        android:id="@+id/reg_token_form"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            >
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/logo"
+                android:id="@+id/imageView" />
+
+            <EditText
+                android:id="@+id/txt_reg_token"
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:hint="@string/caption_reg_token"
+                android:inputType="text|textEmailAddress"
+                android:textColor="#046B90"
+                android:maxLines="1"
+                android:textColorHint="#666"
+                android:textColorHighlight="#fff"
+                android:textColorLink="#fff"
+                android:editable="true"
+                android:enabled="true"
+                android:background="@drawable/edt_cnvrclient2"
+                android:gravity="center_vertical|center_horizontal"
+                android:layout_marginTop="16dp"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btn_registry_camera"
+                style="?android:textAppearanceSmall"
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:layout_marginTop="16dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:text="@string/caption_register_camera"
+                android:layout_gravity="center"
+                android:background="@drawable/btn_submit_cnvrclient2"
+                android:textColorLink="#fff"
+                android:textColor="#fff"
+                android:textAppearance="@style/TextAppearance.AppCompat"
+                android:textStyle="normal|bold"
+                android:textAllCaps="false"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/switcher_form"
+        android:layout_centerInParent="true"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+            <TextView
+                android:text="@string/caption_video_source_registration"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/switcher_form"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/textView"
+                android:textColor="#fff"
+                android:textSize="24sp"
+                android:gravity="center_horizontal"
+                android:textStyle="normal|bold" />
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <RadioButton
+                    android:text="@string/caption_to_reg_token_form"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/to_reg_token_form"
+                    android:textColor="#fff"
+                    android:textAllCaps="false"
+                    android:layout_marginTop="25dp"
+                    android:textSize="20sp"
+                    android:layout_weight="1"
+                    android:checked="true" />
+
+                <TextView
+                    android:text="@string/caption_to_reg_token_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView2"
+                    android:layout_weight="1"
+                    android:textColor="#ff0"
+                    android:textSize="16sp"
+                    android:paddingLeft="35dp" />
+
+                <RadioButton
+                    android:text="@string/caption_to_login_form"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/to_login_form"
+                    android:textColor="#fff"
+                    android:layout_marginTop="25dp"
+                    android:textSize="20sp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:text="@string/caption_to_login_form_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView3"
+                    android:layout_weight="1"
+                    android:textColor="#ff0"
+                    android:textSize="16sp"
+                    android:paddingLeft="35dp" />
+            </RadioGroup>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/switcher_next"
+                android:text="@string/caption_next"
+                android:background="@drawable/btn_cnvrclient2"
+                android:textColor="#fff"
+                android:layout_marginTop="30dp" />
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/login_form"
+        android:visibility="gone"
+        android:layout_centerInParent="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_vertical|center_horizontal">
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/logo"
+                android:id="@+id/imageView2" />
+
+            <EditText
+                android:id="@+id/txt_username"
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:hint="@string/caption_username"
+                android:inputType="text"
+                android:textColor="#046B90"
+                android:maxLines="1"
+                android:textColorHint="#666"
+                android:textColorHighlight="#fff"
+                android:textColorLink="#fff"
+                android:editable="true"
+                android:enabled="true"
+                android:background="@drawable/edt_cnvrclient2"
+                android:gravity="center_vertical|center_horizontal"
+                android:layout_marginTop="16dp"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/txt_password"
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:hint="@string/caption_password"
+                android:inputType="textPassword"
+                android:textColor="#046B90"
+                android:maxLines="1"
+                android:textColorHint="#666"
+                android:textColorHighlight="#fff"
+                android:textColorLink="#fff"
+                android:editable="true"
+                android:enabled="true"
+                android:background="@drawable/edt_cnvrclient2"
+                android:gravity="center_vertical|center_horizontal"
+                android:layout_marginTop="16dp"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btn_signin"
+                style="?android:textAppearanceSmall"
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:layout_marginTop="16dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:text="@string/caption_signin"
+                android:layout_gravity="center"
+                android:background="@drawable/btn_submit_cnvrclient2"
+                android:textColorLink="#fff"
+                android:textColor="#fff"
+                android:textAppearance="@style/TextAppearance.AppCompat"
+                android:textStyle="normal|bold"
+                android:textAllCaps="false"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

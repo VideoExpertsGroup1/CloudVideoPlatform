@@ -1,0 +1,11 @@
+.idea
+out/
+gen/
+.project
+.settings/
+*.iml
+bin/
+local.properties
+target/
+release.properties
+build/*

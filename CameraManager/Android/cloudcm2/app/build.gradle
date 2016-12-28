@@ -1,0 +1,48 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.1"
+
+    defaultConfig {
+        applicationId "com.vxg.cloud.cm"
+        minSdkVersion 21
+        targetSdkVersion 18
+        versionCode 12
+        versionName "4.12"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+        debug {
+            jniDebuggable true
+        }
+        applicationVariants.all { variant ->
+            variant.outputs.each { output ->
+                output.outputFile = file("$project.buildDir/VXGCloudCamera-" + defaultConfig.versionName + ".apk")
+            }
+        }
+    }
+
+    sourceSets {
+        main {
+            jniLibs {
+                srcDir 'libs/'
+                // This is not necessary unless you have precompiled libraries in your project.
+            }
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(':tubesock')
+    compile project(':vxg')
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support:design:25.1.0'
+    compile files('libs/mediacapturesdk.jar')
+}
