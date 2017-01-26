@@ -1,4 +1,4 @@
-# Demo VXG cloud Camera Manager (CM)
+# Demo VXG Cloud Camera Manager (CM)
 ## v1.0.0
 
 ## INSTALLATION
