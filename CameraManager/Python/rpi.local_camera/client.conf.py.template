@@ -3,7 +3,7 @@
 #
 # Server settings
 #
-server_hostname = string(max=128, default='cam.skyvr.videoexpertsgroup.com')
+server_hostname = string(max=128, default='cnvrclient2.videoexpertsgroup.com')
 ws_port = integer(0, 65535, default=8888)
 wss_port = integer(0, 65535, default=8883)
 
