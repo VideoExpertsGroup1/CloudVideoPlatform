@@ -1128,9 +1128,9 @@ class Camera:
         self.device_type = None  # Camera type: bullet, media server etc, could be empty
         parse_res = urlparse(globals.config['camera_feed'])
         self.video_source_type = parse_res.scheme
-        if self.video_source_type not in ['rtsp', 'dev', 'file']:
+        if self.video_source_type not in ['rtsp', 'dev', 'file', 'http', 'rtmp', 'https']:
             raise RuntimeError('Unknown video source type %s' % self.video_source_type)
-        if self.video_source_type == 'rtsp':
+        if self.video_source_type in ['rtsp', 'http', 'rtmp', 'https']:
             self.ip = parse_res.hostname
         else:
             self.ip = '127.0.0.1'
@@ -1437,8 +1437,6 @@ class Camera:
         else:
             #  - False: stream is already connected, but the reason is new -
             # Set the needed flags and do nothing else
-            if reason == Camera.SR_RECORD:
-                self.fire_record_state(stream_id, True)
             if retval is False:
                 return True
 
@@ -1449,8 +1447,6 @@ class Camera:
             result = True
         if not result:
             self.active_streams.remove(stream_id, reason)
-            if reason == Camera.SR_RECORD:
-                self.fire_record_state(stream_id, False)
         return result
 
     def disconnect_stream(self, stream_id, reason):
@@ -1468,8 +1464,6 @@ class Camera:
         if retval is not None:
             if retval:
                 self._disconnect_stream(stream_id)
-            if reason == Camera.SR_RECORD:
-                self.fire_record_state(stream_id, False)
 
     def disconnect_all_streams(self):
         """
@@ -1874,23 +1868,6 @@ class Camera:
         """
         self.on_event('sound', {'sound_info': {'on': on}}, time())
 
-    def fire_record_state(self, stream_id, value):
-        """
-        Called when camera starts/stops event-driven recording. This is a special event, so there's no need to declare
-        it in camera event-processing parameters caps.
-        :type stream_id: str
-        :param stream_id: Media stream ID where recording is started/stopped
-        :type value: bool
-        :param value: Recording state ON(if True) or OFF (if False)
-        """
-        if not self.camera_id:
-            return
-        record_event = {'cam_id': self.camera_id,
-                        'event': 'record',
-                        'time': time(),
-                        'record_info': {'stream_id': stream_id, 'on': value}}
-        self.event_cb(record_event)
-
     def _upload_file(self, url, path, delete, make_snapshot_cb=None, *args, **kwargs):
         if self.http_uploader is not None:
             self.http_uploader.upload_async(path, url, delete, make_snapshot_cb, args, kwargs)
@@ -1969,10 +1946,15 @@ class Camera:
         elif self.video_source_type == 'file':
             args = [FFMPEG, '-re', '-stream_loop', '0', '-v', 'quiet', '-i', camera_url,
                     '-c', 'copy', '-f', 'flv', '-map', '0', publish_url]
-        else:
+        elif self.video_source_type == 'rtsp':
             args = [FFMPEG, '-rtsp_transport', 'tcp', '-v', 'quiet', '-i', camera_url,
-                    '-c', 'copy', '-an', '-f', 'flv', '-map', '0', '-bsf:v', 'dump_extra',
+                    '-c', 'copy', '-f', 'flv', '-map', '0', '-bsf:v', 'dump_extra',
                     '-analyzeduration', '1500000', '-flags', 'global_header', publish_url]
+        elif self.video_source_type == 'rtmp':
+            args = [FFMPEG, '-v', 'error', '-f', 'live_flv', '-rtmp_live', 'live', '-rtmp_buffer', '500',
+                    '-i', camera_url, '-c', 'copy', '-f', 'flv', '-map', '0', publish_url]
+        else:
+            args = [FFMPEG, '-v', 'error', '-i', camera_url, '-c', 'copy', '-an', '-f', 'flv', '-map', '0', publish_url]
         self.streamers[stream_id] = subprocess.Popen(args)
         return True
 
@@ -2022,8 +2004,12 @@ class Camera:
             if media_stream is None:
                 raise ValueError('Unknown media stream ID')
             camera_url = media_stream.url
-            args = [FFMPEG, '-v', 'error', '-y', '-rtsp_transport', 'tcp', '-i', camera_url,
-                    '-f', 'image2', '-vframes', '1', '-s', '160x120', output]
+            if self.video_source_type == 'rtsp':
+                args = [FFMPEG, '-v', 'error', '-y', '-rtsp_transport', 'tcp', '-i', camera_url,
+                        '-f', 'image2', '-vframes', '1', '-s', '160x120', output]
+            else:
+                args = [FFMPEG, '-v', 'error', '-y', '-i', camera_url,
+                        '-f', 'image2', '-vframes', '1', '-s', '160x120', output]
             subprocess.call(args)
         except:
             logger.error('Failed to make snapshot for cam(%s): %s', self.camera_id, error_str())

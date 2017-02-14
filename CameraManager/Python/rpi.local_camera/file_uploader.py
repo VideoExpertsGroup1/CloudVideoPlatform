@@ -38,7 +38,10 @@ class HTTPUploader(Thread):
         if callable(data['make_snapshot_cb']):
             args = data['args'] if data['args'] is not None else []
             kwargs = data['kwargs'] if data['kwargs'] is not None else {}
-            data['path'] = data['make_snapshot_cb'](*args, **kwargs)
+            try:
+                data['path'] = data['make_snapshot_cb'](*args, **kwargs)
+            except NotImplementedError:
+                return
 
         with open(data['path'], 'rb') as file_handle:
             url = data['url']
