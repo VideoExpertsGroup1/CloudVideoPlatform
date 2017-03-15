@@ -1,9 +1,11 @@
-# CloudVideoPlatform
+# VXG Cloud Video Platform
 
 VXG Cloud Video Platform
 
-Unlimited Recording, Processing and Streaming
+* Any video source: IP cameras, Mobile phones, IoT devices and Robots
 
-From Any Live Video Sources
+* Unlimited Recording, Processing and Streaming
 
-https://www.videoexpertsgroup.com/cloud-video-platform/
+* Any platform/Any protocol: RTSP, RTMP, DASH, WebRTC
+
+Learn more: https://www.videoexpertsgroup.com/cloud-platform/
