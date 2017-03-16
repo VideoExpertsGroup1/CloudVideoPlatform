@@ -9,3 +9,5 @@ VXG Cloud Video Platform
 * Any platform/Any protocol: RTSP, RTMP, DASH, WebRTC
 
 Learn more: https://www.videoexpertsgroup.com/cloud-platform/
+
+<img src="http://www.videoexpertsgroup.com/git/cloud_scheme.png" alt="VXG Cloud Video Platform" width="800">
