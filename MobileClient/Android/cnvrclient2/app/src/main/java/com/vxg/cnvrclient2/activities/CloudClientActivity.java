@@ -140,7 +140,11 @@ public class CloudClientActivity extends Activity
 		String uri = "";
 		String frontend = "http://cnvrclient2.videoexpertsgroup.com/vmanager/index.html"; // release
 		// String frontend = "http://10.20.16.87/accpsite/vmanager/"; // debug
-		String svcp_host = "http://" +  AccountProviderAPI.getInstance().getInfo().getServiceProviderHost() + "/";
+		String svcp_host_url = AccountProviderAPI.getInstance().getInfo().getServiceProviderHost();
+		if(svcp_host_url == null){
+			svcp_host_url = "web.skyvr.videoexpertsgroup.com";
+		}
+		String svcp_host = "http://" + svcp_host_url + "/";
 		ServiceProviderAPI.getInstance().setHost(svcp_host);
 		try {
 			if(mLoginByGoogle){
@@ -205,7 +209,7 @@ public class CloudClientActivity extends Activity
 			}
 		});
 
-		mWebView2.setWebViewClient(new WebViewClientImpl(getApplicationContext()));
+		mWebView2.setWebViewClient(new WebViewClientImpl(getApplicationContext(), mLoginByGoogle));
 
 		mWebView2.getSettings().setJavaScriptEnabled(true);
 		mWebView2.getSettings().setBuiltInZoomControls(true);

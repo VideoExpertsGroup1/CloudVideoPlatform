@@ -14,9 +14,11 @@ import java.io.IOException;
 public class WebViewClientImpl extends WebViewClient {
     private static String TAG = WebViewClientImpl.class.getSimpleName();
     private Context mContext = null;
+    private boolean mLoginByGoogle = false;
 
-    public WebViewClientImpl(Context context){
+    public WebViewClientImpl(Context context, boolean loginByGoogle){
         mContext = context;
+        mLoginByGoogle = loginByGoogle;
     }
 
     @Override
@@ -27,6 +29,9 @@ public class WebViewClientImpl extends WebViewClient {
     }
     @Override
     public WebResourceResponse shouldInterceptRequest (WebView view, WebResourceRequest request){
+        if(mLoginByGoogle){
+            return null;
+        }
         String url = request.getUrl().toString();
         String first_part = "http://cnvrclient2.videoexpertsgroup.com/vmanager/";
         if(url.contains("?")){
