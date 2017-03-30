@@ -42,8 +42,8 @@ if ($row = $stmt->fetch()) {
 		),
 	);
 	
-	$response['svcp_auth_web_url'] = 'http://web.skyvr.videoexpertsgroup.com/svcauth/init?iss=http%3A//emagin.videoexpertsgroup.com/openid&vendor=VXG&uatype=web';
-	$response['svcp_auth_app_url'] = 'http://web.skyvr.videoexpertsgroup.com/svcauth/init?iss=http%3A//emagin.videoexpertsgroup.com/openid&vendor=VXG&uatype=app';
+	$response['svcp_auth_web_url'] = 'http://web.skyvr.videoexpertsgroup.com/svcauth/init?iss=http%3A//cnvrclient2.videoexpertsgroup.com/openid&vendor=VXG&uatype=web';
+	$response['svcp_auth_app_url'] = 'http://web.skyvr.videoexpertsgroup.com/svcauth/init?iss=http%3A//cnvrclient2.videoexpertsgroup.com/openid&vendor=VXG&uatype=app';
 	APIHelpers::$TOKEN = APIHelpers::gen_guid();
 	setcookie('sessionid', APIHelpers::$TOKEN, 2000000000, '/');
 	APIHelpers::saveByToken();
