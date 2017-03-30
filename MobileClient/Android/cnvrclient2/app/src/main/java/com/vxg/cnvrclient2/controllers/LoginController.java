@@ -13,23 +13,27 @@
 
 package com.vxg.cnvrclient2.controllers;
 
-import com.vxg.cloud.AccoutProvider.AccountProviderAPI;
-import com.vxg.cloud.ServiceProvider.ServiceProviderToken;
+import android.util.Log;
+
+import com.vxg.cloud.AccountProvider.AccountProviderAPI;
+import com.vxg.cloud.AccountProvider.AccountProviderLoginResult;
 import com.vxg.cloud.ServiceProvider.ServiceProviderAPI;
+import com.vxg.cloud.ServiceProvider.ServiceProviderToken;
 import com.vxg.cnvrclient2.activities.LoginActivity;
 
 public class LoginController {
+    private static String TAG = LoginController.class.getSimpleName();
     public static int LOGIN_START = 0;
     public static int LOGIN_OK = 1;
     public static int LOGIN_FAIL = 2;
     public static int LOGIN_PROGRESS = 3;
-
+    public boolean m_bDemo = false;
     private static LoginController self = null;
     private LoginActivity m_LoginActivity = null;
     private int m_State = LoginController.LOGIN_START;
-    private String m_Error = "";
-    private AccountProviderAPI api = AccountProviderAPI.getInstance();
-
+    private String m_sError = "";
+    private AccountProviderAPI accountProviderAPI = AccountProviderAPI.getInstance();
+    private ServiceProviderAPI serviceProviderAPI = ServiceProviderAPI.getInstance();
     public static LoginController inst(){
         if (null == self){
             self = new LoginController();
@@ -62,22 +66,53 @@ public class LoginController {
     }
 
     public String getLoginError(){
-        return m_Error;
+        return m_sError;
+    }
+
+    public boolean isDemo(){
+        return m_bDemo;
     }
 
     public void tryLogin(String login, String password){
         final String sLogin = login;
         final String sPassword = password;
+        m_bDemo = false;
         updateActivityState(LoginController.LOGIN_PROGRESS);
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                if(api.login(sLogin,sPassword) == true){
-                    ServiceProviderToken token = api.getServiceProviderToken();
-                    ServiceProviderAPI.inst().setServiceProviderToken(token);
+                m_sError = "";
+                AccountProviderLoginResult result = accountProviderAPI.login(sLogin,sPassword);
+                if(!result.hasError()){
+                    ServiceProviderToken token = accountProviderAPI.getServiceProviderToken();
+                    serviceProviderAPI.setToken(token);
                     updateActivityState(LoginController.LOGIN_OK);
                 }else{
-                    m_Error = api.getLastError();
+                    m_sError = result.getErrorDetail();
+                    Log.e(TAG, "Login fail: " + m_sError);
+                    updateActivityState(LoginController.LOGIN_FAIL);
+                }
+            }
+        });
+        t.start();
+    }
+
+    public void tryLoginDemo(){
+        updateActivityState(LoginController.LOGIN_PROGRESS);
+        m_bDemo = true;
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                m_sError = "";
+
+                AccountProviderLoginResult result = accountProviderAPI.demo_login();
+                if(!result.hasError()){
+                    ServiceProviderToken token = accountProviderAPI.getServiceProviderToken();
+                    serviceProviderAPI.setToken(token);
+                    updateActivityState(LoginController.LOGIN_OK);
+                }else{
+                    m_sError = result.getErrorDetail();
+                    Log.e(TAG, "Login fail: " + m_sError);
                     updateActivityState(LoginController.LOGIN_FAIL);
                 }
             }

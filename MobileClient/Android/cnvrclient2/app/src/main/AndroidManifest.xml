@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.vxg.cnvrclient2"
-    android:versionCode="2"
-    android:versionName="2.27">
-
-    <uses-sdk
-        android:minSdkVersion="14"
-        android:targetSdkVersion="22" />
+    package="com.vxg.cnvrclient2">
 
     <permission
         android:name="com.vxg.cnvrclient2.permission.C2D_MESSAGE"
@@ -19,32 +13,38 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
-    <android:uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <android:uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:allowBackup="false"
+        android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:largeHeap="true"
-        android:theme="@android:style/Theme.Black.NoTitleBar">
+        android:largeHeap="true">
         <activity
+            android:label="VXG Cloud Client"
             android:name=".activities.LoginActivity"
+            android:theme="@style/Theme.TranslucentActionBar"
             android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.CloudClientActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:configChanges="orientation|screenSize" />
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:theme="@style/Theme.TranslucentActionBar"
             android:configChanges="orientation|screenSize" />
         <activity
             android:name=".activities.RegistrationActivity"
-            android:configChanges="orientation|screenSize"></activity>
+            android:theme="@style/Theme.TranslucentActionBar"
+            android:windowSoftInputMode="adjustPan|adjustResize"
+            android:configChanges="orientation|screenSize">
+        </activity>
 
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
@@ -75,7 +75,9 @@
             android:name=".gcm.RegistrationIntentService"
             android:exported="false" />
 
-        <activity android:name=".activities.UserProfileActivity"></activity>
+        <activity android:name=".activities.UserProfileActivity"
+            android:theme="@android:style/Theme.Black.NoTitleBar">
+        </activity>
     </application>
 
 </manifest>

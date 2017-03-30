@@ -23,6 +23,7 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 public class WebPlayerInterface {
+	private final static String TAG = WebPlayerInterface.class.getSimpleName();
     private CloudClientActivity mp;
 	private String strVolume = null;
 
@@ -243,4 +244,20 @@ public class WebPlayerInterface {
 		PlayerWrapper player = getPlayerWrapperById(playerId);
 		return player.getMediaPlayer().getVideoWidth();
 	}
+
+	public void onDestroy(){
+		Log.i(TAG, "onDestroy");
+
+		if(playerLive != null){
+			playerLive.close();
+		}
+
+		if(playerPlayback1 != null){
+			playerPlayback1.close();
+		}
+		if(playerPlayback2 != null){
+			playerPlayback2.close();
+		}
+	}
 }
+

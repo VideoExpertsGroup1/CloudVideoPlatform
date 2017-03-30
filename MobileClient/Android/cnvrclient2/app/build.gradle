@@ -2,19 +2,25 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion '22.0.1'
+    compileSdkVersion 25
+    buildToolsVersion '25.0.2'
 
-    lintOptions{
+    lintOptions {
         disable "ResourceType"
     }
 
+    /*signingConfigs {
+        debug {
+            storeFile file("../key/debug.keystore")
+        }
+    }*/
+
     defaultConfig {
         applicationId "com.vxg.cnvrclient2"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 22
-        versionCode 4
-        versionName "3.02"
+        versionCode 23
+        versionName "4.22.1"
         // testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         setProperty("archivesBaseName", "VXGCloudClient2-$versionName-vcode$versionCode")
     }
@@ -38,21 +44,22 @@ android {
 
     sourceSets {
         main {
-            jni{
+            jni {
                 srcDirs = [] // This prevents the auto generation of Android.mk
             }
-            jniLibs{
-                srcDir 'src/main/jniLibs' // This is not necessary unless you have precompiled libraries in your project.
+            jniLibs {
+                srcDir 'src/main/jniLibs'
+                // This is not necessary unless you have precompiled libraries in your project.
             }
         }
     }
 }
 
-
-
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.google.android.gms:play-services-gcm:9.0.0'
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.+'
+    compile project(':vxg')
+    compile 'com.google.android.gms:play-services-gcm:10.0.1'
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.3'
+    compile 'com.google.android.gms:play-services-auth:10.0.1'
 }

@@ -13,9 +13,9 @@
 
 package com.vxg.cnvrclient2.controllers;
 
-import com.vxg.cloud.AccoutProvider.AccountProviderAPI;
+import com.vxg.cloud.AccountProvider.AccountProviderAPI;
 import com.vxg.cnvrclient2.activities.UserProfileActivity;
-import com.vxg.cloud.AccoutProvider.AccountProviderUserProfile;
+import com.vxg.cloud.AccountProvider.AccountProviderUserProfile;
 
 import org.json.JSONObject;
 
@@ -29,7 +29,7 @@ public class UserProfileController {
     private UserProfileActivity m_Activity = null;
     private int m_State = UserProfileController.USERPROFILE_NODATA;
     private String m_Error = "";
-    private AccountProviderAPI api = AccountProviderAPI.getInstance();
+    private AccountProviderAPI accountProviderAPI = AccountProviderAPI.getInstance();
 
     private AccountProviderUserProfile m_userProfile = null;
 
@@ -73,8 +73,7 @@ public class UserProfileController {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                JSONObject obj = api.userProfile();
-                m_userProfile = new AccountProviderUserProfile(obj);
+                m_userProfile = accountProviderAPI.userProfile();
                 updateActivityState(UserProfileController.USERPROFILE_DONE);
             }
         });
@@ -87,7 +86,7 @@ public class UserProfileController {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                api.updateUserProfile(localup);
+                accountProviderAPI.updateUserProfile(localup);
                 updateActivityState(UserProfileController.USERPROFILE_UPDATEDONE);
             }
         });

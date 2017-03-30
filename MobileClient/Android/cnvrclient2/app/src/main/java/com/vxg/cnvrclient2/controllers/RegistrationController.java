@@ -13,8 +13,10 @@
 
 package com.vxg.cnvrclient2.controllers;
 
+import com.vxg.cloud.AccountProvider.AccountProviderUserRegistrationInfo;
+import com.vxg.cloud.AccountProvider.AccountProviderUserRegistrationResult;
 import com.vxg.cnvrclient2.activities.RegistrationActivity;
-import com.vxg.cloud.AccoutProvider.AccountProviderAPI;
+import com.vxg.cloud.AccountProvider.AccountProviderAPI;
 
 public class RegistrationController {
     public static int REGISTRATION_START = 0;
@@ -25,8 +27,8 @@ public class RegistrationController {
     private static RegistrationController self = null;
     private RegistrationActivity m_RegistrationActivity = null;
     private int m_State = RegistrationController.REGISTRATION_START;
-    private String m_Error = "";
-    private AccountProviderAPI api = AccountProviderAPI.getInstance();
+    private static String m_sLastError = "";
+    private AccountProviderAPI accountProviderAPI = AccountProviderAPI.getInstance();
     public static RegistrationController inst(){
         if (null == self){
             self = new RegistrationController();
@@ -69,15 +71,26 @@ public class RegistrationController {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                Boolean bResult = api.registration(local_username, local_email, local_password);
-                if(bResult){
+                AccountProviderUserRegistrationInfo regInfo = new AccountProviderUserRegistrationInfo();
+                regInfo.setUsername(local_username);
+                regInfo.setEmail(local_email);
+                regInfo.setPassword(local_password);
+
+                AccountProviderUserRegistrationResult result = accountProviderAPI.registration(regInfo);
+                if(!result.hasError()){
+                    m_sLastError = "";
                     updateActivityState(RegistrationController.REGISTRATION_OK);
                 }else{
+                    m_sLastError = result.getErrorDetail();
                     updateActivityState(RegistrationController.REGISTRATION_FAIL);
                 }
             }
         });
         t.start();
+    }
+
+    public static String getLastError() {
+        return m_sLastError;
     }
 
 }

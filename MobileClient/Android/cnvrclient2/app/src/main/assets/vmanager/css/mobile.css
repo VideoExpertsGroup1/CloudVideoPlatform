@@ -1,0 +1,410 @@
+.sidebar-container {
+    top: 8.5rem !important;
+}
+
+.sidebar-container .sidebar{
+	padding: 0px !important;
+	transform: unset !important;
+}
+
+body{
+	background: transparent !important;
+}
+
+.cards .type-camera.card{
+	background-color: transparent !important;
+}
+
+.cards .type-camera.card .card-header{
+	background: rgba(0,0,0,0.6) !important;
+	z-index: 10;
+}
+
+.player-footer{
+	/*background: transparent !important;*/
+	background: rgba(0,0,0,0.6) !important;
+	z-index: 15;
+}
+
+.timeline{
+	background: transparent !important;
+}
+
+.player-container #live-container{
+	display: none !important;
+}
+
+.flash-player-container{
+	background: transparent !important;
+}
+
+.card-open .sidebar-container{
+	display: none !important;
+}
+
+.card-open #settings-button{
+	display: none !important;
+}
+
+.card-open .logout-button{
+	display: none !important;
+}
+
+.avatar{
+	display: none;
+}
+
+.navigation-button.power-button{
+	top: 100px;
+	right: 0px !important;
+	width: 54px !important;
+	height: 72px !important;
+}
+
+.navigation-button.power-button .icon{
+	width: 36px !important;
+	height: 72px !important;
+}
+
+.navigation-button.power-button.on .icon{
+	background-image: url(../images/power_button_on_36x72.svg) !important;
+}
+
+.navigation-button.power-button.off .icon{
+	background-image: url(../images/power_button_off_36x72.svg) !important;
+}
+
+@media (max-width: 480px){
+	.cards .type-camera.card .card-header .navigation-button.settings-button.card-settings-button{
+		top: 70px;
+	}
+	
+	.navigation-button.power-button{
+		top: 160px;
+	}
+}
+
+.timeline{
+	top: 6px;
+}
+
+.adjacent-controls.left2{
+	display: block !important;
+}
+
+.datepicker-container-control{
+    position: absolute !important;
+	/*background: rgba(0,0,0,0.6);*/
+	left: 0px;
+    bottom: 71px;
+    height: 6.5rem;
+    margin-bottom: 0px;
+    margin: 0px;
+    padding: 0px;
+    padding-right: 10px;
+    padding-left: 10px;
+    border-top-right-radius: 10px;
+}
+
+.zone-menu-container{
+	display: none !important;
+}
+
+.clip-menu-container{
+	display: table !important;
+	position: absolute !important;
+	bottom: 71px;
+	right: 0px;
+	height: 60px;
+	width: 70px;
+	margin: 0px;
+	padding: 0px;
+	padding-right: 10px;
+	border-top-left-radius: 10px;
+	/*background: rgba(0,0,0,0.6);*/
+}
+
+.clip-menu-container div{
+	height: 100%;
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.timeline .zoom-levels{
+	position: absolute;
+	display: inline-block;
+    height: 36px;
+    width: 150px;
+    color: #FFF;
+	margin-left: 0px;
+    top: initial !important;
+    left: initial;
+    right: 30px;
+    bottom: 81px;
+}
+
+.zoom-levels span{
+	display: inline-block;
+	width: 36px;
+	height: 36px;
+	background-image: url(../images/zoom_inactive_36x36.svg);
+	background-position: center center;
+	color: white;
+	line-height: 36px;
+	background-color: transparent;
+}
+
+.zoom-levels span.active{
+	background-image: url(../images/zoom_active_36x36.svg);
+	background-color: inherit;
+    color: white;
+	line-height: 36px;
+	background-color: transparent;
+}
+
+#audio-streaming-swf-container{
+	display: none !important;
+}
+
+#audio_streaming_swf{
+	display: none;
+}
+
+.microphone{
+	display: none !important;
+}
+
+.player-wrapper .player-container {
+	/*display: none !important;*/
+}
+
+@media screen and (max-width: 852px) {
+	.adjacent-controls.left {
+		display:block;
+	}
+
+	.adjacent-controls.right {
+		display:block;
+	}
+}
+
+.cards .type-camera.card .popover{
+	width: 100%;
+    position: fixed;
+    height: 100%;
+}
+
+.clip-menu-popover.popover.popover-open .popover-tooltip-container{
+	width: 100%;
+    position: absolute;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+}
+
+.popover .popover-tooltip-tag{
+	display: none;
+}
+
+.clip-menu-popover .popover-tooltip{
+	position: relative;
+	top: 50%;
+    transform: translate(-50%,-50%);
+    -webkit-transform: translate(-50%,-50%);
+    right: initial;
+    left: 50%;
+    max-width: 360px;
+}
+
+.player-control-container{
+	display: none !important;
+}
+
+.clip-menu-container .player-button{
+	background-image: url(../images/clip_white_36x36.svg);
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.clip-menu-container .player-button::after{
+	background-image: none;
+}
+
+.datepicker-container .player-button{
+	box-shadow: 0 0 10px rgba(0,0,0,0.5);
+	margin-right: 5px;
+	background: rgba(0,0,0,0.6);
+}
+
+.player-container .overlay-container.big{
+	background-color: transparent;
+}
+
+#live-container{
+	display: none !important;
+}
+
+.player-button.goto-live{
+	position: fixed;
+	left: 10px;
+    bottom: 130px;
+	box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    margin-right: 5px;
+    background-color: rgba(0,0,0,0.6);
+}
+
+#camera-settings-modal .settings-popup.camera-settings-popup{
+	width: 100% !important;
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	height: 100% !important;
+}
+
+#camera-settings-modal .camera-settings-popup .header p{
+	margin-top: 0px;
+}
+
+#camera-settings-modal .settings-popup .header img.arcticmodal-close{
+	position: fixed;
+    top: 13px;
+    right: 13px;
+    left: initial;
+}
+
+#camera-settings-modal .camera-settings-popup .settings-list{
+	height: 100%;
+}
+
+#camera-settings-modal .camera-settings-popup .popup-wrapper{
+	height: 100%;
+}
+
+.cards .type-clips.card .card-content{
+	padding: 0px;
+}
+
+.skyvr-clipshow-window{
+	height: 100%;
+	width: 100%;
+}
+
+.skyvr-clipshow-window .vjs-has-started.skyvr-clipviewer-vjsplayer{
+	margin-left: 0px;
+	margin-right: 0px;
+	height: calc(100% - 108px);
+}
+
+.skyvr-clipshow-content{
+	height: 100% !important;
+	top: 0px;
+    margin: 0px;
+    width: 100%;
+}
+
+.navigation-button.settings-button .icon{
+	background: url("../images/settings_mobile_white_36x36.svg") no-repeat;
+}
+
+.navigation-button.settings-button:active .icon{
+	background: url("../images/settings_mobile_white_36x36.svg") no-repeat;
+}
+
+.navigation-button.settings-button:hover .icon{
+	background: url("../images/settings_mobile_white_36x36.svg") no-repeat;
+}
+
+.state-overlay-container{
+	display: block !importnat;
+}
+
+.player-button.fullscreen{
+	display: none !importnat;
+}
+
+.camera-with-clips .clip.tile.done .video .play-anchor .fade,.camera-with-clips .clip.tile.done .video .play-anchor .icon {
+    display:block !importnant;
+    cursor: pointer;
+}
+
+#skyvr-dialog-modal .settings-popup.camera-settings-popup {
+    width: 100% !important;
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    height: 100% !important;
+	overflow-x: auto;
+}
+
+#skyvr-dialog-modal-header{
+	margin-top: 0px;
+}
+
+.settings-popup .header img.arcticmodal-close{
+    position: absolute;
+    left: initial !important;
+    right: 13px;
+    top: 13px;
+}
+
+.skyvr-clipviewer-download{
+	display: none!important;
+}
+
+/* mobile fullscreen for player */
+.mobile-fullscreen .card-header{
+	display: none !important;
+}
+
+.mobile-fullscreen .player-footer{
+	display: none !important;
+}
+
+.mobile-fullscreen .navigation-button.power-button.on .icon{
+	display: none !important;
+}
+
+.camera-with-clips .clip.tile{
+	margin: 1px;
+	box-shadow: initial;
+	width: 170px;
+}
+
+/* generated by 3rdParty/generate_css/cliplist.py */
+@media only screen and (min-width: 20px) and (max-width: 260px) {.camera-with-clips { width: initial; }}
+@media only screen and (min-width: 260px) and (max-width: 500px) {.camera-with-clips { width: initial; }}
+@media only screen and (min-width: 500px) and (max-width: 740px) {.camera-with-clips { width: initial; }}
+@media only screen and (min-width: 740px) and (max-width: 980px) {.camera-with-clips { width: initial; }}
+@media only screen and (min-width: 980px) and (max-width: 1220px) {.camera-with-clips { width: initial; }}
+@media only screen and (min-width: 1220px) and (max-width: 1460px) {.camera-with-clips { width: initial; }}
+@media only screen and (min-width: 1460px) and (max-width: 1700px) {.camera-with-clips { width: initial; }}
+@media only screen and (min-width: 1700px) and (max-width: 1940px) {.camera-with-clips { width: initial; }}
+@media only screen and (min-width: 1940px) and (max-width: 2180px) {.camera-with-clips { width: initial; }}
+@media only screen and (min-width: 2180px) and (max-width: 2420px) {.camera-with-clips { width: initial; }}
+@media only screen and (min-width: 2420px) and (max-width: 2660px) {.camera-with-clips { width: initial; }}
+@media only screen and (min-width: 2660px) and (max-width: 2900px) {.camera-with-clips { width: initial; }}
+@media only screen and (min-width: 2900px) and (max-width: 3140px) {.camera-with-clips { width: initial; }}
+@media only screen and (min-width: 3140px) {.camera-with-clips { width: initial; }}
+@media only screen and (min-width: 0px) and (max-width: 172px) {.camera-with-clips { width: 0px; }}
+@media only screen and (min-width: 172px) and (max-width: 344px) {.camera-with-clips { width: 172px; }}
+@media only screen and (min-width: 344px) and (max-width: 516px) {.camera-with-clips { width: 344px; }}
+@media only screen and (min-width: 516px) and (max-width: 688px) {.camera-with-clips { width: 516px; }}
+@media only screen and (min-width: 688px) and (max-width: 860px) {.camera-with-clips { width: 688px; }}
+@media only screen and (min-width: 860px) and (max-width: 1032px) {.camera-with-clips { width: 860px; }}
+@media only screen and (min-width: 1032px) and (max-width: 1204px) {.camera-with-clips { width: 1032px; }}
+@media only screen and (min-width: 1204px) and (max-width: 1376px) {.camera-with-clips { width: 1204px; }}
+@media only screen and (min-width: 1376px) and (max-width: 1548px) {.camera-with-clips { width: 1376px; }}
+@media only screen and (min-width: 1548px) and (max-width: 1720px) {.camera-with-clips { width: 1548px; }}
+@media only screen and (min-width: 1720px) and (max-width: 1892px) {.camera-with-clips { width: 1720px; }}
+@media only screen and (min-width: 1892px) and (max-width: 2064px) {.camera-with-clips { width: 1892px; }}
+@media only screen and (min-width: 2064px) and (max-width: 2236px) {.camera-with-clips { width: 2064px; }}
+@media only screen and (min-width: 2236px) and (max-width: 2408px) {.camera-with-clips { width: 2236px; }}
+@media only screen and (min-width: 2408px) and (max-width: 2580px) {.camera-with-clips { width: 2408px; }}
+@media only screen and (min-width: 2580px) and (max-width: 2752px) {.camera-with-clips { width: 2580px; }}
+@media only screen and (min-width: 2752px) and (max-width: 2924px) {.camera-with-clips { width: 2752px; }}
+@media only screen and (min-width: 2924px) and (max-width: 3096px) {.camera-with-clips { width: 2924px; }}
+@media only screen and (min-width: 3096px) {.camera-with-clips { width: 3096px; }}
+
+.cloud-client-api{
+	display: none !important;
+}

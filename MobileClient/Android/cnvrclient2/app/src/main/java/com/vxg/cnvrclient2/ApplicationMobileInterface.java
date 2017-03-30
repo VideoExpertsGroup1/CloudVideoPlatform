@@ -26,12 +26,13 @@ import android.webkit.WebView;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.vxg.cloud.ServiceProvider.ServiceProviderAPI;
 import com.vxg.cnvrclient2.activities.CloudClientActivity;
 import com.vxg.cnvrclient2.activities.UserProfileActivity;
 import com.vxg.cnvrclient2.controllers.LoginController;
 
 public class ApplicationMobileInterface {
-    private String TAG = "ApplicationMobileInterface";
+    private String TAG = ApplicationMobileInterface.class.getSimpleName();
 	private CloudClientActivity mp;
 	private String strNameCallback = "";
 
@@ -60,8 +61,12 @@ public class ApplicationMobileInterface {
 	@JavascriptInterface
 	public void logout() {
         Log.i(TAG, "ApplicationMobileInterface.logout");
-        LoginController.inst().updateActivityState(LoginController.LOGIN_START);
-		this.mp.finish();
+		if(mp.isLoginByGoogle()) {
+			mp.logoutFromGoogle();
+		}else {
+			LoginController.inst().updateActivityState(LoginController.LOGIN_START);
+			this.mp.finish();
+		}
 	}
 
 	@JavascriptInterface
@@ -201,4 +206,9 @@ public class ApplicationMobileInterface {
             }
         });
     }
+
+	@JavascriptInterface
+	public String getSvcpHost(){
+		return ServiceProviderAPI.getInstance().getHost();
+	}
 }

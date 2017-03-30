@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="Configuration">
+        <SwitchPreference
+            android:key="pref_customer_code_switch"
+            android:title="Use custom"
+            android:summary=""
+            android:defaultValue=""/>
+        <SwitchPreference
+            android:key="pref_minimal_latency_enabled"
+            android:title="@string/minimal_latency"
+            android:summary=""
+            android:defaultValue=""/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

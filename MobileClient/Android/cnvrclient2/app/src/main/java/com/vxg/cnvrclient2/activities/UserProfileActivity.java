@@ -22,7 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.vxg.cnvrclient2.R;
-import com.vxg.cloud.AccoutProvider.AccountProviderUserProfile;
+import com.vxg.cloud.AccountProvider.AccountProviderUserProfile;
 import com.vxg.cnvrclient2.controllers.UserProfileController;
 
 public class UserProfileActivity extends Activity {

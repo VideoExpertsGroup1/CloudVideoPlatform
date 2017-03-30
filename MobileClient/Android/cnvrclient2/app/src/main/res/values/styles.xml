@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Widget.ActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">#12658D</item>
+    </style>
+
+    <style name="Widget.ActionBar.Transparent">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <!-- style name="MyDropDownNav" parent="@android:style/Theme.Holo.Light.DarkActionBar">
+        <item name="android:background">#12658D</item>
+        <item name="android:popupBackground">#12658D</item>
+        <item name="android:dropDownSelector">#2788b5</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style -->
+
+    <style name="MyDropDownListView" parent="android:style/Widget.Holo.ListView.DropDown">
+        <item name="android:listSelector">#12658D</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="MyPopupMenu" parent="android:style/Widget.Holo.Light.ListPopupWindow">
+        <item name="android:popupBackground">#12658D</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="MyCustomMenuTextAppearance" parent="@android:style/TextAppearance.Widget.IconMenu.Item">
+        <item name="android:textColor">#fff</item>
+    </style>
+
+    <style name="TextAppearance">
+        <item name="android:textColor">#fff</item>
+    </style>
+</resources>
