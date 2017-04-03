@@ -1,0 +1,37 @@
+	<html>
+		<head>
+			<script type="text/javascript" src="//code.jquery.com/jquery-3.2.0.min.js"></script>
+			<script type="text/javascript" src="CloudAPI.min.js?v=1"></script>
+			<script>
+				var svcp_host = window.location.protocol + "//web.skyvr.videoexpertsgroup.com/";
+				
+				var redirect_url = window.location.protocol + "//" + window.location.hostname + window.location.pathname;
+				redirect_url += "?svcp_host=" + encodeURIComponent(svcp_host);
+				<!-- login by google -->
+				var login_by_google = svcp_host + "svcauth/init?&src=doc&provider=VXG_DOC_GOOGLE&vendor=VXG_DOC&redirect=" + encodeURIComponent(redirect_url);
+				
+				var vendor = "VXG";
+				var login_by_accp = svcp_host + "svcauth/init?vendor=" + vendor +"&redirect=" + encodeURIComponent(redirect_url);
+				
+				$(document).ready(function(){
+					$('body').append(
+						'<h1>Login by Accp</h1>'
+						+ '<a href="' + login_by_accp + '">' + login_by_accp + '</a>'
+						+ '<h1>Login by Google</h1>'
+						+ '<a href="' + login_by_google + '">' + login_by_google + '</a>'
+					);
+					if(window.location.href.indexOf("#token") != -1){ // contains token in link
+						CloudAPI.loadApiTokenFromHref(); // will be parse url
+						CloudAPI.applyApiToken(); // will be save to localStorage apitoken and apply to request
+					}
+					CloudAPI.accountInfo().done(function(response){
+						$('body').append("<h1>Success authorized</h1>");
+					}).fail(function(r){
+						console.error("Not authorized");
+					});
+				});
+			</script>
+		</head>
+		<body>
+		</body>
+	</html>
