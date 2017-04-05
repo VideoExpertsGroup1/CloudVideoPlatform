@@ -233,6 +233,7 @@ public class CloudClientActivity extends Activity
 		mWebView2.addJavascriptInterface(appMobileInterface, "ApplicationMobileInterface");
 		mWebView2.clearCache(true);
 		mWebView2.setBackgroundColor(Color.TRANSPARENT);
+
 		this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 	}
 

@@ -19,8 +19,8 @@ android {
         applicationId "com.vxg.cnvrclient2"
         minSdkVersion 21
         targetSdkVersion 22
-        versionCode 23
-        versionName "4.22.1"
+        versionCode 25
+        versionName "4.22.3"
         // testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         setProperty("archivesBaseName", "VXGCloudClient2-$versionName-vcode$versionCode")
     }
