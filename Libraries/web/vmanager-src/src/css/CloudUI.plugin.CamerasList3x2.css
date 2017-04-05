@@ -1,0 +1,100 @@
+
+.camlist3x2-table{
+	display: table;
+	width: 100%;
+	table-layout: fixed;
+}
+
+.camlist3x2-row{
+	display: table-row;
+}
+
+.camlist3x2-cell{
+	display: table-cell;
+	min-width: 20%;
+	width: 20%;
+	padding: 10px;
+}
+
+.camlist3x2-cell.left, .camlist3x2-cell.right{
+	min-width: 5%;
+    width: 15%;
+}
+
+.camlist3x2-pager{
+	width: 100%;
+}
+
+.camlist3x2-slide{
+	max-width: 300px;
+    height: 100%;
+    border-radius: 15px;
+	background-color: rgba(67,126,131,.4);
+	color: white;
+	padding: 15px;
+	margin-left: auto;
+    margin-right: auto;
+}
+
+.camlist3x2-camtitle{
+	margin-bottom: 5px;
+}
+.camlist3x2-camname{
+	width: calc(100% - 35px);
+	display: inline-block;
+	text-shadow: #080808 2px 2px 6px;
+    text-align: left;
+	white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.camlist3x2-rec-status{
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	border-radius: 35px;
+	float: right;
+}
+
+.camlist3x2-rec-status.on{
+	background-color: red;
+}
+
+.camlist3x2-rec-status.off{
+	background-color: black;
+}
+
+.camlist3x2-preview{
+	max-width: 280px;
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+}
+
+.camlist3x2-preview.active{
+	background-image: url("../files/images/camimg_default.png");
+}
+
+.camlist3x2-preview.inactive{
+	background-image: url("../files/images/camimg_inactive.png");
+}
+
+.camlist3x2-preview.inactive_by_scheduler{
+	background-image: url("../files/images/camimg_inactive.png");
+}
+
+.camlist3x2-preview.unauthorized{
+	background-image: url("../files/images/camimg_unauthorized.png");
+}
+
+.camlist3x2-preview.offline{
+	background-image: url("../files/images/camimg_offline.png");
+}
+
+.camlist3x2-preview img{
+	cursor: pointer;
+    width: 100%;
+}
+
+
+

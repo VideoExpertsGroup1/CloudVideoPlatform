@@ -1,0 +1,99 @@
+.spec-background{
+	background-image: url("./images/background.jpg");
+	background: url("./images/background.jpg");
+	background-position: center center !important;
+}
+
+.skyvr-loading-content{
+	color: #7d7488;
+}
+
+.slide-img{
+	background-image: url("./images/camimg_default.svg");
+}
+
+.slide-img.active{
+	background-image: url("./images/camimg_default.svg");
+}
+
+.slide-img.inactive{
+	background-image: url("./images/camimg_inactive.svg");
+}
+
+.slide-img.inactive_by_scheduler{
+	background-image: url("./images/camimg_inactive.jpg");
+}
+
+.slide-img.unauthorized{
+	background-image: url("./images/camimg_unauthorized.svg");
+}
+
+.slide-img.offline{
+	background-image: url("./images/camimg_offline.svg");
+}
+
+.empty-cameras {
+	color: #7d7488 !important;
+	border: 1px solid #7d7488 !important;
+}
+
+.margin-r span {
+	background-image: url(./images/right_arrow.svg) !important;
+}
+
+.margin-l span {
+	background-image: url(./images/left_arrow.svg) !important;
+}
+
+.cloudui-version{
+	color: #7d7488 !important;
+}
+
+.skyvr-cell-content.top-panel{
+	background-color: rgba(67,126,131,.4) !important;
+}
+
+.logout-button#logout{
+	float: left;
+}
+
+.logout-button#logout:hover{
+	background-color: rgba(255,255,255,.1) !important;
+}
+
+.cloud-client-api:hover{
+	background-color: rgba(255,255,255,.1) !important;
+}
+
+i.page-icon{
+	background-color: rgba(67,126,131,.3) !important;
+}
+
+i.active {
+	background-color: rgba(67,126,131,.5) !important;
+}
+
+.slides .slide-wrapper .slide{
+	background-color: rgba(67,126,131,.4);
+}
+
+.addcamera{
+	background-image: url(./images/plus_white_25x25.svg) !important;
+}
+
+.addcameradialog .settings-popup .header{
+	background-color: rgba(67,126,131,.4)!important;
+	border-bottom: inherit !important;
+}
+
+.addcameradialog .settings-popup .popup-wrapper{
+	color: #7d7488 !important;
+}
+
+.addcameradialog .settings-popup .menu_btn{
+	color: #7d7488 !important;
+}
+
+.cloud-user-name{
+	text-align: center !important;
+}

@@ -1,0 +1,218 @@
+
+/* chrome */
+
+.camerazilla-container:-webkit-full-screen{
+	top: 0%;
+}
+
+.camerazilla-container:-webkit-full-screen .player-container {
+	height: 100%!important;
+	width: 100%!important;
+	/*background-color: #131313;*/
+	background-color: red;
+    -webkit-transform:translate(0,0%);
+    transform:translate(0,0%);
+    top:0%;
+    margin:0 auto;
+   	overflow:hidden;
+    z-index:0;
+}
+
+.camerazilla-container:-webkit-full-screen .player-wrapper{
+	padding-top: 0px;
+	padding-bottom: 0px;
+	top: 0rem;
+}
+
+.camerazilla-container:-webkit-full-screen .zone-menu-container{
+	display: none;
+}
+
+.camerazilla-container:-webkit-full-screen .clip-menu-container{
+	display: none;
+}
+
+.camerazilla-container:-webkit-full-screen .make-clip-toolbar{
+	display: none;
+}
+
+.camerazilla-container:-webkit-full-screen .player-footer{
+	display: inline-block;
+	background-color: rgba(54, 58, 61, 0.64);
+	z-index: 1;
+	-moz-transition:opacity 0.25s;
+    -o-transition:opacity 0.25s;
+    -webkit-transition:opacity 0.25s;
+    transition:opacity 0.25s;
+    left: 0px;
+    padding-top: 10px;
+    height: 70px;
+}
+
+.camerazilla-container:-webkit-full-screen .player-footer:hover{
+	transition: background-color 0.25s ease 0s;
+	background-color:#363A3D;
+}
+
+.camerazilla-container:-webkit-full-screen .timeline-container .zoom-levels{
+	padding-top: 7px;
+	margin-top: -10px;
+	margin-bottom: 5px;
+}
+
+.camerazilla-container:-webkit-full-screen .microphone{ bottom: 85px;}
+.camerazilla-container:-webkit-full-screen .volume{bottom: 75px;}
+.camerazilla-container:-webkit-full-screen .native-res{bottom: 75px;}
+.camerazilla-container:-webkit-full-screen .fullscreen{bottom: 75px;}
+.camerazilla-container:-webkit-full-screen .playback-back{ bottom: 85px;}
+.camerazilla-container:-webkit-full-screen .playback-forward{ bottom: 85px;}
+.camerazilla-container:-webkit-full-screen .playback-goto-live{ bottom: 85px;}
+.camerazilla-container:-webkit-full-screen .playback-play{ bottom: 85px;}
+.camerazilla-container:-webkit-full-screen .playback-pause{ bottom: 85px;}
+.camerazilla-container:-webkit-full-screen .playback-play-pause{ bottom: 85px;}
+
+.camerazilla-container:-webkit-full-screen .timeline-container{
+	left: 45px;
+}
+
+/* firefox */
+
+.camerazilla-container:-moz-full-screen .player-container {
+	height: 100%!important;
+	width: 100%!important;
+	-moz-transform:translate(0,0%);
+	transform:translate(0,0%);
+	top:0%;
+	overflow:hidden;
+	margin:0 auto;
+}
+
+.camerazilla-container:-moz-full-screen .player-wrapper{
+	padding-top: 0px;
+	padding-bottom: 0px;
+	top: 0rem;
+}
+
+.camerazilla-container:-moz-full-screen .zone-menu-container{
+	display: none;
+}
+
+.camerazilla-container:-moz-full-screen .clip-menu-container{
+	display: none;
+}
+
+.camerazilla-container:-moz-full-screen .make-clip-toolbar{
+	display: none;
+}
+
+.camerazilla-container:-moz-full-screen .player-footer{
+	display: inline-block;
+	background-color: rgba(54, 58, 61, 0.64);
+	z-index: 1;
+	-moz-transition:opacity 0.25s;
+    -o-transition:opacity 0.25s;
+    -webkit-transition:opacity 0.25s;
+    transition:opacity 0.25s;
+    left: 0px;
+    padding-top: 10px;
+    height: 70px;
+}
+
+.camerazilla-container:-moz-full-screen .player-footer:hover{
+	transition: background-color 0.25s ease 0s;
+	background-color:#363A3D;
+}
+
+.camerazilla-container:-moz-full-screen .timeline-container .zoom-levels{
+	padding-top: 7px;
+	margin-top: -10px;
+	margin-bottom: 5px;
+}
+
+.camerazilla-container:-moz-full-screen .datepicker-container-control .player-button:after {
+	transition: background-color 0.25s ease 0s;
+	background-position: center;
+}
+
+.camerazilla-container:-moz-full-screen .microphone{ bottom: 85px;}
+.camerazilla-container:-moz-full-screen .volume{bottom: 75px;}
+.camerazilla-container:-moz-full-screen .native-res{bottom: 80px;}
+.camerazilla-container:-moz-full-screen .fullscreen{bottom: 80px;}
+.camerazilla-container:-moz-full-screen .playback-back{ bottom: 85px;}
+.camerazilla-container:-moz-full-screen .playback-forward{ bottom: 85px;}
+.camerazilla-container:-moz-full-screen .playback-goto-live{ bottom: 85px;}
+.camerazilla-container:-moz-full-screen .playback-play{ bottom: 85px;}
+.camerazilla-container:-moz-full-screen .playback-pause{ bottom: 85px;}
+.camerazilla-container:-moz-full-screen .playback-play-pause{ bottom: 85px;}
+
+/* ie */
+.camerazilla-container:-ms-fullscreen .player-container {
+	height: 100%!important;
+	width: 100%!important;
+	/*background-color: #131313;*/
+	background-color: white;
+    -ms-transform:translate(0,-50%);
+    transform:translate(0,-50%);
+    top:50%;
+    margin:0 auto;
+   	overflow:hidden;
+    z-index:0;
+}
+
+.camerazilla-container:-ms-fullscreen .player-wrapper{
+	padding-top: 0px;
+	padding-bottom: 0px;
+	top: 0rem;
+}
+
+.camerazilla-container:-ms-fullscreen .zone-menu-container{
+	display: none;
+}
+
+.camerazilla-container:-ms-fullscreen .clip-menu-container{
+	display: none;
+}
+
+.camerazilla-container:-ms-fullscreen .make-clip-toolbar{
+	display: none;
+}
+
+.camerazilla-container:-ms-fullscreen .player-footer{
+	display: inline-block;
+	background-color: rgba(54, 58, 61, 0.64);
+	z-index: 1;
+	-moz-transition:opacity 0.25s;
+    -o-transition:opacity 0.25s;
+    -webkit-transition:opacity 0.25s;
+    transition:opacity 0.25s;
+    left: 0px;
+    padding-top: 10px;
+    height: 70px;
+}
+
+.camerazilla-container:-ms-fullscreen .player-footer:hover{
+	transition: background-color 0.25s ease 0s;
+	background-color:#363A3D;
+}
+
+.camerazilla-container:-ms-fullscreen .microphone{ bottom: 85px;}
+.camerazilla-container:-ms-fullscreen .volume{bottom: 75px;}
+.camerazilla-container:-ms-fullscreen .native-res{bottom: 75px;}
+.camerazilla-container:-ms-fullscreen .fullscreen{bottom: 75px;}
+.camerazilla-container:-ms-fullscreen .playback-back{ bottom: 85px;}
+.camerazilla-container:-ms-fullscreen .playback-forward{ bottom: 85px;}
+.camerazilla-container:-ms-fullscreen .playback-goto-live{ bottom: 85px;}
+.camerazilla-container:-ms-fullscreen .playback-play{ bottom: 85px;}
+.camerazilla-container:-ms-fullscreen .playback-pause{ bottom: 85px;}
+.camerazilla-container:-ms-fullscreen .playback-play-pause{ bottom: 85px;}
+
+
+.camerazilla-container:fullscreen .player-container {
+    height: 100%!important;
+	width: 100%!important;
+	-moz-transform:translate(0,0%);
+	-ms-transform:translate(0,0%);
+	-webkit-transform:translate(0,0%);
+	transform:translate(0,0%);
+}
+

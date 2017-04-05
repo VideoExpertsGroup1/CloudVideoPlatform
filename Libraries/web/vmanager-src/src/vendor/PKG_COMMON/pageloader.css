@@ -1,0 +1,19 @@
+.spec-background{
+	background: #fff;
+	background-image: url("./images/background.jpg");
+	background-position: center center;
+}
+
+.progress{
+	border: 1px solid rgba(67,126,131,.4);
+	box-shadow: 0 0 5px rgba(67,126,131,.4);
+}
+
+.content-pageloading {
+	color: #7d7488;
+}
+
+.progress-content {
+    background-color: rgba(67,126,131,.4);
+}
+

@@ -1,0 +1,620 @@
+html {
+    font:normal 10px/1.2 Akkurat,Helvetica,sans-serif;
+    height:100%;
+    -webkit-tap-highlight-color:transparent;
+    -ms-touch-action:none
+    margin:0;
+    overflow:hidden;
+    padding:0;
+}
+
+body {
+	margin:0;
+    overflow:hidden;
+    padding:0;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale
+}
+
+button,input {
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale
+}
+
+img {
+    border: 0;
+}
+
+a {
+    text-decoration:none
+}
+
+.main-content {
+    -moz-transition:transform 800ms ease-in-out;
+    -o-transition:transform 800ms ease-in-out;
+    -webkit-transition:transform 800ms ease-in-out;
+    transition: transform 800ms ease-in-out;
+
+    /*position:absolute;
+    bottom:0;
+    left:0;
+    overflow:hidden;
+    right:0;
+    top:0*/
+    height: 100%;
+    width: 100%;
+    position: absolute;    
+    left: 0px;
+    top: 0px;
+}
+
+.structure {
+    -khtml-background-size:cover;
+    -moz-background-size:cover;
+    -o-background-size:cover;
+    -webkit-background-size:cover;
+    background-size:cover;
+    background:transparent;
+    overflow:hidden;
+}
+
+.sidebar-container {
+    -moz-transition:all 800ms;
+    -o-transition:all 800ms;
+    -webkit-transition:all 800ms;
+    transition:all 800ms;
+    bottom:0;
+    left:0;
+    overflow:hidden;
+    text-align:center;
+    width:100%
+}
+
+@media (max-width: 660px){
+	.sidebar-container {
+		top:8.5rem;
+	}
+}
+
+.slide_description{
+    color:#ffffff;
+    text-shadow: #080808 2px 2px 6px;
+    text-align: left;
+    padding-left: 3px;
+}
+
+.sidebar-container .sidebar {
+    -moz-transition:all 800ms;
+    -o-transition:all 800ms;
+    -webkit-transition:all 800ms;
+    transition:all 800ms;
+    margin: 0px auto;
+}
+
+i.page-icon {
+    width: 10px;
+    height: 10px;
+    background-color: #6da9c7;
+    display: inline-block;
+    border-radius: 5px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+i.active {
+    background-color: #124865;
+}
+
+.slider_wrapper{
+	color: white;
+}
+
+.addcamera{
+	background-image: url(../images/plus_white_25x25.svg);
+	width: 25px;
+	height: 25px;
+	cursor: pointer;
+	display: inline-block;
+}
+
+.cards{
+	height: 100%;
+}
+
+.clip-container {
+    top: 0px;
+    position: fixed;
+}
+
+.animate-container{
+    -webkit-transition: left 800ms ease-in-out,transform 800ms ease-in-out;
+    -moz-transition: left 800ms ease-in-out,transform 800ms ease-in-out;
+    -o-transition: left 800ms ease-in-out,transform 800ms ease-in-out;
+    transition: left 800ms ease-in-out,transform 800ms ease-in-out;
+    width: 100%;
+    height: 100%;
+}
+
+.incoming-container {
+    -moz-transform:translateX(100%);
+    -ms-transform:translateX(100%);
+    -o-transform:translateX(100%);
+    -webkit-transform:translateX(100%);
+    transform:translateX(100%);
+}
+
+/* only for ie */
+.incoming-container .type-clips.card{
+	left: 100%;
+	width: 100%;
+}
+
+.closed-container {
+    -moz-transform:translateX(-100%);
+    -ms-transform:translateX(-100%);
+    -o-transform:translateX(-100%);
+    -webkit-transform:translateX(-100%);
+    transform:translateX(-100%);
+}
+
+.skyvr-dialog-clipshow{
+	width: 100%;
+	height: 100%;
+	padding: 0px;
+	margin: 0px;
+	position: absolute;
+    left: 0px;
+    top: 0px;
+}
+
+.skyvr-clipshow-background{
+	display: block;
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	padding: 0px;
+	margin: 0px;
+	background-color: #000;
+	opacity: 0.8;
+}
+
+.skyvr-clipshow-table{
+	display: table;
+	position: absolute;
+	z-index: 100;
+	width: 100%;
+	height: 100%;
+	visibility: visible;
+	padding: 0px;
+	margin: 0px;
+}
+
+.skyvr-clipshow-cell{
+	display: table-cell;
+	vertical-align: middle;
+	z-index: 1001;
+	text-align: center;
+	height: 100%;
+	width: 100%;
+	vertical-align: middle;
+}
+
+.skyvr-clipshow-window{
+	display: inline-block;
+	background-color: #12658D;
+	box-shadow: 0 0 10px rgba(0,0,0,0.5);
+	vertical-align: middle;
+	position: relative;
+	min-width: 330px;
+    min-height: 200px;
+    border-radius: 4px;
+    
+}
+
+.skyvr-clipshow-window .skyvr-clipviewer-title{
+	text-indent: 5px;
+	text-align: left;
+	border: 1px solid #BFDAE1;
+	width: 200px;
+	height: 35px;
+	color: #12658C;
+	font-size: 18px;
+	border-radius: 4px;
+	margin-top: 10px;
+	margin-left: 10px;
+	float: left;
+}
+
+.skyvr-clipshow-window .skyvr-clipshow-tag{
+	float: left;
+	text-indent: 5px;
+	text-align: left;
+	border: 1px solid #BFDAE1;
+	width: 200px;
+	height: 35px;
+	color: #12658C;
+	font-size: 18px;
+	margin-bottom: 10px;
+	margin-left: 10px;
+	border-radius: 4px;
+	float: left;
+	margin-top: 10px;
+}
+
+.skyvr-clipshow-window .menu_btn{
+	background-color: inherit;
+	margin-left: 15px;
+	float: right;
+	margin-bottom: 10px;
+	margin: 0px 0px 0px 15px;
+}
+
+.skyvr-clipshow-window .skyvr-clipshow-save{
+	float: left;
+	margin: 0;
+	margin-left: 15px;
+	color: #fff;
+}
+
+.skyvr-clipviewer-prev{
+	background-image: url("../files/images/left_arrow_bold.svg");
+	background-repeat: no-repeat;
+	display: inline-block;
+	cursor: pointer;
+	background-position: center center;
+	height: 40px;
+	vertical-align: middle;
+	z-index: 100;
+	position: absolute;
+	background-color: #12658D;
+	left: 10px;
+	top: 50%;
+	border-bottom-right-radius: 4px;
+	border-top-right-radius: 4px;
+	width: 32px;
+	background-color: rgba(43, 51, 63, 0.7);
+	transform: translateY(-50%);
+}
+
+.skyvr-clipviewer-next{
+	background-image: url("../files/images/right_arrow_bold.svg");
+	background-repeat: no-repeat;
+	display: inline-block;
+	width: 32px;
+	height: 40px;
+	cursor: pointer;
+	background-position: center center;
+	vertical-align: middle;
+	position: absolute;
+	right: 10px;
+	border-bottom-left-radius: 4px;
+	border-top-left-radius: 4px;
+	top: 50%;
+	z-index: 100;
+	background-color: rgba(43, 51, 63, 0.7);
+	transform: translateY(-50%);
+}
+
+.skyvr-clipshow-content{
+	transform: translate(0px, 0px);
+	background-color: black;
+	overflow: inherit;
+}
+
+#videojs-clipshow{
+	width: 100%;
+	height: 100%;
+	padding: 0px;
+	margin: 0px;
+	top: 0px;
+}
+
+.clipmaker-input-datetime{
+	position: fixed;
+    background: white;
+    width: 200px;
+    height: 185px;
+    border: 1px solid #BFDAE1;
+    padding: 20px;
+}
+
+.clipmaker-input-datetime .clipmaker-datetimeeditor-month, .clipmaker-input-datetime .clipmaker-datetimeeditor-day{
+	width: 70px;
+	text-indent: 0px;
+	margin-bottom: 10px;
+}
+
+.clipmaker-input-datetime .clipmaker-datetimeeditor-year{
+	width: 155px;
+	text-indent: 0px;
+	margin-bottom: 10px;
+}
+
+.clipmaker-input-datetime .clipmaker-datetimeeditor-hours, .clipmaker-input-datetime .clipmaker-datetimeeditor-minutes, .clipmaker-input-datetime .clipmaker-datetimeeditor-seconds{
+	width: 42px;
+    text-indent: 0px;
+	margin-bottom: 10px;
+}
+
+.clipmaker-datetimeeditor-apply{
+	color: #12658C;
+    cursor: pointer;
+    float: left;
+}
+
+.clipmaker-datetimeeditor-cancel{
+	color: #12658C;
+    cursor: pointer;
+	float: right;
+}
+
+.cloudui-version{
+    position: absolute;
+    bottom: 2px;
+    left: 5px;
+    color: #f0f0f0;
+    font-size: 13px;
+}
+
+.navigation-button {
+    background:transparent;
+    border:none;
+    border-radius:50%;
+    cursor:pointer;
+    height: 36px;
+    padding:0;
+    width: 36px;
+}
+
+.navigation-button:focus {
+    background:rgba(0,0,0,0.2)
+}
+
+.cards .type-camera.card {
+    background-color:#131313
+}
+
+.cards .type-camera.card .card-header {
+	background-color:#131313;
+    height:60px;
+    margin-bottom:.1rem;
+    z-index:1
+}
+
+.type-camera.card .card-header .close-card-button,
+.type-clips.card .card-header .close-card-button {
+    left:auto;
+    position:relative;
+    top:auto;
+	height: 100%;
+}
+
+.card .card-header .close-card-button .icon,
+.card.type-clips .close-card-button .icon {
+    background: url("data:image/svg+xml;charset=US-ASCII,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22iso-8859-1%22%3F%3E%0A%3C!DOCTYPE%20svg%20PUBLIC%20%22-%2F%2FW3C%2F%2FDTD%20SVG%201.1%2F%2FEN%22%20%22http%3A%2F%2Fwww.w3.org%2FGraphics%2FSVG%2F1.1%2FDTD%2Fsvg11.dtd%22%3E%0A%3Csvg%20version%3D%221.1%22%20id%3D%22Layer_1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%20x%3D%220px%22%20y%3D%220px%22%0A%09%20width%3D%2214px%22%20height%3D%2225px%22%20viewBox%3D%220%200%2014%2025%22%20style%3D%22enable-background%3Anew%200%200%2014%2025%3B%22%20xml%3Aspace%3D%22preserve%22%3E%0A%3Cpolygon%20style%3D%22fill%3A%23FFFFFF%3B%22%20points%3D%2212.329%2C25.243%200.086%2C13%2012.793%2C0.293%2014.207%2C1.707%202.914%2C13%2013.743%2C23.829%20%22%2F%3E%0A%3C%2Fsvg%3E%0A");
+    background-repeat:no-repeat;
+    background-position: 50% 50%;
+    height: 100%;
+    display:inline-block;
+    float:left;
+    position:relative;
+    width: 36px;
+}
+
+.cards .type-camera.card .card-header .card-title {
+	font-family: 'Open Sans', sans-serif;
+    font-weight: 800;
+    color: #fff;
+    top: 16px;
+    font-size: 22px;
+}
+
+.cards .type-camera.card .card-header .card-title .live{
+	font-size: 20px;
+	filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=62);
+	font-family: "SegoeUIItalic";
+    opacity: .62;
+	position: relative;
+    left: 30px;
+    bottom: 2px;
+}
+
+.card {
+    -moz-transition:all 800ms;
+    -o-transition:all 800ms;
+    -webkit-transition:all 800ms;
+    transition:all 800ms;
+    background:#fff;
+    border-top-left-radius:1.2rem;
+    border-bottom-left-radius:1.2rem;
+    bottom:0;
+    left:45.2rem;
+    margin:0 auto;
+    position:fixed;
+    right:0;
+    top:0
+}
+
+.card.type-camera,
+.card.type-clips {
+    border-radius:0;
+    left:0
+}
+
+.card .card-header {
+    height:5rem;
+    position:relative;
+    width:100%
+}
+
+.card .card-header .card-title {
+    color:#444;
+    font-size:2.2rem;
+    left:6.4rem;
+    margin:0;
+    overflow:hidden;
+    position:absolute;
+    right:6.4rem;
+    text-align:center;
+    text-overflow:ellipsis;
+    top:2.7rem;
+    white-space:nowrap
+}
+
+.navigation-button.settings-button{
+	top: 11px;
+	right: 18px;
+	position: absolute;
+}
+
+.navigation-button.settings-button .icon {
+	background: url("../files/images/player/sett.svg") no-repeat;
+    position: absolute;
+    height: 36px;
+    width: 36px;
+}
+
+.player-container .overlay-container {
+    background-color:#1A1A1A;
+    bottom:0;
+    left:0;
+    margin:auto;
+    position:absolute;
+    right:0;
+    top:0;
+    z-index:2;
+    text-align: center;
+}
+
+.player-container .overlay-container p {
+    margin-top:0
+}
+
+.player-container .overlay-container .overlay {
+    position:relative;
+    top:50%;
+    -moz-transform:translate(0,-50%);
+    -ms-transform:translate(0,-50%);
+    -webkit-transform:translate(0,-50%);
+    transform:translate(0,-50%)
+}
+
+.player-container .overlay-container.big {
+    color:#fff;
+    height:100%;
+    width:100%;
+    z-index:3
+}
+
+.player-container .overlay-container.big h1,.player-container .overlay-container.big h2 {
+    margin:0
+}
+
+.player-container .overlay-container.big h1 {
+    font-size:2.7rem;
+    font-weight:400;
+    margin-bottom:.6rem
+}
+
+.player-container .overlay-container.big h2 {
+    color:rgba(255,255,255,0.32);
+    font-size:1.5rem
+}
+
+.player-container .overlay-container.camera-idle {
+    background-color:transparent;
+    vertical-align: middle;
+    text-align: center;
+    height:7.2rem;
+    width:7.2rem;
+    line-height: 7.2rem;
+    color: white;
+    font-weight: bold;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.dialog-popup{
+	background-color: white;
+	min-height: 100px;
+	height: auto;
+}
+
+.dialog-content{
+	text-align: center;
+}
+
+.dialog-content .caption{
+	display: inline-block;
+	text-align: left;
+    width: 80%;
+    height: 40px;
+    line-height: 40px;
+	font-size: 16px;
+    font-weight: bold;
+    color: #265e79;
+}
+
+.dialog-content .footer{
+	height: 20px;
+}
+
+.dialog-content button{
+	width: auto;
+    height: 40px;
+}
+
+/* clips */
+
+.skyvr-clipshow-window .skyvr-clipviewer-download{
+	background-image: url("../images/download_white_25x25.svg");
+	background-repeat: no-repeat;
+	background-position: center center;
+	width: 32px;
+	height: 54px;
+	margin-top: 10px;
+	margin-right: 2px;
+	margin-left: 0px;
+}
+
+.skyvr-clipshow-window .skyvr-clipshow-delete{
+	background-image: url("../images/delete_white_25x25.svg");
+	background-repeat: no-repeat;
+	background-position: center center;
+	width: 32px;
+	height: 54px;
+	margin-top: 10px;
+	margin-left: 0px;
+	margin-right: 10px;
+}
+
+.skyvr-clipshow-window .skyvr-clipviewer-share{
+	background-image: url("../images/share_white_25x25.svg");
+	background-repeat: no-repeat;
+	background-position: center center;
+	width: 32px;
+	height: 54px;
+	margin-top: 10px;
+	margin-left: 0px;
+	margin-right: 10px;
+}
+
+.skyvr-clipshow-window .skyvr-clipviewer-private{
+	background-image: url("../images/private_white_25x25.svg");
+	background-repeat: no-repeat;
+	background-position: center center;
+	width: 32px;
+	height: 32px;
+	margin-top: 10px;
+	margin-left: 0px;
+	margin-right: 10px;
+}
+
+.skyvr-clipshow-window .vjs-has-started.skyvr-clipviewer-vjsplayer{
+	margin-left: 10px;
+	margin-right: 10px;
+	background-color: #000;
+}
+
+.skyvr-clipshow-window .skyvr-dlg-ftr{
+	background-color: #12658D;
+}

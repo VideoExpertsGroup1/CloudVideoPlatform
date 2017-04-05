@@ -1,0 +1,23 @@
+.fc .cloud-user-name {
+    display: none;
+}
+
+.fc .top-panel-menu {
+	display: none;
+}
+
+.fc .card {
+    -moz-transition:all 0ms !important;
+    -o-transition:all 0ms !important;
+    -webkit-transition:all 0ms !important;
+    transition:all 0ms !important;
+}
+
+.fc #home-container.card-open .main-content .skyvr-table-content{
+	/* transform: translateX(-100%);*/
+	-webkit-transition: left 0ms ease-in-out,transform 0ms ease-in-out;
+    -moz-transition: left 0ms ease-in-out,transform 0ms ease-in-out;
+    -o-transition: left 0ms ease-in-out,transform 0ms ease-in-out;
+    transition: left 0ms ease-in-out,transform 0ms ease-in-out;
+	left: -100%;
+}

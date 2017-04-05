@@ -1,0 +1,8 @@
+src/lang/*/*
+!src/lang/VXG
+!src/lang/*.json
+
+src/vendor/*
+!src/vendor/VXG*
+!src/vendor/SAMPLE_*
+!src/vendor/PKG_COMMON*

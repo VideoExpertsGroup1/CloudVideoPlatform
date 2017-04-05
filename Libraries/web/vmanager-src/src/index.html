@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html class="en">
+<head>
+	<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+	<meta charset="utf-8">
+	<meta content="CloudVideoPlatform" name="description"/>
+	<!--[if lte IE 9]>
+	<meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+	<![endif]-->
+	<meta http-equiv="x-ua-compatible" content="IE=edge">
+	<meta content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, minimal-ui" name="viewport"/>
+	<link href="favicon.ico" rel="shortcut icon">
+
+	<script type="text/javascript">
+		cc = {};
+		cc.title = "";
+		cc.subtitle = "";
+		cc.clips = false;
+	</script>
+	<script type="text/javascript" src="./files/js/lib/jquery.js"></script>
+	<script type="text/javascript" src="./js/CloudAPI.min.js"></script>
+	<script type="text/javascript" src="./js/pageloader.js"></script>
+	<script type="text/javascript" src="./js/oauth.js"></script> <!-- will be load cc.js here -->
+
+	<script>
+		if (typeof document.documentMode != "undefined") {
+			document.documentElement.className += ' ie';
+			console.log("is IE");
+		}else if(typeof InstallTrigger != "undefined"){
+			document.documentElement.className += ' ff';
+			console.log("is FF");
+		}
+	</script>
+</head>
+<body class="spec-background">
+		<!--! Scripts -->
+
+		<section id="templates">
+		<script type="text/x-template" id="layers-buttons">
+			<% _.each(layouts, function(counter) { %>
+				<div class="layer-button-wrapper <% if (!counter.enabled){%>hide<%}%>">	
+					<div active_color="<%=counter.layoutColor%>" class="layer-button layer-button-<%=counter.layoutNumber%>" layer-number="<%=counter.layoutNumber%>">
+						<input id="md-checkbox-<%=counter.layoutNumber%>" class="zone-enabled-checkbox zone-enabled-checkbox-<%=counter.layoutNumber%>" type="checkbox" layer-number="<%=counter.layoutNumber%>" <% if (counter.checked){%>checked<%}%>>
+
+						<label for="md-checkbox-<%=counter.layoutNumber%>">
+							<div  style="background-color: <%=counter.layoutColor%>;" class="zone-layout-color">
+								<img src="files/images/player/tick.svg">
+							</div>
+						</label>
+						<p><%= app.polyglot.t("Zone") %> <%=counter.layoutNumber + 1%></p>
+					</div>
+				</div>
+			<% }); %>
+		</script>
+		<script type="text/x-template" id="md-filter-table">
+			<table>
+				<tr>
+					<td filter_type="motion" class="motion<%if(md_filter.motion){ %> active<%}%>">
+						<p><%= app.polyglot.t("Motion") %></p>
+					</td>
+					<td filter_type="sound" class="sound<% if(md_filter.sound){ %> active<% };%>">
+						<p><%= app.polyglot.t("Sound") %></p>
+					</td>
+				</tr>
+				<% if(md_filter.md_zonesEnabled){%><tr>
+				<% _.each(md_filter.regions, function(region, i) { %> 
+					<td filter_type="zone" zone_number='<%= region.count %>' style="background-color: <%= region.color %>;" <% if(region.state){ %>class="active"<% }; %>>
+						<p><%= app.polyglot.t("Zone") %> <%= region.count + 1 %></p>
+					</td>
+					<% if(i%2 == 1){%>
+				</tr>
+				<tr>
+					<%};%>
+				<% }); %>
+				</tr><%};%>
+
+			</table>
+		</script>
+		
+		<div style="display: none;">
+			<div class="box-modal" id="camera-settings-modal">
+				<div class="list-content">
+					<div class="settings-popup camera-settings-popup">
+						<div class="header">
+							<p>Camera settings</p>
+							<img class="box-modal_close arcticmodal-close" src="./files/images/camera_setting/close_white.svg">
+							<img class="hide back-arrow-camera-settings" id="back-arrow" src="./files/images/left_arrow.svg">
+							<div class="clear"></div>
+						</div>
+						<div class="popup-wrapper" id="camera-settings-modal-content">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div style="display: none;">
+			<div class="box-modal" id="camera-firmware-upgrade-modal">
+				<div class="list-content">
+					<div class="settings-popup camera-settings-popup" style="background-color: white; height: 270px;">
+						<div class="header">
+							<p>Firmware upgrade</p>
+							<img class="box-modal_close arcticmodal-close" src="./files/images/camera_setting/close_white.svg">
+							<div class="clear"></div>
+						</div>
+						<div class="popup-wrapper" id="camera-firmware-upgrade-modal-content">
+						</div>
+						<center>
+							<div class="menu_btn" style="margin-left: 15px;" id="camera-firmware-upgrade-now">Upgrade Now</div>
+							<div class="menu_btn arcticmodal-close" style="margin-left: 15px;" id="camera-firmware-upgrade-later">Later</div>
+						</center>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div style="display: none;">
+			<div class="box-modal" id="skyvr-dialog-modal">
+				<div class="list-content">
+					<div class="settings-popup camera-settings-popup" style="background-color: white; min-height: 100px; height: auto;">
+						<div class="header">
+							<p id="skyvr-dialog-modal-header">Something here header</p>
+							<img class="box-modal_close arcticmodal-close" src="./files/images/camera_setting/close_white.svg">
+							<div class="clear"></div>
+						</div>
+						<div class="popup-wrapper" id="skyvr-dialog-modal-content">
+						</div>
+						<div id="skyvr-dialog-modal-buttons" class="skyvr-dialog-modal-buttons">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div style="display: none;">
+			<div class="box-modal" id="skyvr-dialog-modal-processing">
+				<div class="list-content">
+					<div class="settings-popup camera-settings-popup" style="background-color: white; min-height: 100px; height: auto;">
+						<div class="header">
+							<p id="skyvr-dialog-modal-processing-header">Something here header</p>
+							<div class="clear"></div>
+						</div>
+						<div class="popup-wrapper">
+							<div class="skyvr-dialog-modal-status">
+								<div style="display: table;">
+									<div id="skyvr-dialog-modal-processing-icon"></div>
+									<div id="skyvr-dialog-modal-processing-text"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/x-template" id="skyvr-dialog-modal-error">
+			<div class="box-modal">
+				<div class="list-content">
+					<div class="settings-popup camera-settings-popup" style="background-color: white; min-height: 100px; height: auto;">
+						<div class="header">
+							<p>Something here header</p>
+							<img class="box-modal_close arcticmodal-close" src="./files/images/camera_setting/close_white.svg">
+							<div class="clear"></div>
+						</div>
+						<div class="popup-wrapper">
+							<div class="skyvr-dialog-modal-status" style="padding-bottom: 0px;">
+								<div style="display: table;">
+									<div class="error-icon">
+										<!-- TODO move to css -->
+										<img style="padding: 5px" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxNy4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4KCjxzdmcKICAgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIgogICB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiCiAgIHhtbG5zOnN2Zz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiCiAgIHhtbG5zOnNvZGlwb2RpPSJodHRwOi8vc29kaXBvZGkuc291cmNlZm9yZ2UubmV0L0RURC9zb2RpcG9kaS0wLmR0ZCIKICAgeG1sbnM6aW5rc2NhcGU9Imh0dHA6Ly93d3cuaW5rc2NhcGUub3JnL25hbWVzcGFjZXMvaW5rc2NhcGUiCiAgIHZlcnNpb249IjEuMSIKICAgaWQ9IkxheWVyXzEiCiAgIHg9IjBweCIKICAgeT0iMHB4IgogICB3aWR0aD0iNTAiCiAgIGhlaWdodD0iNTAiCiAgIHZpZXdCb3g9IjAgMCA1MCA1MCIKICAgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIKICAgaW5rc2NhcGU6dmVyc2lvbj0iMC45MSByMTM3MjUiCiAgIHNvZGlwb2RpOmRvY25hbWU9ImVycm9yLnN2ZyI+PG1ldGFkYXRhCiAgICAgaWQ9Im1ldGFkYXRhMTEiPjxyZGY6UkRGPjxjYzpXb3JrCiAgICAgICAgIHJkZjphYm91dD0iIj48ZGM6Zm9ybWF0PmltYWdlL3N2Zyt4bWw8L2RjOmZvcm1hdD48ZGM6dHlwZQogICAgICAgICAgIHJkZjpyZXNvdXJjZT0iaHR0cDovL3B1cmwub3JnL2RjL2RjbWl0eXBlL1N0aWxsSW1hZ2UiIC8+PGRjOnRpdGxlIC8+PC9jYzpXb3JrPjwvcmRmOlJERj48L21ldGFkYXRhPjxkZWZzCiAgICAgaWQ9ImRlZnM5Ij48bGluZWFyR3JhZGllbnQKICAgICAgIGlua3NjYXBlOmNvbGxlY3Q9ImFsd2F5cyIKICAgICAgIGlkPSJsaW5lYXJHcmFkaWVudDQxNDEiPjxzdG9wCiAgICAgICAgIHN0eWxlPSJzdG9wLWNvbG9yOiNhYTAwMDA7c3RvcC1vcGFjaXR5OjE7IgogICAgICAgICBvZmZzZXQ9IjAiCiAgICAgICAgIGlkPSJzdG9wNDE0MyIgLz48c3RvcAogICAgICAgICBzdHlsZT0ic3RvcC1jb2xvcjojYWEwMDAwO3N0b3Atb3BhY2l0eTowOyIKICAgICAgICAgb2Zmc2V0PSIxIgogICAgICAgICBpZD0ic3RvcDQxNDUiIC8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQKICAgICAgIGlua3NjYXBlOmNvbGxlY3Q9ImFsd2F5cyIKICAgICAgIHhsaW5rOmhyZWY9IiNsaW5lYXJHcmFkaWVudDQxNDEiCiAgICAgICBpZD0ibGluZWFyR3JhZGllbnQ0MTQ3IgogICAgICAgeDE9IjcuNDc0NTc2IgogICAgICAgeTE9IjguODEzNTU5NSIKICAgICAgIHgyPSI5MC4xNTI1NDIiCiAgICAgICB5Mj0iODkuNTA4NDY5IgogICAgICAgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiIC8+PC9kZWZzPjxzb2RpcG9kaTpuYW1lZHZpZXcKICAgICBwYWdlY29sb3I9IiNmZmZmZmYiCiAgICAgYm9yZGVyY29sb3I9IiM2NjY2NjYiCiAgICAgYm9yZGVyb3BhY2l0eT0iMSIKICAgICBvYmplY3R0b2xlcmFuY2U9IjEwIgogICAgIGdyaWR0b2xlcmFuY2U9IjEwIgogICAgIGd1aWRldG9sZXJhbmNlPSIxMCIKICAgICBpbmtzY2FwZTpwYWdlb3BhY2l0eT0iMCIKICAgICBpbmtzY2FwZTpwYWdlc2hhZG93PSIyIgogICAgIGlua3NjYXBlOndpbmRvdy13aWR0aD0iMTg1NSIKICAgICBpbmtzY2FwZTp3aW5kb3ctaGVpZ2h0PSIxMDU2IgogICAgIGlkPSJuYW1lZHZpZXc3IgogICAgIHNob3dncmlkPSJmYWxzZSIKICAgICBpbmtzY2FwZTp6b29tPSI2LjU1NTU1NTYiCiAgICAgaW5rc2NhcGU6Y3g9IjM2LjYwNjQ0OSIKICAgICBpbmtzY2FwZTpjeT0iLTUuMTMwMzc2NSIKICAgICBpbmtzY2FwZTp3aW5kb3cteD0iMTk4NSIKICAgICBpbmtzY2FwZTp3aW5kb3cteT0iMjQiCiAgICAgaW5rc2NhcGU6d2luZG93LW1heGltaXplZD0iMSIKICAgICBpbmtzY2FwZTpjdXJyZW50LWxheWVyPSJMYXllcl8xIiAvPjxlbGxpcHNlCiAgICAgc3R5bGU9Im9wYWNpdHk6MTtmaWxsOnVybCgjbGluZWFyR3JhZGllbnQ0MTQ3KTtmaWxsLW9wYWNpdHk6MTtmaWxsLXJ1bGU6bm9uemVybztzdHJva2U6bm9uZTtzdHJva2Utb3BhY2l0eToxIgogICAgIGlkPSJwYXRoNDEzNCIKICAgICBjeD0iMjUuMTA2NDYyIgogICAgIGN5PSIyNS4wNjg0MTUiCiAgICAgcng9IjI0LjY3NTAxMSIKICAgICByeT0iMjQuOTU3NzU2IiAvPjxnCiAgICAgaWQ9Imc0MTM2IgogICAgIHRyYW5zZm9ybT0ibWF0cml4KDEuNDAzNDQxMiwwLDAsMS40MTUxODE5LC0wLjQ3NjgyNzk2LC0wLjAwNDQ5ODA0KSIKICAgICBzdHlsZT0iZmlsbDojZmZmZmZmO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpub25lO3N0cm9rZS1vcGFjaXR5OjEiPjxyZWN0CiAgICAgICBpZD0icmVjdDMiCiAgICAgICBoZWlnaHQ9IjIiCiAgICAgICB3aWR0aD0iMzEuMTEzMDAxIgogICAgICAgc3R5bGU9ImZpbGw6I2ZmZmZmZjtmaWxsLW9wYWNpdHk6MTtzdHJva2U6bm9uZTtzdHJva2Utb3BhY2l0eToxIgogICAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMC43MDcxLDAuNzA3MSwtMC43MDcxLDAuNzA3MSwxOCwtNy40NTU4KSIKICAgICAgIHk9IjE3IgogICAgICAgeD0iMi40NDQiIC8+PHJlY3QKICAgICAgIGlkPSJyZWN0NSIKICAgICAgIGhlaWdodD0iMzEuMTEyNzAzIgogICAgICAgd2lkdGg9IjEuOTk5OTgwOCIKICAgICAgIHN0eWxlPSJmaWxsOiNmZmZmZmY7ZmlsbC1vcGFjaXR5OjE7c3Ryb2tlOm5vbmU7c3Ryb2tlLW9wYWNpdHk6MSIKICAgICAgIHRyYW5zZm9ybT0ibWF0cml4KDAuNzA3MTA2NzgsMC43MDcxMDY3OCwtMC43MDcxMDY3OCwwLjcwNzEwNjc4LDAsMCkiCiAgICAgICB5PSItMTUuNTU1OTkyIgogICAgICAgeD0iMjQuNDU1NzExIiAvPjwvZz48L3N2Zz4=">
+									</div>
+									<div class="error-text"></div>
+								</div>
+							</div>
+						</div>
+						<div class="skyvr-dialog-modal-buttons">
+							<div class="menu_btn arcticmodal-close" style="margin-left: 15px;">Ok</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</script>
+		
+		<script type="text/x-template" id="skyvr-dialog-modal-information">
+			<div class="box-modal">
+				<div class="list-content">
+					<div class="settings-popup camera-settings-popup" style="background-color: white; min-height: 100px; height: auto;">
+						<div class="header">
+							<p>Something here header</p>
+							<img class="box-modal_close arcticmodal-close" src="./files/images/camera_setting/close_white.svg">
+							<div class="clear"></div>
+						</div>
+						<div class="popup-wrapper">
+							<div class="skyvr-dialog-modal-status" style="padding-bottom: 0px;">
+								<div style="display: table;">
+									<div class="error-icon">
+										<!-- TODO move to css -->
+										<img style="padding: 5px" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxNy4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4KCjxzdmcKICAgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICB4bWxuczpjYz0iaHR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIgogICB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiCiAgIHhtbG5zOnN2Zz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICAgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiCiAgIHhtbG5zOnNvZGlwb2RpPSJodHRwOi8vc29kaXBvZGkuc291cmNlZm9yZ2UubmV0L0RURC9zb2RpcG9kaS0wLmR0ZCIKICAgeG1sbnM6aW5rc2NhcGU9Imh0dHA6Ly93d3cuaW5rc2NhcGUub3JnL25hbWVzcGFjZXMvaW5rc2NhcGUiCiAgIHZlcnNpb249IjEuMSIKICAgaWQ9IkxheWVyXzEiCiAgIHg9IjBweCIKICAgeT0iMHB4IgogICB3aWR0aD0iNTAiCiAgIGhlaWdodD0iNTAiCiAgIHZpZXdCb3g9IjAgMCA1MCA1MCIKICAgeG1sOnNwYWNlPSJwcmVzZXJ2ZSIKICAgaW5rc2NhcGU6dmVyc2lvbj0iMC45MSByMTM3MjUiCiAgIHNvZGlwb2RpOmRvY25hbWU9ImluZm8uc3ZnIj48bWV0YWRhdGEKICAgICBpZD0ibWV0YWRhdGExMSI+PHJkZjpSREY+PGNjOldvcmsKICAgICAgICAgcmRmOmFib3V0PSIiPjxkYzpmb3JtYXQ+aW1hZ2Uvc3ZnK3htbDwvZGM6Zm9ybWF0PjxkYzp0eXBlCiAgICAgICAgICAgcmRmOnJlc291cmNlPSJodHRwOi8vcHVybC5vcmcvZGMvZGNtaXR5cGUvU3RpbGxJbWFnZSIgLz48ZGM6dGl0bGUgLz48L2NjOldvcms+PC9yZGY6UkRGPjwvbWV0YWRhdGE+PGRlZnMKICAgICBpZD0iZGVmczkiPjxsaW5lYXJHcmFkaWVudAogICAgICAgaW5rc2NhcGU6Y29sbGVjdD0iYWx3YXlzIgogICAgICAgaWQ9ImxpbmVhckdyYWRpZW50NDE0OCI+PHN0b3AKICAgICAgICAgc3R5bGU9InN0b3AtY29sb3I6IzEyNjU4ZDtzdG9wLW9wYWNpdHk6MTsiCiAgICAgICAgIG9mZnNldD0iMCIKICAgICAgICAgaWQ9InN0b3A0MTUwIiAvPjxzdG9wCiAgICAgICAgIHN0eWxlPSJzdG9wLWNvbG9yOiMxMjY1OGQ7c3RvcC1vcGFjaXR5OjA7IgogICAgICAgICBvZmZzZXQ9IjEiCiAgICAgICAgIGlkPSJzdG9wNDE1MiIgLz48L2xpbmVhckdyYWRpZW50PjxsaW5lYXJHcmFkaWVudAogICAgICAgaW5rc2NhcGU6Y29sbGVjdD0iYWx3YXlzIgogICAgICAgeGxpbms6aHJlZj0iI2xpbmVhckdyYWRpZW50NDE0OCIKICAgICAgIGlkPSJsaW5lYXJHcmFkaWVudDQxNTQiCiAgICAgICB4MT0iNy4xNjk0OTEzIgogICAgICAgeTE9IjguMjAzMzkwMSIKICAgICAgIHgyPSI4Ni45NDkxNSIKICAgICAgIHkyPSI4Ny44MzA1MDUiCiAgICAgICBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgLz48L2RlZnM+PHNvZGlwb2RpOm5hbWVkdmlldwogICAgIHBhZ2Vjb2xvcj0iI2ZmZmZmZiIKICAgICBib3JkZXJjb2xvcj0iIzY2NjY2NiIKICAgICBib3JkZXJvcGFjaXR5PSIxIgogICAgIG9iamVjdHRvbGVyYW5jZT0iMTAiCiAgICAgZ3JpZHRvbGVyYW5jZT0iMTAiCiAgICAgZ3VpZGV0b2xlcmFuY2U9IjEwIgogICAgIGlua3NjYXBlOnBhZ2VvcGFjaXR5PSIwIgogICAgIGlua3NjYXBlOnBhZ2VzaGFkb3c9IjIiCiAgICAgaW5rc2NhcGU6d2luZG93LXdpZHRoPSIxODU1IgogICAgIGlua3NjYXBlOndpbmRvdy1oZWlnaHQ9IjEwNTYiCiAgICAgaWQ9Im5hbWVkdmlldzciCiAgICAgc2hvd2dyaWQ9ImZhbHNlIgogICAgIGlua3NjYXBlOnpvb209IjMuMjc3Nzc3OCIKICAgICBpbmtzY2FwZTpjeD0iNzEuNTQ4Nzc3IgogICAgIGlua3NjYXBlOmN5PSItMTYuNDkyMjc0IgogICAgIGlua3NjYXBlOndpbmRvdy14PSIxOTg1IgogICAgIGlua3NjYXBlOndpbmRvdy15PSIyNCIKICAgICBpbmtzY2FwZTp3aW5kb3ctbWF4aW1pemVkPSIxIgogICAgIGlua3NjYXBlOmN1cnJlbnQtbGF5ZXI9IkxheWVyXzEiIC8+PGVsbGlwc2UKICAgICBzdHlsZT0ib3BhY2l0eToxO2ZpbGw6dXJsKCNsaW5lYXJHcmFkaWVudDQxNTQpO2ZpbGwtb3BhY2l0eToxO2ZpbGwtcnVsZTpub256ZXJvO3N0cm9rZTpub25lO3N0cm9rZS1vcGFjaXR5OjEiCiAgICAgaWQ9InBhdGg0MTM0IgogICAgIGN4PSIyNS4xMDY0NjIiCiAgICAgY3k9IjI1LjA2ODQxNSIKICAgICByeD0iMjQuNjc1MDExIgogICAgIHJ5PSIyNC45NTc3NTYiIC8+PHJlY3QKICAgICB4PSIxOS40MjQyOSIKICAgICB5PSIzOC45MTE0MTEiCiAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMC45OTc3NTkyOCwtMC4wNjY5MDYwMywwLjA0NjY0MDQ5LDAuOTk4OTExNzQsMCwwKSIKICAgICBzdHlsZT0iZmlsbDojZmZmZmZmO2ZpbGwtb3BhY2l0eToxO3N0cm9rZTpub25lO3N0cm9rZS1vcGFjaXR5OjEiCiAgICAgd2lkdGg9IjcuMjYzMjA4OSIKICAgICBoZWlnaHQ9IjUuMzM5MDQ2IgogICAgIGlkPSJyZWN0MyIKICAgICBpbmtzY2FwZTp0cmFuc2Zvcm0tY2VudGVyLXg9Ii0xLjY4MzU0NjIiCiAgICAgaW5rc2NhcGU6dHJhbnNmb3JtLWNlbnRlci15PSItMS40MTYyMTIiIC8+PHJlY3QKICAgICB4PSIyMC44MDc5OTciCiAgICAgeT0iNS41NDQ2MDEiCiAgICAgdHJhbnNmb3JtPSJtYXRyaXgoMC45OTk5OTk4NywtNS4wMTEyMzI3ZS00LDAuMDM3NjI0MSwwLjk5OTI5MTk2LDAsMCkiCiAgICAgc3R5bGU9ImZpbGw6I2ZmZmZmZjtmaWxsLW9wYWNpdHk6MTtzdHJva2U6bm9uZTtzdHJva2Utb3BhY2l0eToxO3N0cm9rZS13aWR0aDoyLjAwMDY4OTY3O3N0cm9rZS1taXRlcmxpbWl0OjQ7c3Ryb2tlLWRhc2hhcnJheTpub25lO3N0cm9rZS1saW5lam9pbjpyb3VuZCIKICAgICB3aWR0aD0iNi41MDU3MDU4IgogICAgIGhlaWdodD0iMjcuMzkyMzgiCiAgICAgaWQ9InJlY3Q1IiAvPjwvc3ZnPg==">
+									</div>
+									<div class="error-text"></div>
+								</div>
+							</div>
+						</div>
+						<div class="skyvr-dialog-modal-buttons">
+							<div class="menu_btn arcticmodal-close" style="margin-left: 15px;">Ok</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</script>
+
+		<div style="display: none;">
+			<div class="box-modal" id="unauthorized-modal">
+				<div class="list-content">
+					<div class="settings-popup camera-settings-popup" style="background-color: white; height: 200px;">
+						<div class="header">
+							<p>unauthorized</p>
+							<!-- img class="box-modal_close arcticmodal-close" src="./files/images/camera_setting/close_white.svg" -->
+							<div class="clear"></div>
+						</div>
+						<div class="popup-wrapper" id="unauthorized-modal-content">
+						</div>
+						<center>
+							<div class="menu_btn arcticmodal-close" style="margin-left: 15px;" id="unauthorized-modal-goto-sign">Goto Login Page</div>
+						</center>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/x-template" id="camera-settings-dropdown-element">
+			<div class="settings-list-element dropdown <%= first_state %>">
+				<div class="element-name"> 
+					<p><%= setting_name %></p>
+					<% if(current) { %><p class='current-value'><%= current["name"] %></p><% } %>
+					<div class="clear"></div>
+				</div>
+				<div class="dropdown-body">
+					<% if(desc) {%>
+					<p><%=desc%></p>
+					<% } %>
+					<div class="clear"></div>
+					<% if(input) { %>
+					<form id="<%= input_name %>">
+						<% if(input_type == "radio") { %>
+							<% _.each(inputs, function(input) { %> 
+								<input <% if(current["value"] == input["value"]) { %>checked<% } %>  name='<%= input_name %>' value='<%= input["value"] %>' id='<%= input_name %>_<%= input["value"] %>' type='<%= input_type %>'><label for='<%= input_name %>_<%= input["value"] %>'><%= input["name"] %></label><br>
+							<% }) %>
+						<% }else if(input_type == "text") { %>
+							<% _.each(inputs, function(input) { %> 
+								<input name="<%= input_name %>" value="<%= value %>" type="<%= input_type %>">
+								<button><%= app.polyglot.t("Save") %></button>
+							<% }) %>
+						<% }else if(input_type == "url_edit") { %>
+							<% _.each(inputs, function(input) { %> 
+								<input autocomplete="new-password" name="<%= input.name %>" placeholder=<%= input.holder %> value="<%= input.value %>" type="<%= input.type %>">
+							<% }) %>
+							<button><%= app.polyglot.t("Save") %></button>
+						<% }else if(input_type == "caminfo") { %>
+							<p id="caminfo_text" class="menu_paramlist_table_p"></p><br>
+						<% }else if(input_type == "info") { %>
+							<p id="<%= input_name %>_text" class="menu_paramlist_table_p"></p><br>
+						<% }else if(input_type == "memory_card") { %>
+							<p id="memory_card_text" class="menu_paramlist_table_p"><%= value %></p>
+							<div class="menu_btn" id="memory_card_refresh"><%= app.polyglot.t("memory_card_refresh") %></div>
+							<div class="menu_btn" id="memory_card_format"><%= app.polyglot.t("memory_card_format") %></div>
+                        <% }else if(input_type == "slider") { %>
+                            <div class="setting-slider" data-value="<%= value %>">
+                            </div>
+                            <div class="slider-toogle <%= mute %>"><%= app.polyglot.t("Mute") %></div>
+                        <% }else if(input_type == "select") { %>
+                            <select name="<%= input_name %>">
+								<% _.each(inputs, function(input) { %>
+                                    <% if(input["value"] != current["value"]) { %>
+                                        <option value="<%= input["value"] %>"><%= input["name"] %></option>
+                                    <% }else { %>
+                                        <option selected="selected" value="<%= input["value"] %>"><%= input["name"] %></option>
+                                    <% } %>
+								<% }) %>
+							</select>
+                        <% } %>
+						
+					</form>
+					<% } %>
+				</div>
+			</div>
+		</script>
+		<script type="text/x-template" id="camera-settings-new-read_only-element">
+			<div class="settings-list-element dropdown">
+				<div class="element-name"> 
+					<p><%= setting_name %></p>
+					<% if(current) { %><p class='current-value'><%= current["name"] %></p><% } %>
+					<div class="clear"></div>
+				</div>
+			</div>
+		</script>
+		<script type="text/x-template" id="camera-settings-new-window-element">
+			<div class="settings-list-element new-window">
+				<div class="element-name"> 
+					<p><%= setting_name %></p>
+					<div class="clear"></div>
+				</div>
+			</div>
+		</script>
+		<script type="text/x-template" id="camera-settings-devider-element">
+			<div class="settings-list-devider">
+				<p><%= setting_name %></p>
+			</div>
+		</script>
+
+        <script type="text/x-template" id="camera-settings-drapdown-toggle-element">
+            <div class="settings-list-element toggle-camera-element dropdown-active">
+
+                    <div class="element-name">
+                        <p><%= setting_name %></p>
+                    </div>
+                    <div class="scheduler-power-button <%= value %>"></div>
+
+                <div class="dropdown-body only-active">
+
+                    <div class="first-content <%= display_first %>">
+                        <% if(desc1) {%>
+                        <p><%=desc1%></p>
+                        <% } %>
+                        <div class="clear"></div>
+
+                        <form id="<%= input_name %>">
+                            <% _.each(inputs, function(input) { %>
+                            <input <% if(current["value"] == input["value"]) { %>checked<% } %>  name='<%= input_name %>' value='<%= input["value"] %>' id='<%= input_name %>_<%= input["value"] %>' type='<%= input_type %>'><label for='<%= input_name %>_<%= input["value"] %>'><%= input["name"] %></label><br>
+
+                            <% }) %>
+                        </form>
+                    </div>
+
+                    <div class="second-content <%= display_second %>">
+                        <% if(desc2) {%>
+                        <p><%=desc2%></p>
+                        <% } %>
+                        <div class="clear"></div>
+
+                        <p href="#" id="<%= input_name_second %>"><%= app.polyglot.t("Open scheduler") %></a>
+
+                    </div>
+                </div>
+            </div>
+        </script>
+
+        <script type="text/x-template" id="camera-settings-power-button-element">
+            <div class="settings-list-element toggle-camera-element">
+                <div class="element-name">
+                    <p><%= setting_name %></p>
+                </div>
+                <div class="camera-power-button <%= value %>">
+                </div>
+            </div>
+        </script>
+		
+		<script type="text/x-template" id="camera-settings-mainmenu">
+			<div class="settings-list">
+				
+			</div>
+		</script>
+		<script type="text/x-template" id="camera-settings-scheduler-editor">
+			<div class="submenu-wrapper" style="display: none;">If you don't see special control here. Please tell us.</div>
+			<canvas id="camera-settings-scheduler-editor-canvas"/>
+		</script>
+
+			<script type="text/x-template" id="camera">
+				<div class="card type-camera incoming">
+				                               <div class="card-header">
+				                                   <h1 class="card-title" ><span class="title rec-red">Office</span><span class="live">Live</span></h1>
+				                                    <div class="navigation-button close-card-button">
+				                                       <div class="icon"></div>
+				                                    </div></a>
+
+												    <div class="navigation-button power-button on">
+				                                       <div class="icon"></div>
+				                                    </div>
+				                                    <div class="navigation-button settings-button card-settings-button">
+				                                       <div class="icon"></div>
+				                                    </div>
+				                               </div>
+				
+				                               <div class="card-content">
+				                                   <div id="fullscreen-container" class="camerazilla-container is-live" >
+				                                       <div class="player-wrapper">
+				                                           <div class="player-container" id="full-player-container" >
+																<div class="player-control-container">
+																	<canvas id='grid-canvas'></canvas>
+				                                                   <div class="left-panel">
+				                                                       <button class="player-button zoom-in" ></button>
+				                                                       <div class="slider-container">
+				                                                           <div id="zoom-slider" class="dc-slider ui-slider ui-slider-vertical ui-widget ui-widget-content ui-corner-all">
+				                                                           </div>
+				                                                       </div><button class="player-button zoom-out" disabled></button>
+				                                                       <button class="player-button enhance disabled"></button>
+				                                                       <button class="player-button reset-zoom" disabled></button>
+				                                                   </div>
+																	
+																	<div class="video-scale-position hiding-button">
+																		<canvas id="video-scale-position-canvas" width="248" height="140"></canvas>
+																		<div class="video-scale-position-cursor"></div>
+																		<img class="video-scale-position-cursor-background-image-loader"/>
+																	</div>
+																	
+																	<button class="player-button microphone hiding-button microphone-off"></button>
+																	<button class="player-button playback-back hiding-button"></button>
+																	<button class="player-button playback-play-pause hiding-button"></button>
+																	<button class="player-button playback-forward hiding-button"></button>
+																	<button class="player-button playback-goto-live hiding-button"></button>
+																	<button class="player-button ptz-left hiding-button"></button>
+																	<button class="player-button ptz-right hiding-button"></button>
+																	<button class="player-button ptz-top hiding-button"></button>
+																	<button class="player-button ptz-bottom hiding-button"></button>
+
+																	<div class="group-right">
+																		<div class="volume player-button" >
+																			<div class="slider-container">
+																				<div id="volume-slider" class="dc-slider ui-slider ui-slider-vertical ui-widget ui-widget-content ui-corner-all">
+																				</div>
+																			</div><button class="player-button"></button>
+																		</div>
+																	</div>
+
+				                                                   <div class="talkback-popover popover" >
+				                                                       <div id="popover-overlay" class="popover-overlay"></div>
+
+				                                                       <div class="popover-tooltip-container">
+				                                                           <div class="popover-tooltip">
+				                                                               <div class="popover-body">
+				                                                                   <div class="talkback-indicator">
+				                                                                       <div class="mic-pulser"></div>
+
+				                                                                       <div class="mic-level"></div>
+
+				                                                                       <div class="mic-icon-background"></div>
+
+				                                                                       <div class="mic-icon"></div>
+				                                                                   </div>
+				                                                               </div><button class="popover-done">Done</button>
+				                                                           </div>
+
+				                                                           <div class="popover-tooltip-tag"></div>
+				                                                       </div>
+				                                                   </div>
+
+				                                                   <div class="enhanced-indicator">
+
+
+				                                                       <div class="enhanced-left"></div>
+				                                                       <div class="enhanced-top"></div>
+				                                                       <div class="enhanced-right"></div>
+				                                                       <div class="enhanced-bottom"></div>
+				                                                       <div class="enhanced-message">
+				                                                           Your recorded video has been altered to this&nbsp;view.<button>Undo</button>
+				                                                       </div>
+				                                                   </div>
+				                                               </div>
+				                                               <div class="state-overlay-container">
+				                                                   <div class="big overlay-container"  style="display: none;">
+				                                                       <div class="camera-disconnected overlay"  style="display: none;">
+				                                                           <h1><%= app.polyglot.t("Your camera is not connected") %></h1>
+				                                                           <h2><%= app.polyglot.t("Make sure your camera is plugged in and is connected to Wi‑Fi") %></h2>
+				                                                       </div>
+				
+				                                                       <div class="camera-off overlay" style="display: none;">
+				                                                           <h1><%= app.polyglot.t("Your camera is off") %></h1>
+				                                                           <h2><%= app.polyglot.t("Turn on to see video") %></h2>
+				                                                       </div>
+				                                                       
+				                                                       <div class="camera-unauthorized overlay" style="display: none;">
+				                                                           <h1><%= app.polyglot.t("Your camera has wrong configuration") %></h1>
+				                                                           <h2><%= app.polyglot.t("Please contact camera vendor") %></h2>
+				                                                       </div>
+
+				                                                       <div class="camera-updating overlay" style="display: none;">
+				                                                           <h1><%= app.polyglot.t("Connecting") %></h1>
+				                                                           <h2><%= app.polyglot.t("This could take a minute") %></h2>
+				                                                       </div>
+				                                                       
+				                                                       <div class="camera-videojs-error overlay"  style="display: none;">
+				                                                           <h1><%= app.polyglot.t("Could not play file. Video format is not supported.") %></h1>
+				                                                           <h2><%= app.polyglot.t("The video could not be loaded, either because the server or network failed or because the format is not supported") %></h2>
+				                                                       </div>
+				                                                       
+				                                                       <div class="camera-videojs-deny-live overlay"  style="display: none;">
+				                                                           <h1><%= app.polyglot.t("live_video_is_not_available") %></h1>
+				                                                           <h2><%= app.polyglot.t("access_deny") %></h2>
+				                                                       </div>
+				                                                       
+				                                                       <div class="camera-videojs-live-is-not-available overlay"  style="display: none;">
+				                                                           <h1><%= app.polyglot.t("live_video_is_not_available") %></h1>
+				                                                           <h2><%= app.polyglot.t("start_live") %>:<br> <div class="goto-live"></div></h2>
+				                                                       </div>
+				                                                       
+				                                                       <div class="camera-has-not-live-urls overlay" style="display: none;">
+				                                                           <h1><%= app.polyglot.t("your_camera_has_not_live_stream") %></h1>
+				                                                           <h2><%= app.polyglot.t("please_check_your_camera") %></h2>
+				                                                       </div>
+
+				                                                       <div class="camera-streaming-paused overlay" style="display: none;">
+				                                                           <h1><%= app.polyglot.t("live_streaming_was_paused") %></h1>
+				                                                           <h2><%= app.polyglot.t("start_live") %>:<br> <div class="goto-live"></div></h2>
+				                                                       </div>
+				                                                       
+				                                                       <div class="camera-no-hls-no-flash overlay" style="display: none;">
+				                                                           <h2><%= app.polyglot.t("please_install_flash_player") %></h2>
+				                                                       </div>
+				                                                   </div>
+				                                                   <div class="camera-spinner overlay-container" ></div>
+				                                                   <div class="camera-idle overlay-container" ></div>
+																	<div class="group-right">
+																		<button class="player-button native-res"></button>
+																		<button class="player-button fullscreen"></button>
+																	</div>
+																</div>
+															   
+															   <div id="audio-streaming-swf-container" style="width: 100%; height: 100%; z-index:-1; position: absolute;">
+																	<object id="audio_streaming_swf" type="application/x-shockwave-flash" data="swf/audio-streaming.swf" width="100%" height="100%">
+																		<param name="movie" value="swf/audio-streaming.swf" />
+																		<embed src="swf/audio-streaming.swf">
+																		<param name="allowScriptAccess" value="always"/>
+																		<param value="allowNetworking" value="all"/>
+																		<param name="wmode" value="transparent"/>
+																		<!-- param name="bgcolor" value="#ffffff" / -->
+																		<param name="menu" value="false" />
+																	</object>
+																</div>
+				                                           </div>
+				                                       </div>
+				                                       <div class="player-footer">
+				                                           <div class="timeline">
+				                                               <div class="make-clip-toolbar">
+				                                                   <div class="clip-controls left">
+				                                                       <label class="timelapse-control"></label>
+				                                                       <div class="checkbox is-timelapse-checkbox">
+				                                                           <label class="timelapse-control"></label>
+				                                                       </div><label class="timelapse-control"><label class="is-timelapse-label">Timelapse</label></label>
+				                                                       <div class="clip-length">
+				                                                           <button class="length-icon"></button>
+				                                                           <div class="automatic-timelapse-message popover">
+				                                                               <div class="popover-tooltip-container">
+				                                                                   <div class="popover-tooltip">
+				                                                                       <h1 class="popover-title">Your clip is over an hour long and has been turned into a&nbsp;Timelapse.</h1><button class=
+				                                                                       "automatic-timelapse-message-ok">OK</button>
+				                                                                   </div>
+				                                                               </div>
+				                                                               <div class="popover-tooltip-tag"></div>
+				                                                           </div>
+				
+				                                                           <div class="clip-length-popover popover">
+				                                                               <div class="popover-tooltip-container">
+				                                                                   <div class="popover-tooltip">
+				                                                                       <h1 class="popover-title">Timelapse Length</h1>
+				
+				                                                                       <ul>
+				                                                                           <li ><button>2 min</button></li>
+				                                                                           <li ><button>1 min</button></li>
+				                                                                           <li ><button>30 sec</button></li>
+				                                                                           <li ><button>15 sec</button></li>
+				                                                                           <li ><button>6 sec</button></li>
+				                                                                       </ul>
+				                                                                   </div>
+				
+				                                                                   <div class="popover-tooltip-tag"></div>
+				                                                               </div>
+				                                                           </div>
+																		<label class="length-label">Length <span class="length-message"></span></label>
+				                                                       </div>
+				                                                   </div>
+				
+				                                                   <div class="clip-controls right">
+				                                                       <button class="cancel-clips-button">Cancel</button> <button class="save-clips-button">Save</button>
+				                                                   </div>
+				                                               </div>
+				
+				                                               <div class="adjacent-controls left">
+				                                                   <div class="datepicker-container">
+				                                                       <div>
+																			<div class="datepicker-container-control">
+																				<div style="display: table-cell; vertical-align: middle;">
+																					<button class="player-button"></button>
+																				</div>
+																				<div style="display: table-cell; vertical-align: middle;">
+																					<span class="current-time">&nbsp;</span><br>
+																					<span class="current-day">Today</span>
+																				</div>
+																			</div>
+				
+				                                                           <div class="calendar-popover popover ">
+				                                                               <div class="popover-overlay"></div>
+				
+				                                                               <div class="popover-tooltip-container">
+				                                                                   <div class="popover-tooltip">
+				                                                                       <div class="popover-body">
+				                                                                           <div class="calendar">
+				                                                                               <div>
+				                                                                                   <div class="month">
+				                                                                                       <span class="current-month" style="margin: 5px auto;width: 180px;display: block;"></span><span class="prev" data-trget="back">&lt;</span><span class="next" data-trget="fwd">&gt;</span>
+				                                                                                   </div>
+				
+				                                                                                   <div class="header">
+																										<span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+				                                                                                   </div>
+				
+				                                                                                   <div class="days">
+				                                                                                       <div class="camera-spinner overlay-container"></div>
+				                                                                                   </div>
+				                                                                               </div>
+				                                                                           </div>
+				                                                                       </div>
+				                                                                   </div>
+				
+				                                                                   <div class="popover-tooltip-tag"></div>
+				                                                               </div>
+				                                                           </div>
+				                                                       </div>
+				                                                   </div>
+				                                               </div>
+																<div class="adjacent-controls left2">
+																	<button class="player-button goto-live"></button>
+																</div>
+
+				                                               <div class="adjacent-controls right">
+				                                                   <div class="zone-menu-container">
+				                                                       <div>
+				                                                           <button class="player-button"></button>
+				                                                           <div class="zone-menu-popover popover">
+				                                                               <div class="popover-overlay"></div>
+																				<div class="popover-tooltip-container">
+				                                                                   <div class="popover-tooltip">
+				                                                                       <div class="popover-title">
+																						   <%= app.polyglot.t("Filter by") %>:
+				                                                                       </div>
+				                                                                      <div class="popover-body">
+				                                                                           <div>
+																								<table>
+																								</table>
+																							</div>
+				                                                                       </div>
+				
+				                                                                       <div>
+				                                                                       </div>
+				                                                                       <div class="popover-done">
+				                                                                           <span class="button-zone-edit"><%= app.polyglot.t("Edit") %></span> <span class="button-zone-create"><%= app.polyglot.t("Edit") %></span>
+				                                                                       </div>
+				                                                                   </div>
+				                                                                  <div class="popover-tooltip-tag"></div>
+				                                                               </div>
+				                                                           </div>
+				                                                       </div>
+				                                                   </div>
+																	<div class="clip-menu-container">
+																		<div>
+																			<button class="player-button"></button>
+																		</div>
+																	</div>
+																	 <div class="clip-menu-popover popover">
+																		   <div class="popover-overlay"></div>
+																			<div class="popover-tooltip-container">
+																			   <div class="popover-tooltip">
+																				   <div class="skyvr-dlg-hdr">
+																					   <div class="skyvr-dlg-hdr-title"><%= app.polyglot.t("clip_maker") %></div>
+																					</div>
+																					<div class="popover-body">
+																						<div class="menu_paramlist_table">
+																							<div class="menu_paramlist_row" id="clip_group_creation">
+																								<div class="menu_paramlist_name"><%= app.polyglot.t("clip_group") %></div>
+																								<div class="menu_paramlist_value">
+																									<input id="clipmaker-group" type="text" value=""/>
+																								</div>
+																							</div>
+																							<div class="menu_paramlist_row">
+																								<div class="menu_paramlist_name"><%= app.polyglot.t("clip_title") %></div>
+																								<div class="menu_paramlist_value"><input id="clipmaker-title" type="text" value=""/></div>
+																							</div>
+																							<div class="menu_paramlist_row">
+																								<div class="menu_paramlist_name"><%= app.polyglot.t("clip_start") %></div>
+																								<div class="menu_paramlist_value">
+																									<div id="clipmaker-start-datetimepicker" class="clipmaker-input-datetime" style="display: none"></div>
+																									<input id="clipmaker-start" type="text" value=""/>
+																									<!-- img id="clipmaker-start-open-editor" src="./files/images/clip-calendar.svg"/ -->
+																									<img id="clipmaker-start-select-cursor" class="btn" src="./files/images/clip-cursor.svg"/>
+																								</div>
+																							</div>
+																							<div class="menu_paramlist_row">
+																								<div class="menu_paramlist_name"><%= app.polyglot.t("clip_stop") %></div>
+																								<div class="menu_paramlist_value">
+																									<div id="clipmaker-stop-datetimepicker" class="clipmaker-input-datetime" style="display: none"></div>
+																									<input id="clipmaker-stop" type="text" value=""/>
+																									<!-- img id="clipmaker-stop-open-editor" src="./files/images/clip-calendar.svg"/ -->
+																									<img id="clipmaker-stop-select-cursor" class="btn" src="./files/images/clip-cursor.svg"/>
+																								</div>
+																							</div>
+																						</div>
+																					</div>
+																					<div class="popover-done">
+																						<span class="button-clip-cancel"><%= app.polyglot.t("clip_cancel") %></span>
+																						<span class="button-clip-save"><%= app.polyglot.t("clip_save") %></span>
+																						<span class="button-clip-goto-clips"><%= app.polyglot.t("clip_goto_clips") %></span>
+																						<div class="hint" style="display: none;"><%= app.polyglot.t("clip_maker_hint") %></div>
+																					</div>
+																			   </div>
+																			   <div class="popover-tooltip-tag"></div>
+																		   </div>
+																	   </div>
+				                                               </div>
+
+																<div class="timeline-contextmenu" style="display: none">
+																	<div class="timeline-contextmenubtn" id="timeline-search-cursor"><%= app.polyglot.t("timeline_menu_show_cursor_position") %></div>
+																	<div class="timeline-contextmenubtn" id="clip-start-point">Set clip start time</div>
+																	<div class="timeline-contextmenubtn" id="clip-end-point">Set clip end time</div>
+																	<div class="timeline-contextmenubtn" id="timeline-condition-of-cache"><%= app.polyglot.t("timeline_menu_condition_of_cache") %></div>
+																</div>
+
+																<div class="timeline-container" style="width: 480px; height: 75px; display:none; margin-top: -12px">
+																	<span class="page left" data-target="back"></span>
+																	<span class="page right" data-target="fwd"></span> 
+																	<svg></svg>
+																	<div class="zoom-levels" style="top: 17px;">
+																		<!-- span duration="216000000" scale="13500000" >24H</span><br -->
+																		<span duration="108000000" scale="6750000" >12H</span>
+																		<span duration="8640000" scale="900000" class="active">HR</span>
+																		<span duration="490000" scale="60000" >MIN</span>
+																	</div>
+																	<div class="timeline-loader">
+																		<div class="timeline-loading-progress">
+																			<div class="timeline-loading-progress-base skyvr-loading-progress-changewidth1"></div>
+																			<div class="timeline-loading-progress-base skyvr-loading-progress-changewidth2"></div>
+																			<div class="timeline-loading-progress-base skyvr-loading-progress-changewidth3"></div>
+																		</div>
+																	</div>
+				                                               </div>
+				                                            </div>
+														    <div style="display: none;" class="DM-panel DM-panel-rect">
+																<div class="left-md-buttons">
+																	<button class="text-button" id="add-md"><%= app.polyglot.t("Add") %></button>
+																	<button class="text-button" id="remove-md"><%= app.polyglot.t("Remove") %></button>
+																</div>
+																<div class="layers"></div>
+																<!--<div class="zone-edit">-->
+																	<!--<input id="md-zone-sensivity" type="range" min="0" max="100" value="10" />-->
+																	<!--<button class="text-button" id="remove-all-md">Remove all</button>-->
+																<!--</div>-->
+																<div class="right-md-buttons">
+																	<button class="text-button" id="save-md"><%= app.polyglot.t("Save") %></button>
+																	<button class="text-button" id="cancel-md"><%= app.polyglot.t("Cancel") %></button>
+																</div>
+														    </div>
+
+															<div style="display: none;" class="DM-panel DM-panel-grid">
+																<button class="text-button" id="add-md"><%= app.polyglot.t("Add") %></button>
+																<button class="text-button" id="remove-md"><%= app.polyglot.t("Remove") %></button>
+																<div class="layers"></div>
+																<!--<div class="zone-edit">-->
+																	<!--<input id="md-zone-sensivity" type="range" min="0" max="100" value="10" />
+																	<button class="grid-control-button" id="plus-button">+</button>
+																	<button class="grid-control-button" id="minus-button">-</button>-->
+																	
+																	<!--<button class="text-button" id="remove-all-md">Remove all</button>-->
+																	<button class="text-button" id="save-md"><%= app.polyglot.t("Save") %></button>
+																	<button class="text-button" id="cancel-md"><%= app.polyglot.t("Cancel") %></button>
+																<!--</div>-->
+														    </div>														   
+				                                           <div class="thumbnail-popover popover transition-element"></div>
+				                                       </div>
+				                                   </div>
+				                               </div>
+				                           </div>
+			</script>
+		</section>
+		<div id="home-container">
+			<div class="content">
+				<div class="spec-background" style="width: 100%; height: 100%; top: 0px; left: 0px; position: absolute;">
+					<div class="content-pageloading">
+						<div id="progress-caption">Loading...</div>
+						<div class="progress">
+							<div class="progress-content" id="progress-content"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="skyvr-dialog-clipshow" style="display: none;">
+			<div class="skyvr-clipshow-background"></div>
+			<div class="skyvr-clipshow-table">
+				<div class="skyvr-clipshow-cell">
+					<div class="skyvr-clipshow-window">
+						<div class="skyvr-dlg-hdr">
+							<div class="skyvr-dlg-hdr">
+								<div id="skyvr-clipviewer-groupview" class="skyvr-dlg-hdr-title"></div>
+								<div id="skyvr-clipviewer-close" class="skyvr-dlg-hdr-right"></div>
+							</div>
+						</div>
+						<div class="vjs-has-started skyvr-clipviewer-vjsplayer">
+							<div class="skyvr-clipviewer-prev"></div>
+							<div class="player-container skyvr-clipshow-content" id="skyvr-dialog-clipshow-content"></div>
+							<div class="skyvr-clipviewer-next"></div>
+						</div>
+						<div class="skyvr-dlg-ftr">
+							<input id="skyvr-clipviewer-title" class="skyvr-clipviewer-title"></input>
+							<input id="skyvr-clipviewer-group" class="skyvr-clipshow-tag"></input>
+							<div class="skyvr-clipshow-save menu_btn"></div>
+							<div class="skyvr-clipshow-delete menu_btn"></div>
+							<div class="skyvr-clipviewer-download menu_btn"></div>							
+							<div class="skyvr-clipviewer-share menu_btn"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="skyvr-timeline-thumbnail-container" style="display: none;">
+			<div class="skyvr-timeline-thumbnail" time="0">
+				<div class="skyvr-timeline-thumbnail-time"></div>
+				<div class="skyvr-timeline-thumbnail-cursor"></div>
+			</div>
+		</div>
+		<div id="clipmaker-input-template-datetimepicker" style="display: none">
+			<select class="clipmaker-datetimeeditor-month">
+				<option value="01">Jan</option>
+				<option value="02">Feb</option>
+				<option value="03">Mar</option>
+				<option value="04">Apr</option>
+				<option value="05">May</option>
+				<option value="06">June</option>
+				<option value="07">July</option>
+				<option value="08">Aug</option>
+				<option value="09">Sep</option>
+				<option value="10">Oct</option>
+				<option value="11">Nov</option>
+				<option value="12">Dec</option>
+			</select>
+			/
+			<select class="clipmaker-datetimeeditor-day">
+				<option value="01">01</option>
+				<option value="02">02</option>
+			</select>
+
+			<select class="clipmaker-datetimeeditor-year">
+				<option value="2016">2016</option>
+				<option value="2017">2017</option>
+			</select>
+			
+			<select class="clipmaker-datetimeeditor-hours">
+				<option value="01">01</option>
+				<option value="02">02</option>
+			</select> :
+			<select class="clipmaker-datetimeeditor-minutes">
+				<option value="01">01</option>
+				<option value="02">02</option>
+			</select> :
+			<select class="clipmaker-datetimeeditor-seconds">
+				<option value="01">01</option>
+				<option value="02">02</option>
+			</select>
+			<span class="clipmaker-datetimeeditor-apply">Apply</span>
+			<span class="clipmaker-datetimeeditor-cancel">Cancel</span>
+		</div>
+		
+		<div class="skyvr-dialog-is-demo-version" style="display: none;">
+			<div class="skyvr-dialog-is-demo-version-background"></div>
+			<div class="skyvr-clipshow-table">
+				<div class="skyvr-clipshow-cell">
+					<div class="skyvr-clipshow-window">
+						<div class="skyvr-dlg-hdr">
+							<div class="skyvr-dlg-hdr">
+								<div id="skyvr-clipviewer-close" class="skyvr-dlg-hdr-right"></div>
+							</div>
+						</div>
+						<div class="skyvr-dialog-content-demo-version"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="cloudui-version">%VERSION%</div>
+	</body>
+</html>
