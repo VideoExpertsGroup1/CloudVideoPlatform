@@ -68,6 +68,10 @@ STATE_DISCONNECTED = 'disconnected'
 STATE_UNREGISTERED = 'unregistered'
 
 
+class ConnectionClosedByServer(Exception):
+    pass
+
+
 class NVRClient:
     version = '1.0.0'
 
@@ -116,6 +120,7 @@ class NVRClient:
         self.thread_ev_loop = None  # Timeout checking thread
         self.command_queue = None  # Commands sending thread
         self.upload_queue = None  # HTTP(s) uploading thread
+        self.error = None
 
         """
         Cloud session variables
@@ -540,6 +545,8 @@ class NVRClient:
                     logger.info('Server is closing connection. Reason: %s', msg['reason'])
                     if msg['reason'] == self.BYE_R_RECONNECT:
                         self.reconnect = True
+                    else:
+                        self.error = ConnectionClosedByServer(msg['reason'])
                     status = ''
 
                 elif cmd == 'stream_start':
@@ -699,11 +706,15 @@ class NVRClient:
         """
         self.stat.set_tm("command")
 
-    @staticmethod
-    def _ws_on_error(ws, error):
+    def _ws_on_error(self, ws, error):
         """ Websockets handler: On error happened
         """
         logger.error('WebSocket error %s', str(error))
+        self.error = error
+        if self.secure:
+            logger.debug('Fallback to insecure connection..')
+            self.secure = False
+            self.error = None
         ws.close()
 
     def _ws_on_close(self, ws):
@@ -855,20 +866,15 @@ class NVRClient:
             self.upload_queue.start()
             Camera.http_uploader = self.upload_queue
 
-            first_run = True
-            while first_run or (self.reconnect and self.reconnect_target is not None):
-                first_run = False
+            while self.error is None or (self.reconnect and self.reconnect_target is not None):
                 self.reconnect = False
                 # Start WebSocket connection
-                if self.ws is None:
-                    self.start(self.secure)
-
-                self.ws.run_forever(sslopt={"cert_reqs": ssl.CERT_NONE, "check_hostname": False})
-                if self.conn_state < self.CONN_OPENED:
-                    logger.warning("Failed to establish secure connection. Try insecure")
-                    self.start(False)
-                    self.ws.run_forever()
-
+                self.start(self.secure)
+                if self.secure:
+                    ws_params = {'sslopt': {"cert_reqs": ssl.CERT_NONE, "check_hostname": False}}
+                else:
+                    ws_params = {}
+                self.ws.run_forever(**ws_params)
                 self._close_ws_connection()
 
             if self.reconnect and self.reconnect_target is not None:
