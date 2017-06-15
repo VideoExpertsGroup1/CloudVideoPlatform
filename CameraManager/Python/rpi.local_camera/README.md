@@ -25,22 +25,18 @@
     
 
 ## LAUNCH
-1. Configure your video source by the one of following ways:
-    * Integration kit users should edit the file auth2\_cm\_starter.py and fill the variable REG_TOKEN with obtained Reg Token like this:
 
-            REG_TOKEN = 'ABCDEF123456'
+1. Launch camera manager:
 
-    * Other users should: 
-        * [Sign Up](http://cnvrclient2.videoexpertsgroup.com/), if you already have an account, skip this step;
-        * Open auth2\_cm\_starter.py and edit 'username' and 'password' fields of ACCP_CREDENTIALS structure with your credentials like this:
+	python auth2_cm_starter.py
 
-                ACCP_CREDENTIALS = {
-                    'username': 'my_acc',
-                    'password': 'my_secure_pass',
-                }
+There will be registered a new camera in your personal account login/password
 
-2. Launch application:
 
-        python auth2_cm_starter.py
-    
-3. After some time (camera registration takes 1-2 minutes), [login](http://cnvrclient2.videoexpertsgroup.com/) with your credentials, click to 'Start video streaming' and you'll see the camera list with your Raspberry PI.
+2. Install VXG Cloud Client application and see your camera:
+
+   Google Play: https://play.google.com/store/apps/details?id=com.vxg.cnvrclient2&hl=en
+   App Store: https://itunes.apple.com/en/app/vxg-cloud-client/id1129124647?mt=8
+
+   Before login please open settings and change latency to minimal.
+   Do login and enjoy the video.

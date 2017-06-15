@@ -144,6 +144,7 @@ class NVRClient:
         Camera
         """
         Camera.event_cb = self.on_camera_event
+        Camera.raw_msg_cb = self.on_raw_message
         self.camera = Camera()
 
         self.stat.set_tm("dbg_event")
@@ -449,6 +450,24 @@ class NVRClient:
             raise ValueError('event')
         self._send_cmd('cam_event', event_data)
 
+    def _cmd_raw_message(self, rmsg_data):
+        """
+        Sends raw_message to server.
+        Raises:
+            - ValueError if some mandatory fields are missing.
+        :param rmsg_data: Event parameters dictionary. Fields:
+            - cam_id: int, camera ID;
+            - client_id: string, ID of a client;
+            - message: string, message content;
+        """
+        if 'cam_id' not in rmsg_data:
+            raise ValueError('cam_id')
+        if 'client_id' not in rmsg_data:
+            raise ValueError('client_id')
+        if 'message' not in rmsg_data:
+            raise ValueError('message')
+        self._send_cmd('raw_message', rmsg_data)
+
     def _on_cmd_message(self, message):
         """
         Main command messages handler
@@ -641,6 +660,18 @@ class NVRClient:
                 elif cmd == 'cam_get_log':
                     assert self.camera.camera_id == msg['cam_id']
                     self.camera.get_log()
+
+                elif cmd == 'raw_message':
+                    assert self.camera.camera_id == msg['cam_id']
+                    self.camera.on_raw_message(msg['client_id'], msg['message'])
+
+                elif cmd == 'raw_message_client_connected':
+                    assert self.camera.camera_id == msg['cam_id']
+                    self.camera.on_raw_message_client_connected(msg['client_id'])
+
+                elif cmd == 'raw_message_client_disconnected':
+                    assert self.camera.camera_id == msg['cam_id']
+                    self.camera.on_raw_message_client_disconnected(msg['client_id'])
 
                 elif cmd == 'backward_start':
                     assert self.camera.camera_id == msg['cam_id']
@@ -923,6 +954,15 @@ class NVRClient:
         :param event: dict, event data in format described in chapter 6.5 of API reference
         """
         self._cmd_cam_event(event)
+
+    def on_raw_message(self, client_id,  message):
+        """
+        Callback for raw messages
+        :param client_id: string, ID of client
+        :param message: string, message
+        """
+        rmsg = {'msgid': self._next_msg_id, 'cam_id': self.camera.camera_id, 'client_id': client_id, 'message': message}
+        self._cmd_raw_message(rmsg)
 
 
 def init_signals():

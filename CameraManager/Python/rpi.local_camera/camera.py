@@ -11,6 +11,7 @@ from time import time
 import traceback
 import os.path
 import sys
+from shutil import copyfile
 # https://bugs.python.org/issue20318
 # Popen from 2.7 python is buggy in multi-threaded environment, use backport from python 3.2
 if sys.version_info[0] < 3:
@@ -1101,6 +1102,7 @@ class Camera:
     Base class for all camera types. Contains some general info and base interface
     """
     event_cb = None
+    raw_msg_cb = None
     http_uploader = None
 
     # Stream types
@@ -1108,6 +1110,7 @@ class Camera:
     SR_RECORD = 'record'
     SR_EVENT_RECORD = 'record_by_event'  # as it defined in server protocol, just toggles this mode
     SR_EVENT_RECORD_REAL = 'record_by_event_real'  # internal value, connects streams
+    LAST_IMAGE = './last_image.jpg'
 
     def __init__(self):
         """
@@ -1126,6 +1129,7 @@ class Camera:
         self.username = 'user'  # Credentials to access video/audio feed
         self.password = 'password'  # Credentials to access video/audio feed
         self.device_type = None  # Camera type: bullet, media server etc, could be empty
+        self.raw_messaging = globals.config.get('raw_messaging', True)
         parse_res = urlparse(globals.config['camera_feed'])
         self.video_source_type = parse_res.scheme
         if self.video_source_type not in ['rtsp', 'dev', 'file', 'http', 'rtmp', 'https']:
@@ -1149,10 +1153,10 @@ class Camera:
         # Since default VideoInfoCapabilities config is not usable, let's fill it somehow
         if self.video_source_type == 'dev':
             self.video_stream_caps = {'video1': [VideoInfoCapabilities(formats=[VideoEncodingFormat.H264],  # only H.264
-                                                                       resolutions=[[640, 480]],  # only 640x480
+                                                                       resolutions=[[960, 540]],  # only 960x540
                                                                        fps=[25],  # only 25 fps
-                                                                       gop=[30, 30, 1],  # only 30 frames
-                                                                       bitrate=[500, 500, 1],  # only 500kbps
+                                                                       gop=[25, 25, 1],  # only 25 frames
+                                                                       bitrate=[1000, 1000, 1],  # only 1000kbps
                                                                        vbr=False)]}  # does not support VBR
         else:
             self.video_stream_caps = {'video1': [VideoInfoCapabilities(formats=[VideoEncodingFormat.H264],  # only H.264
@@ -1227,10 +1231,10 @@ class Camera:
         # Let's describe stream defined earlier in video_streams_caps according to this caps.
         if self.video_source_type == 'dev':
             self.video_streams = {'video1': VideoInfo(fmt=VideoEncodingFormat.H264,
-                                                      width=640, height=480,
+                                                      width=960, height=540,
                                                       fps=25,
-                                                      gop=30,
-                                                      bitrate=500)}
+                                                      gop=25,
+                                                      bitrate=1000)}
         else:
             self.video_streams = {'video1': VideoInfo(fmt=VideoEncodingFormat.H264,
                                                       width=1920, height=1080,
@@ -1258,7 +1262,7 @@ class Camera:
         #  - 'sound' event will generate snapshots but will not trigger streaming start.
         # This parameter is dictionary of EventParams: {'event_name': EventParams ...}
         self.events_params = {'net': EventParams(active=True, stream=False, snapshot=False),
-                              'sound': EventParams(active=True, stream=False, snapshot=True)}
+                              'sound': EventParams(active=True, stream=False, snapshot=False)}
         # Camera is enabled by user, see ServerAPI doc chapter 2.7 for detailed description
         self.activity = True
         # Storage for parameters that was changed during camera inactivity period.
@@ -1298,6 +1302,7 @@ class Camera:
             if len(p2p_settings) > 0:
                 p2p_settings['initial_mode'] = self.access_mode
                 retval['p2p'] = p2p_settings
+        retval['raw_messaging'] = self.raw_messaging
 
         return retval
 
@@ -1829,6 +1834,41 @@ class Camera:
             logger.error('Error at event processing: %s', repr(ex))
         return None
 
+    def send_raw_message_broadcast(self, message):
+        """
+        Camera sends new raw_message to all its clients
+        :param message: string, content of the message
+        """
+        if self.raw_messaging and self.camera_id is not None and self.activity:
+            self.raw_msg_cb('', message)
+
+    def send_raw_message(self, client_id, message):
+        """
+        Camera sends new raw_message to a client
+        :param client_id: string, ID of a client that communicates with the camera
+        :param message: string, content of the message
+        """
+        if self.raw_messaging and self.camera_id is not None and self.activity:
+            self.raw_msg_cb(client_id, message)
+
+    def on_raw_message(self, client_id, message):
+        if self.raw_messaging:
+            logger.info('Client %s. Received raw message: %s' % (client_id, message))
+
+            # Do any fast processing here or asynchronously in a separate thread and answer to client
+            # when necessary using send_raw_message
+
+            # A test answer:
+            self.send_raw_message(client_id, 'Processed: %s' % message)
+
+    def on_raw_message_client_connected(self, client_id):
+        if self.raw_messaging:
+            logger.info('Added new raw messaging client %s' % client_id)
+
+    def on_raw_message_client_disconnected(self, client_id):
+        if self.raw_messaging:
+            logger.info('Raw messaging client %s has been disconnected' % client_id)
+
     @staticmethod
     def _is_event_on(event_data):
         if event_data['event'] == 'sound':
@@ -1883,12 +1923,29 @@ class Camera:
                                                MediaServerInfo.UPLOAD_FTYPE_JPG,
                                                curr_time)
         if url is not None:
-            self._upload_file(url, None, True, self._make_snapshot, self.stream_by_event_params.stream_id)
+            self._upload_file(url, None, True, self.make_snapshot, self.stream_by_event_params.stream_id)
         else:
-            snapshot_path = self._make_snapshot(self.stream_by_event_params.stream_id)
+            snapshot_path = self.make_snapshot(self.stream_by_event_params.stream_id)
             inline = get_base64_content(snapshot_path)
             return inline
         return ''
+
+    def make_snapshot(self, stream_id):
+        if self.video_source_type == 'dev':
+            # Current rPI streaming implementation blocks video source exclusively,
+            # Use cached image as snapshot
+            if self.streamers.get(stream_id, None) is not None:
+                if not os.path.isfile(self.LAST_IMAGE):
+                    raise RuntimeError('No last image is present')
+                filename = 'snap_%s.jpg' % get_iso_8601_time_str(time())
+                copyfile(self.LAST_IMAGE, filename)
+                return filename
+            else:
+                filename = self._make_snapshot(stream_id)
+                copyfile(filename, self.LAST_IMAGE)
+                return filename
+        else:
+            return self._make_snapshot(stream_id)
 
     def upgrade_firmware(self, url):
         logger.info('Upgrade camera to new FW, url %s', url)
@@ -1941,8 +1998,9 @@ class Camera:
 
         if self.video_source_type == 'dev':
             self._initialize_camera()
-            args = [FFMPEG, '-v', 'quiet', '-f', 'v4l2', '-video_size', 'vga', '-framerate', '25', '-input_format',
-                    'h264', '-i', camera_url, '-vcodec', 'copy', '-an', '-f', 'flv', publish_url]
+            args = [FFMPEG, '-f', 'v4l2', '-v', 'error', '-hide_banner', '-video_size', '960x540', '-framerate', '25',
+                    '-input_format', 'h264', '-i', camera_url, '-vcodec', 'copy',  '-bufsize', '100k', '-an',
+                    '-f', 'flv', publish_url]
         elif self.video_source_type == 'file':
             args = [FFMPEG, '-re', '-stream_loop', '0', '-v', 'quiet', '-i', camera_url,
                     '-c', 'copy', '-f', 'flv', '-map', '0', publish_url]
@@ -1960,13 +2018,47 @@ class Camera:
 
     @staticmethod
     def _initialize_camera():
+        # auto_exposure_bias
         try:
-            args = ['v4l2-ctl', '--set-ctrl', 'h264_i_frame_period=10']
+            args = ['v4l2-ctl', '--set-ctrl', 'auto_exposure_bias=12']  # default 12
+            subprocess.check_call(args)
+        except:
+            logger.error('Failed to initialize camera: could not set exposure_time_absolute')
+        
+        # exposure_time_absolute
+        try:
+            args = ['v4l2-ctl', '--set-ctrl', 'exposure_time_absolute=1000']  # default 1000
+            subprocess.check_call(args)
+        except:
+            logger.error('Failed to initialize camera: could not set exposure_time_absolute')
+
+        # white_balance_auto_preset
+        try:
+            args = ['v4l2-ctl', '--set-ctrl', 'white_balance_auto_preset=1']  # default 1
+            subprocess.check_call(args)
+        except:
+            logger.error('Failed to initialize camera: could not set white_balance_auto_preset')
+        
+        # iso_sensitivity_auto
+        try:
+            args = ['v4l2-ctl', '--set-ctrl', 'iso_sensitivity_auto=1']  # default 1
+            subprocess.check_call(args)
+        except:
+            logger.error('Failed to initialize camera: could not set h264 profile')
+
+        try:
+            args = ['v4l2-ctl', '--set-ctrl', 'h264_profile=4']  # set profile 2==main, 4==high
+            subprocess.check_call(args)
+        except:
+            logger.error('Failed to initialize camera: could not set h264 profile')
+            
+        try:
+            args = ['v4l2-ctl', '--set-ctrl', 'h264_i_frame_period=25']  # every 25 frames
             subprocess.check_call(args)
         except:
             logger.error('Failed to initialize camera: could not set I-Frame interval')
         try:
-            args = ['v4l2-ctl', '--set-ctrl', 'video_bitrate=500000']
+            args = ['v4l2-ctl', '--set-ctrl', 'video_bitrate=1000000']
             subprocess.check_call(args)
         except:
             logger.error('Failed to initialize camera: could not set video bitrate')
@@ -1994,7 +2086,7 @@ class Camera:
         :param stream_id: string, media stream to get snapshot from
         :return: string path to JPEG file or None in case of error
         """
-        if self.video_source_type in ['dev', 'file']:
+        if self.video_source_type in ['file']:
             raise NotImplementedError
 
         filename = 'snap_%s.jpg' % get_iso_8601_time_str(time())
