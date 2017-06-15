@@ -20,7 +20,7 @@
     sudo chmod -R 777 *
     ```
     
-4.   Add video driver loading on device start . Please note that reboot is required after following command:
+4. Add video driver loading on device start . Please note that reboot is required after following command:
 
     ```sh
     sudo su -c 'echo 'bcm2835_v4l2' >> /etc/modules'
@@ -28,6 +28,7 @@
     sudo reboot;
     ```
 
+   
 ## LAUNCH
 
 1. Configure your video source by editing the auth2\_cm\_starter.py file and filling the variable REG\_TOKEN with your Registration Token like this:
