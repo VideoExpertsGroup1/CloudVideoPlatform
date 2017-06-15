@@ -2086,7 +2086,7 @@ class Camera:
         :param stream_id: string, media stream to get snapshot from
         :return: string path to JPEG file or None in case of error
         """
-        if self.video_source_type in ['file']:
+        if self.video_source_type in ['file', 'dev']:
             raise NotImplementedError
 
         filename = 'snap_%s.jpg' % get_iso_8601_time_str(time())

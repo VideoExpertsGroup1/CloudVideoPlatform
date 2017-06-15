@@ -26,17 +26,22 @@
 
 ## LAUNCH
 
-1. Launch camera manager:
+1. Configure your video source by editing the auth2\_cm\_starter.py file and filling the variable REG\_TOKEN with your Registration Token like this:
+	```python
+	REG_TOKEN = 'ABCDEF123456'
+	```
+	Your Registration token can be obtained by the multiple ways, for example it can be done in admin panel of integration kit:
+	1. Select your user account in the 'User list'
+	2. Press the 'Create "Push" Camera' button
+	3. Press the 'Create reg_token' button near newly created camera
 
+2. Launch application:
+	```sh
 	python auth2_cm_starter.py
+	```
+3. You can watch video from the source by the following ways:
+   - On web browser, for example you can use the Video player from the integration kit
+   - On your mobile device using VXG Cloud Client applications:
+     - Google Play: https://play.google.com/store/apps/details?id=com.vxg.cnvrclient2&hl=en
+     - App Store: https://itunes.apple.com/en/app/vxg-cloud-client/id1129124647?mt=8
 
-There will be registered a new camera in your personal account login/password
-
-
-2. Install VXG Cloud Client application and see your camera:
-
-   Google Play: https://play.google.com/store/apps/details?id=com.vxg.cnvrclient2&hl=en
-   App Store: https://itunes.apple.com/en/app/vxg-cloud-client/id1129124647?mt=8
-
-   Before login please open settings and change latency to minimal.
-   Do login and enjoy the video.
