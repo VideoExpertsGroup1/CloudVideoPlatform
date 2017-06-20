@@ -2,6 +2,7 @@
 Camera class is defined here. Primitive streaming support.
 """
 
+from threading import RLock
 from urlparse import urlparse
 from utils import get_logger, error_str, PackBits, CapabilityViolatedError, get_iso_8601_time_str, check_value_in_range, \
     get_base64_content
@@ -1279,7 +1280,8 @@ class Camera:
         self.media_server = MediaServerInfo()  # media server info
         self.active_streams = ActiveStreams()
         self.record_by_event = False
-        self.streamers = {}  # Active media streamers processes
+        self.streamers = {}  # Active media streamer processes
+        self.streamers_lock = RLock()  # To be sure that only one streamer app is accessing v4l device
 
     def to_json(self):
         """
@@ -1998,22 +2000,30 @@ class Camera:
 
         if self.video_source_type == 'dev':
             self._initialize_camera()
-            args = [FFMPEG, '-f', 'v4l2', '-v', 'error', '-hide_banner', '-video_size', '960x540', '-framerate', '25',
-                    '-input_format', 'h264', '-i', camera_url, '-vcodec', 'copy',  '-bufsize', '100k', '-an',
-                    '-f', 'flv', publish_url]
+            args = [FFMPEG, '-f', 'v4l2', '-v', 'error', '-hide_banner', '-video_size', '960x540',
+                    '-framerate', '25', '-input_format', 'h264', '-i', camera_url, '-vcodec', 'copy',
+                    '-bufsize', '100k', '-an', '-f', 'flv', publish_url]
+            self.streamers_lock.__enter__()
         elif self.video_source_type == 'file':
-            args = [FFMPEG, '-re', '-stream_loop', '0', '-v', 'quiet', '-i', camera_url,
+            args = [FFMPEG, '-re', '-stream_loop', '0', '-v', 'error', '-hide_banner', '-i', camera_url,
                     '-c', 'copy', '-f', 'flv', '-map', '0', publish_url]
         elif self.video_source_type == 'rtsp':
-            args = [FFMPEG, '-rtsp_transport', 'tcp', '-v', 'quiet', '-i', camera_url,
+            args = [FFMPEG, '-rtsp_transport', 'tcp', '-v', 'error', '-hide_banner', '-i', camera_url,
                     '-c', 'copy', '-f', 'flv', '-map', '0', '-bsf:v', 'dump_extra',
                     '-analyzeduration', '1500000', '-flags', 'global_header', publish_url]
         elif self.video_source_type == 'rtmp':
-            args = [FFMPEG, '-v', 'error', '-f', 'live_flv', '-rtmp_live', 'live', '-rtmp_buffer', '500',
-                    '-i', camera_url, '-c', 'copy', '-f', 'flv', '-map', '0', publish_url]
+            args = [FFMPEG, '-v', 'error', '-hide_banner', '-f', 'live_flv', '-rtmp_live', 'live',
+                    '-rtmp_buffer', '500', '-i', camera_url, '-c', 'copy', '-f', 'flv', '-map', '0', publish_url]
         else:
-            args = [FFMPEG, '-v', 'error', '-i', camera_url, '-c', 'copy', '-an', '-f', 'flv', '-map', '0', publish_url]
-        self.streamers[stream_id] = subprocess.Popen(args)
+            args = [FFMPEG, '-v', 'error', '-hide_banner', '-i', camera_url, '-c', 'copy', '-an', '-f', 'flv',
+                    '-map', '0', publish_url]
+        try:
+            self.streamers[stream_id] = subprocess.Popen(args)
+        except:
+            raise
+        finally:
+            if self.video_source_type == 'dev':
+                self.streamers_lock.__exit__(None, None, None)
         return True
 
     @staticmethod
@@ -2086,7 +2096,7 @@ class Camera:
         :param stream_id: string, media stream to get snapshot from
         :return: string path to JPEG file or None in case of error
         """
-        if self.video_source_type in ['file', 'dev']:
+        if self.video_source_type in ['file']:
             raise NotImplementedError
 
         filename = 'snap_%s.jpg' % get_iso_8601_time_str(time())
@@ -2102,9 +2112,14 @@ class Camera:
             else:
                 args = [FFMPEG, '-v', 'error', '-y', '-i', camera_url,
                         '-f', 'image2', '-vframes', '1', '-s', '160x120', output]
+            if self.video_source_type == 'dev':
+                self.streamers_lock.__enter__()
             subprocess.call(args)
         except:
             logger.error('Failed to make snapshot for cam(%s): %s', self.camera_id, error_str())
+        finally:
+            if self.video_source_type == 'dev':
+                self.streamers_lock.__exit__(None, None, None)
 
         return output
 
