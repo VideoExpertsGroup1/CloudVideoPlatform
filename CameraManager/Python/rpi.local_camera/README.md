@@ -31,7 +31,7 @@
    
 ## LAUNCH
 
-1. Configure your video source by editing the auth2\_cm\_starter.py file and filling the variable REG\_TOKEN with your Registration Token like this:
+1. Configure your video source by editing the auth2_cm_starter.py file and filling the variable REG_TOKEN with your Registration Token like this:
 	```python
 	REG_TOKEN = 'ABCDEF123456'
 	```
@@ -39,6 +39,15 @@
 	1. Select your user account in the 'User list'
 	2. Press the 'Create "Push" Camera' button
 	3. Press the 'Create reg_token' button near newly created camera
+	
+	Supported video source is set in file auth2_cm_starter.py and variable SRC_FEED
+	Following video sources are supported :
+	1. Raspberry Pi camera
+	 SRC_FEED = 'dev:///dev/video0' 
+	2. IP camera 
+	  SRC_FEED = 'rtsp://admin:password@IP_ADDRESS:TCP_PORT/'
+	3. Other video sources : files , stream servers and so on 
+	  SRC_FEED = 'file://c/dir/file.mp4'
 
 2. Launch application:
 	```sh
