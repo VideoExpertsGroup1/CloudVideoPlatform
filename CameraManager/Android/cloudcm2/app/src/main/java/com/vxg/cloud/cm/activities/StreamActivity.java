@@ -3,6 +3,7 @@ package com.vxg.cloud.cm.activities;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ public class StreamActivity extends AppCompatActivity implements StreamActivityL
     private boolean stoppedByUser = false;
     private boolean restarting = false;
     private MediaCapturerWrapper mMediaCaptureWrapper;
+    private veg.mediaplayer.sdk.MediaPlayer mMediaPlayerBackward = null;
     private String mPreviewURL = null;
 
     private ImageButton buttonClose;
@@ -52,6 +54,56 @@ public class StreamActivity extends AppCompatActivity implements StreamActivityL
     private AlertDialog.Builder errorDialogBuilder;
     private AlertDialog errorDialog;
     private boolean mIgnorePauseResume;
+
+    @Override
+    @SuppressLint("HandlerLeak")
+    protected void onCreate(Bundle savedInstanceState) {
+        /*getWindow().requestFeature(Window.FEATURE_PROGRESS);
+        getWindow().setFeatureInt(Window.FEATURE_PROGRESS, Window.PROGRESS_VISIBILITY_ON);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+        );*/
+        Log.d(TAG, "onCreate()");
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_stream);
+        mMediaCaptureWrapper = new MediaCapturerWrapper((MediaCapture)findViewById(R.id.capture_view), this.getApplicationContext(), this);
+
+        PowerManager pm = (PowerManager) getApplicationContext().getSystemService(POWER_SERVICE);
+        mWakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "com.vxg.cloud.cm");
+
+        WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        multicastLock = wifi.createMulticastLock("multicastLock");
+        multicastLock.setReferenceCounted(true);
+        multicastLock.acquire();
+
+        initViews();
+        settings = PreferenceManager.getDefaultSharedPreferences(this);
+
+        errorDialogBuilder = new AlertDialog.Builder(this);
+
+        Log.i(TAG, "Start try VXGCloudCamera...");
+        mStreamController = StreamController.getInstance(getApplicationContext());
+        mStreamController.setStreamActivityListener(this);
+        Log.i(TAG, "veg.mediaplayer.sdk.MediaPlayer: " + veg.mediaplayer.sdk.MediaPlayer.getVersion());
+        mMediaPlayerBackward = new veg.mediaplayer.sdk.MediaPlayer(StreamActivity.this,false);
+    }
+
+    private void initViews() {
+        buttonClose = (ImageButton) findViewById(R.id.button_close);
+        buttonClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeStreamDialog();
+            }
+        });
+        recordLedStatus = (ImageView) findViewById(R.id.recordLedStatus);
+        recordLedStatus.setImageResource(R.drawable.led_green);
+        recordTextStatus = (TextView) findViewById(R.id.recordTextStatus);
+        recordTextStatus.setText(getString(R.string.stream_status_connecting));
+    }
 
     //***** StreamActivityListener
     @Override
@@ -135,6 +187,7 @@ public class StreamActivity extends AppCompatActivity implements StreamActivityL
         String errorMessage = "Unknown";
         if(error == CameraManagerErrors.REASON_AUTH_FAILURE){
             errorMessage = getString(R.string.error_dialog_AUTH_FAILURE);
+            Log.i(TAG, "serverConnClose (REASON_AUTH_FAILURE): call unsetStreamActivityListener");
             mStreamController.unsetStreamActivityListener();
         }else if(error == CameraManagerErrors.REASON_CONN_CONFLICT){
             errorMessage = getString(R.string.error_dialog_CONN_CONFLICT);
@@ -144,6 +197,7 @@ public class StreamActivity extends AppCompatActivity implements StreamActivityL
             errorMessage = getString(R.string.error_dialog_SYSTEM_ERROR);
         }else if(error == CameraManagerErrors.REASON_DELETED){
             errorMessage = getString(R.string.error_dialog_DELETED);
+            Log.i(TAG, "serverConnClose (REASON_DELETED): call unsetStreamActivityListener");
             mStreamController.unsetStreamActivityListener();
         }else if(error == CameraManagerErrors.CONNECTION_TIMEOUT) {
             errorMessage = getString(R.string.error_dialog_ws_port_blocked);
@@ -174,52 +228,29 @@ public class StreamActivity extends AppCompatActivity implements StreamActivityL
     }
     //********!!
 
+    private int nStartBackward = 0;
     @Override
-    @SuppressLint("HandlerLeak")
-    protected void onCreate(Bundle savedInstanceState) {
-        /*getWindow().requestFeature(Window.FEATURE_PROGRESS);
-        getWindow().setFeatureInt(Window.FEATURE_PROGRESS, Window.PROGRESS_VISIBILITY_ON);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-        );*/
-        Log.d(TAG, "onCreate()");
-        super.onCreate(savedInstanceState);
-
-        setContentView(R.layout.activity_stream);
-        mMediaCaptureWrapper = new MediaCapturerWrapper((MediaCapture)findViewById(R.id.capture_view), this.getApplicationContext(), this);
-
-        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-        mWakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "com.vxg.cloud.cm");
-
-        WifiManager wifi = (WifiManager) getSystemService(WIFI_SERVICE);
-        multicastLock = wifi.createMulticastLock("multicastLock");
-        multicastLock.setReferenceCounted(true);
-        multicastLock.acquire();
-
-        initViews();
-        settings = PreferenceManager.getDefaultSharedPreferences(this);
-
-        errorDialogBuilder = new AlertDialog.Builder(this);
-
-        Log.i(TAG, "Start try VXGCloudCamera...");
-        mStreamController = StreamController.getInstance(getApplicationContext());
-        mStreamController.setStreamActivityListener(this);
+    public void startBackwardAudio(String url){
+        Log.i(TAG, "backward start " + url);
+        if(nStartBackward > 0){
+            Log.e(TAG, "Already backward started");
+            return;
+        }
+        nStartBackward++;
+        // mMediaPlayerBackward.Close();
+        veg.mediaplayer.sdk.MediaPlayerConfig conf = mMediaPlayerBackward.getConfig();
+        conf.setMode(veg.mediaplayer.sdk.MediaPlayer.PlayerModes.PP_MODE_AUDIO.val());
+        conf.setConnectionDetectionTime(500);
+        conf.setConnectionTimeout(5000);
+        conf.setConnectionBufferingTime(0);
+        conf.setConnectionUrl(url);
+        mMediaPlayerBackward.Open(conf,null);
     }
 
-    private void initViews() {
-        buttonClose = (ImageButton) findViewById(R.id.button_close);
-        buttonClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                closeStreamDialog();
-            }
-        });
-        recordLedStatus = (ImageView) findViewById(R.id.recordLedStatus);
-        recordLedStatus.setImageResource(R.drawable.led_green);
-        recordTextStatus = (TextView) findViewById(R.id.recordTextStatus);
-        recordTextStatus.setText(getString(R.string.stream_status_connecting));
+    @Override
+    public void stopBackwardAudio(){
+        mMediaPlayerBackward.Close();
+        nStartBackward--;
     }
 
     @Override
@@ -253,12 +284,14 @@ public class StreamActivity extends AppCompatActivity implements StreamActivityL
 
         stoppedByUser = true;
 
+        Log.i(TAG, "onStop 1: call unsetStreamActivityListener");
         mStreamController.unsetStreamActivityListener();
         super.onStop();
 
         if (mMediaCaptureWrapper.isStarted()) {
             mMediaCaptureWrapper.onStop();
 
+            Log.i(TAG, "onStop 2: call unsetStreamActivityListener");
             mStreamController.unsetStreamActivityListener();
 
             if (mWakeLock.isHeld()) // A WakeLock should only be released when isHeld() is true !
@@ -271,6 +304,7 @@ public class StreamActivity extends AppCompatActivity implements StreamActivityL
     @Override
     protected void onDestroy() {
         Log.v(TAG, "onDestroy()");
+        Log.i(TAG, "onDestroy: call unsetStreamActivityListener");
         mStreamController.unsetStreamActivityListener();
         mMediaCaptureWrapper.onDestroy();
 

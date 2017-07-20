@@ -262,7 +262,7 @@ public class MediaCapturerWrapper implements MediaCaptureCallback {
         // unmute state
         ncm |= MediaCaptureConfig.CaptureModes.PP_MODE_AUDIO.val();
         // mute state
-        //ncm &= ~(MediaCaptureConfig.CaptureModes.PP_MODE_AUDIO.val());
+        // ncm &= ~(MediaCaptureConfig.CaptureModes.PP_MODE_AUDIO.val());
 
         //captureConfig.setUseAVSync(false); //av sync off
         capture.getConfig().setCaptureMode(ncm);
@@ -382,7 +382,7 @@ public class MediaCapturerWrapper implements MediaCaptureCallback {
         if (mMediaCapture != null) {
             mMediaCapture.onStart();
         }else{
-            Log.e(TAG, "mMediaCapture id null");
+            Log.e(TAG, "mMediaCapture is null");
         }
     }
 
@@ -390,7 +390,7 @@ public class MediaCapturerWrapper implements MediaCaptureCallback {
         if (mMediaCapture != null) {
             mMediaCapture.onDestroy();
         }else{
-            Log.e(TAG, "mMediaCapture id null");
+            Log.e(TAG, "mMediaCapture is null");
         }
     }
 
@@ -405,9 +405,10 @@ public class MediaCapturerWrapper implements MediaCaptureCallback {
     public void StartStreaming() {
         if (mMediaCapture != null) {
             Log.i(TAG, "StartStreaming: " + mMediaCapture.getConfig().getUrl());
+            Log.i(TAG, "MediaCapture.getLibVersion: " + MediaCapture.getLibVersion());
             mMediaCapture.StartStreaming();
         }else{
-            Log.e(TAG, "StartStreaming: MediaCapture id null");
+            Log.e(TAG, "StartStreaming: MediaCapture is null");
         }
 
     }
@@ -428,7 +429,7 @@ public class MediaCapturerWrapper implements MediaCaptureCallback {
             mMediaCapture.getConfig().setStreaming(false); // adhoc for fix change url
             mMediaCapture.getConfig().setUrl(mediaServerURL);
         }else{
-            Log.e(TAG, "setUrl: MediaCapture id null");
+            Log.e(TAG, "setUrl: MediaCapture is null (" + mediaServerURL + ")");
         }
     }
 

@@ -8,8 +8,25 @@ android {
         applicationId "com.vxg.cloud.cm"
         minSdkVersion 21
         targetSdkVersion 18
-        versionCode 12
-        versionName "4.12"
+        versionCode 14
+        versionName "4.14"
+        setProperty("archivesBaseName", "VXGCloudCamera-$versionName-vcode$versionCode")
+    }
+
+    productFlavors {
+        armv7_arm {
+            ndk {
+                abiFilter "armeabi-v7a"
+                abiFilter "armeabi" // streamer not support
+            }
+        }
+        /*armv7_armeabi_x86 { // TODO
+            ndk {
+                abiFilter "armeabi-v7a"
+                //
+                // abiFilter "x86" // streamer not support
+            }
+        }*/
     }
 
     buildTypes {
@@ -20,11 +37,6 @@ android {
         }
         debug {
             jniDebuggable true
-        }
-        applicationVariants.all { variant ->
-            variant.outputs.each { output ->
-                output.outputFile = file("$project.buildDir/VXGCloudCamera-" + defaultConfig.versionName + ".apk")
-            }
         }
     }
 
@@ -45,4 +57,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'com.android.support:design:25.1.0'
     compile files('libs/mediacapturesdk.jar')
+    compile files('libs/mediaplayersdk.jar')
 }

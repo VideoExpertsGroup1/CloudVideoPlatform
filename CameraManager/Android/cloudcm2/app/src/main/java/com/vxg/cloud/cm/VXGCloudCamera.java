@@ -28,7 +28,6 @@ import com.vxg.cloud.ServiceProvider.ServiceProviderHelper;
 import com.vxg.cloud.cm.Control.StreamController;
 import com.vxg.cloud.cm.Interfaces.ServerWebSocketListener;
 import com.vxg.cloud.cm.Interfaces.WebSocketApiListener;
-import com.vxg.cloud.cm.Utils.JsonHelper;
 import com.vxg.cloud.cm.Utils.VEG_WebSocket;
 
 import org.json.JSONException;
@@ -45,7 +44,7 @@ public class VXGCloudCamera implements ServerWebSocketListener, CameraManagerCli
     private VEG_WebSocket webSocketClient;
     private int massageId = 1;
 
-    private WebSocketApiListener webSocketApiListener;
+    private WebSocketApiListener mWebSocketApiListener;
 
     private boolean closedByUser = false;
     private boolean isReconnect = false;
@@ -69,16 +68,22 @@ public class VXGCloudCamera implements ServerWebSocketListener, CameraManagerCli
         }else{
             Log.i(TAG, "DEBUG ERROR_LOST_SERVER_CONNECTION");
 
-            if (webSocketApiListener != null)
-                webSocketApiListener.onServerConnClose(CameraManagerErrors.LOST_SERVER_CONNECTION);
+            if (mWebSocketApiListener != null) {
+                mWebSocketApiListener.onServerConnClose(CameraManagerErrors.LOST_SERVER_CONNECTION);
+            }else{
+                Log.e(TAG, "mWebSocketApiListener is null");
+            }
         }
     }
 
     @Override
     public void onErrorWebSocket(CameraManagerErrors error) {
         Log.e(TAG, "onErrorWebSocket, " + error.toString());
-        if (webSocketApiListener != null)
-            webSocketApiListener.onServerConnClose(error);
+        if (mWebSocketApiListener != null){
+            mWebSocketApiListener.onServerConnClose(error);
+        }else{
+            Log.e(TAG, "mWebSocketApiListener is null");
+        }
     }
 
     @Override
@@ -89,24 +94,33 @@ public class VXGCloudCamera implements ServerWebSocketListener, CameraManagerCli
     @Override
     public void onCamHelloReceived(int refid, String orig_cmd, int cam_id, String media_url, boolean bActivity) {
         mConfig.setCamID(cam_id);
-        if(webSocketApiListener != null)
-            webSocketApiListener.onUpdatedCameraManagerConfig(mConfig);
+        if(mWebSocketApiListener != null) {
+            Log.i(TAG, "CAM_HELLO receive ; call onUpdatedCameraManagerConfig()");
+            mWebSocketApiListener.onUpdatedCameraManagerConfig(mConfig);
+        }else{
+            Log.e(TAG, "mWebSocketApiListener is null");
+        }
         cam_path = media_url;
         mConfig.setCameraActivity(bActivity);
 
-        Log.i(TAG, "CAM_HELLO receive ; call onPreparedCM()");
-        if (webSocketApiListener != null)
-            webSocketApiListener.onPreparedCM();
+        Log.i(TAG, "CAM_HELLO receive");
+        if (mWebSocketApiListener != null) {
+            Log.i(TAG, "CAM_HELLO receive ; call onPreparedCM()");
+            mWebSocketApiListener.onPreparedCM();
+        }else{
+            Log.e(TAG, "mWebSocketApiListener is null could not call onPreparedCM");
+        }
         sendCmdDone(refid, orig_cmd, CameraManagerDoneStatus.OK);
     }
     //**********!
 
     public void startWebSocket(WebSocketApiListener webSocketApiListener) {
+        Log.i(TAG, "startWebSocket");
         /*if (configuration.isRegistered()) {
             mConfig.setUUID(configuration.getString(CameraConfiguration.UUID, null));
         }*/
 
-        this.webSocketApiListener = webSocketApiListener;
+        this.mWebSocketApiListener = webSocketApiListener;
         URI uri = mConfig.getAddress();
         Log.i(TAG, "startWebSocket CameraConfiguration " + uri);
         if(uri != null){
@@ -117,7 +131,8 @@ public class VXGCloudCamera implements ServerWebSocketListener, CameraManagerCli
     }
 
     public void unsetWebSocketApiListener() {
-        this.webSocketApiListener = null;
+        Log.i(TAG, "unsetWebSocketApiListener");
+        this.mWebSocketApiListener = null;
         if (webSocketClient != null) {
             webSocketClient.close();
             webSocketClient = null;
@@ -268,8 +283,11 @@ public class VXGCloudCamera implements ServerWebSocketListener, CameraManagerCli
 
     @Override
     public void onUpdatedConfig() {
-        if(webSocketApiListener != null)
-            webSocketApiListener.onUpdatedCameraManagerConfig(mConfig);
+        if(mWebSocketApiListener != null) {
+            mWebSocketApiListener.onUpdatedCameraManagerConfig(mConfig);
+        }else{
+            Log.e(TAG, "mWebSocketApiListener is null");
+        }
     }
 
     @Override
@@ -289,52 +307,72 @@ public class VXGCloudCamera implements ServerWebSocketListener, CameraManagerCli
     @Override
     public void onByeError() {
         Log.i(TAG, "DEBUG REASON_ERROR");
-        if (webSocketApiListener != null)
-            webSocketApiListener.onServerConnClose(CameraManagerErrors.REASON_ERROR);
+        if (mWebSocketApiListener != null) {
+            mWebSocketApiListener.onServerConnClose(CameraManagerErrors.REASON_ERROR);
+        }else{
+            Log.e(TAG, "mWebSocketApiListener is null");
+        }
     }
 
     @Override
     public void onByeSystemError() {
         Log.i(TAG, "DEBUG REASON_SYSTEM_ERROR");
-        if (webSocketApiListener != null)
-            webSocketApiListener.onServerConnClose(CameraManagerErrors.REASON_SYSTEM_ERROR);
+        if (mWebSocketApiListener != null) {
+            mWebSocketApiListener.onServerConnClose(CameraManagerErrors.REASON_SYSTEM_ERROR);
+        }else{
+            Log.e(TAG, "mWebSocketApiListener is null");
+        }
     }
 
     @Override
     public void onByeInvalidUser() {
         Log.i(TAG, "DEBUG REASON_INVALID_USER");
-        if (webSocketApiListener != null)
-            webSocketApiListener.onServerConnClose(CameraManagerErrors.REASON_INVALID_USER);
+        if (mWebSocketApiListener != null){
+            mWebSocketApiListener.onServerConnClose(CameraManagerErrors.REASON_INVALID_USER);
+        }else{
+            Log.e(TAG, "mWebSocketApiListener is null");
+        }
     }
 
     @Override
     public void onByeAuthFailure() {
         Log.i(TAG, "clearSettings");
         Log.i(TAG, "DEBUG REASON_AUTH_FAILURE");
-        if (webSocketApiListener != null) {
-            webSocketApiListener.onServerConnClose(CameraManagerErrors.REASON_AUTH_FAILURE);
+        if (mWebSocketApiListener != null) {
+            mWebSocketApiListener.onServerConnClose(CameraManagerErrors.REASON_AUTH_FAILURE);
+        }else{
+            Log.e(TAG, "mWebSocketApiListener is null");
         }
     }
 
     @Override
     public void onByeConnConflict() {
         Log.i(TAG, "DEBUG REASON_CONN_CONFLICT");
-        if (webSocketApiListener != null)
-            webSocketApiListener.onServerConnClose(CameraManagerErrors.REASON_CONN_CONFLICT);
+        if (mWebSocketApiListener != null){
+            mWebSocketApiListener.onServerConnClose(CameraManagerErrors.REASON_CONN_CONFLICT);
+        }else{
+            Log.e(TAG, "mWebSocketApiListener is null");
+        }
     }
 
     @Override
     public void onByeShutdown() {
         Log.i(TAG, "DEBUG REASON_SHUTDOWN");
-        if (webSocketApiListener != null)
-            webSocketApiListener.onServerConnClose(CameraManagerErrors.REASON_SHUTDOWN);
+        if (mWebSocketApiListener != null){
+            mWebSocketApiListener.onServerConnClose(CameraManagerErrors.REASON_SHUTDOWN);
+        }else{
+            Log.e(TAG, "mWebSocketApiListener is null");
+        }
     }
 
     @Override
     public void onByeDelete() {
         Log.i(TAG, "DEBUG REASON_DELETED");
-        if (webSocketApiListener != null)
-            webSocketApiListener.onServerConnClose(CameraManagerErrors.REASON_DELETED);
+        if (mWebSocketApiListener != null) {
+            mWebSocketApiListener.onServerConnClose(CameraManagerErrors.REASON_DELETED);
+        }else{
+            Log.e(TAG, "mWebSocketApiListener is null");
+        }
     }
 
     @Override
@@ -352,6 +390,25 @@ public class VXGCloudCamera implements ServerWebSocketListener, CameraManagerCli
         }
         if(start_stream_counter == 0) {
             controllerHandler.sendEmptyMessage(StreamController.ACTION_STREAM_STOP);
+        }
+    }
+
+    @Override
+    public void onBackwardStart(String url) {
+        Log.i(TAG, "onBackwardStart");
+        Message message = new Message();
+        message.what = StreamController.ACTION_BACKWARD_START;
+        message.obj = url;
+        controllerHandler.sendMessage(message);
+    }
+
+    @Override
+    public void onBackwardStop() {
+        Log.i(TAG, "onBackwardStop");
+        if (mWebSocketApiListener != null) {
+            controllerHandler.sendEmptyMessage(StreamController.ACTION_BACKWARD_STOP);
+        }else{
+            Log.e(TAG, "mWebSocketApiListener is null");
         }
     }
 }

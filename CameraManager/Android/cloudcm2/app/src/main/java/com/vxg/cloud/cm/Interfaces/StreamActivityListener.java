@@ -14,4 +14,6 @@ public interface StreamActivityListener {
     void serverConnClose(CameraManagerErrors error);
     void takePreview(String url);
     void takedCaptureCroppedPreview(File cropPreview);
+    void startBackwardAudio(String url);
+    void stopBackwardAudio();
 }

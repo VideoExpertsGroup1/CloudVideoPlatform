@@ -6,10 +6,10 @@
     <string name="caption_next">Next</string>
     <string name="caption_username">Username</string>
     <string name="caption_password">Password</string>
-    <string name="caption_to_reg_token_form">Registration token</string>
-    <string name="caption_to_reg_token_description">For example: rDR33B (got from integration-kit)</string>
+    <string name="caption_to_reg_token_form">Trying to register</string>
+    <string name="caption_to_reg_token_description">For example: rDR33B (received from Integration Kit)</string>
     <string name="caption_to_login_form">Username/Password</string>
-    <string name="caption_to_login_form_description">Sign in VXG account server</string>
+    <string name="caption_to_login_form_description">Sign-in on VXG account server</string>
     <string name="caption_video_source_registration">Video Source Registration</string>
     <string name="caption_register_camera">Register Camera</string>
     <string name="caption_signin">Sign in</string>
