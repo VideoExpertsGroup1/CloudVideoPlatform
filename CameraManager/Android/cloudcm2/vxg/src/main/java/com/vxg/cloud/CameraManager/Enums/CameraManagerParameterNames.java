@@ -92,4 +92,7 @@ public class CameraManagerParameterNames {
     public static final String REGIONS = "regions";
     public static final String SIZE = "size";
     public static final String FREE = "free";
+    public static final String URL = "url";
+    public static final String BACKWARD_FORMATS = "backward_formats";
+
 }

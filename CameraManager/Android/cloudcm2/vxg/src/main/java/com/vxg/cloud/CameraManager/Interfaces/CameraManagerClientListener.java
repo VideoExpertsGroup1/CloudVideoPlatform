@@ -35,4 +35,6 @@ public interface CameraManagerClientListener {
     void onByeDelete();
     void onStreamStart(String reason);
     void onStreamStop(String reason);
+    void onBackwardStart(String url);
+    void onBackwardStop();
 }

@@ -20,6 +20,7 @@ import com.vxg.cloud.CameraManager.Enums.CameraManagerParameterNames;
 import com.vxg.cloud.CameraManager.Interfaces.CameraManagerClientListener;
 import com.vxg.cloud.CameraManager.Interfaces.CmdHandler;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -62,7 +63,15 @@ public class CmdGetCamAudioConf implements CmdHandler {
             // TODO hardcoded
             audio_caps.put(CameraManagerParameterNames.MIC, false);
             audio_caps.put(CameraManagerParameterNames.SPKR, false);
-            audio_caps.put(CameraManagerParameterNames.BACKWARD, false);
+            audio_caps.put(CameraManagerParameterNames.BACKWARD, true);
+
+            // Possible formats “RAW”, “ADPCM”, “MP3”, “NELLY8”, “NELLY16”, “NELLY”, “G711A”, “G711U”, “AAC”, “SPEEX”, “UNKNOWN”].
+            JSONArray backward_formats = new JSONArray();
+            backward_formats.put("G711U");
+            backward_formats.put("AAC");
+            backward_formats.put("MP3");
+            audio_caps.put(CameraManagerParameterNames.BACKWARD_FORMATS, backward_formats);
+
         } catch (JSONException e){
             Log.e(TAG, e.getMessage());
             e.printStackTrace();

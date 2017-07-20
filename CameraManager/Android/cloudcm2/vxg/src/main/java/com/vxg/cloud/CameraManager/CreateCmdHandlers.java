@@ -13,6 +13,8 @@
 
 package com.vxg.cloud.CameraManager;
 
+import com.vxg.cloud.CameraManager.CmdHandlers.CmdBackwardStart;
+import com.vxg.cloud.CameraManager.CmdHandlers.CmdBackwardStop;
 import com.vxg.cloud.CameraManager.CmdHandlers.CmdBye;
 import com.vxg.cloud.CameraManager.CmdHandlers.CmdCamUpdatePreview;
 import com.vxg.cloud.CameraManager.CmdHandlers.CmdConfigureHandler;
@@ -63,6 +65,8 @@ public class CreateCmdHandlers {
         CreateCmdHandlers.register(handlers, new CmdSetStreamConfig());
         CreateCmdHandlers.register(handlers, new CmdStreamStart());
         CreateCmdHandlers.register(handlers, new CmdStreamStop());
+        CreateCmdHandlers.register(handlers, new CmdBackwardStart());
+        CreateCmdHandlers.register(handlers, new CmdBackwardStop());
         return handlers;
     }
 

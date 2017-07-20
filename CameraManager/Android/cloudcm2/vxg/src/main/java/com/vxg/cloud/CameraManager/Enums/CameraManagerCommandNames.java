@@ -49,4 +49,6 @@ public class CameraManagerCommandNames {
     public static final String SET_MOTION_DETECTION = "set_motion_detection";
     public static final String GET_AUDIO_DETECTION = "get_audio_detection";
     public static final String SET_AUDIO_DETECTION = "set_audio_detection";
+    public static final String BACKWARD_START = "backward_start";
+    public static final String BACKWARD_STOP = "backward_stop";
 }
